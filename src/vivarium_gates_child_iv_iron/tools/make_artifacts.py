@@ -35,7 +35,7 @@ def running_from_cluster() -> bool:
 
 
 def check_for_existing(output_dir: Path, location: str, append: bool, replace_keys: Tuple) -> None:
-    # need to explicitly cast to Path from str 
+    # need to explicitly cast to Path from str
     existing_artifacts = set([item.stem for item in Path(output_dir).iterdir()
                               if item.is_file() and item.suffix == '.hdf'])
     locations = set([sanitize_location(loc) for loc in metadata.LOCATIONS])
@@ -50,7 +50,7 @@ def check_for_existing(output_dir: Path, location: str, append: bool, replace_ke
                 abort=True
             )
             for loc in existing:
-                path = output_dir / f'{loc}.hdf'
+                path = Path(output_dir + f"{loc}.hdf")
                 logger.info(f'Deleting artifact at {str(path)}.')
                 path.unlink(missing_ok=True)
         elif replace_keys:
@@ -97,7 +97,7 @@ def build_artifacts(
     check_for_existing(output_dir, location, append, replace_keys)
 
     if location in metadata.LOCATIONS:
-            build_single(loc, output_dir, replace_keys)
+            build_single(location, output_dir, replace_keys)
     elif location == 'all':
         if running_from_cluster():
             # parallel build when on cluster

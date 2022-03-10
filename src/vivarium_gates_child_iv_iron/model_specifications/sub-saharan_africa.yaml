@@ -4,6 +4,9 @@ components:
         population:
             - BasePopulation()
             - Mortality()
+    vivarium_gates_child_iv_iron.components:
+        - DisabilityObserver()
+        - MortalityObserver()
 
 configuration:
     input_data:

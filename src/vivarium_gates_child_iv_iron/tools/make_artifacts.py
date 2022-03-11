@@ -36,7 +36,7 @@ def running_from_cluster() -> bool:
 
 def check_for_existing(output_dir: Path, location: str, append: bool, replace_keys: Tuple) -> None:
     # need to explicitly cast to Path from str
-    existing_artifacts = set([item.stem for item in Path(output_dir).iterdir()
+    existing_artifacts = set([item.stem for item in output_dir.iterdir()
                               if item.is_file() and item.suffix == '.hdf'])
     locations = set([sanitize_location(loc) for loc in metadata.LOCATIONS])
     existing = locations.intersection(existing_artifacts)
@@ -50,7 +50,7 @@ def check_for_existing(output_dir: Path, location: str, append: bool, replace_ke
                 abort=True
             )
             for loc in existing:
-                path = Path(output_dir + f"{loc}.hdf")
+                path = output_dir / f'{loc}.hdf'
                 logger.info(f'Deleting artifact at {str(path)}.')
                 path.unlink(missing_ok=True)
         elif replace_keys:
@@ -94,7 +94,7 @@ def build_artifacts(
     import vivarium_cluster_tools as vct
     vct.mkdir(output_dir, parents=True, exists_ok=True)
 
-    check_for_existing(output_dir, location, append, replace_keys)
+    check_for_existing(Path(output_dir), location, append, replace_keys)
 
     if location in metadata.LOCATIONS:
             build_single(location, output_dir, replace_keys)

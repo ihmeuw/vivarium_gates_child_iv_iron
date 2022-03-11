@@ -90,14 +90,9 @@ def load_age_bins(key: str, location: str) -> pd.DataFrame:
 
 
 def load_demographic_dimensions(key: str, location: str) -> pd.DataFrame:
-    demographic_cols = ['sex', 'age_start', 'age_end', 'year_start', 'year_end']
-
-    demographic_dimensions = pd.DataFrame([
-        ['Male', 0, 5, 2022, 2026],
-        ['Female', 0, 5, 2022, 2026]],
-        columns=demographic_cols).set_index(demographic_cols)
-
-    return demographic_dimensions
+    demographic_dimensions = interface.get_demographic_dimensions(location)
+    is_under_five = demographic_dimensions.index.get_level_values('age_end') <= 5
+    return demographic_dimensions[is_under_five]
 
 
 def load_theoretical_minimum_risk_life_expectancy(key: str, location: str) -> pd.DataFrame:
@@ -117,6 +112,37 @@ def load_metadata(key: str, location: str):
     if hasattr(entity_metadata, 'to_dict'):
         entity_metadata = entity_metadata.to_dict()
     return entity_metadata
+
+
+def load_categorical_paf(key: str, location: str) -> pd.DataFrame:
+    try:
+        risk = {
+            # todo add keys as needed
+            data_keys.KEYGROUP.PAF: data_keys.KEYGROUP,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+
+    distribution_type = get_data(risk.DISTRIBUTION, location)
+
+    if distribution_type != 'dichotomous' and 'polytomous' not in distribution_type:
+        raise NotImplementedError(
+            f"Unrecognized distribution {distribution_type} for {risk.name}. Only dichotomous and "
+            f"polytomous are recognized categorical distributions."
+        )
+
+    exp = get_data(risk.EXPOSURE, location)
+    rr = get_data(risk.RELATIVE_RISK, location)
+
+    # paf = (sum_categories(exp * rr) - 1) / sum_categories(exp * rr)
+    sum_exp_x_rr = (
+        (exp * rr)
+        .groupby(list(set(rr.index.names) - {'parameter'})).sum()
+        .reset_index()
+        .set_index(rr.index.names[:-1])
+    )
+    paf = (sum_exp_x_rr - 1) / sum_exp_x_rr
+    return paf
 
 
 def _load_em_from_meid(location, meid, measure):

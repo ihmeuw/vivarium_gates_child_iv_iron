@@ -1,1 +1,1 @@
-from vivarium_gates_child_iv_iron.components.observers import MortalityObserver, DisabilityObserver
+from vivarium_gates_child_iv_iron.components.observers import DisabilityObserver, MortalityObserver

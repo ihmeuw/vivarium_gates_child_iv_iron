@@ -1,5 +1,26 @@
 from datetime import datetime
 
+##########################
+# Cause Model Parameters #
+##########################
+
+# diarrhea duration in days
+DIARRHEA_DURATION: Tuple = (
+    'diarrheal_diseases_duration', get_norm_from_quantiles(mean=4.04485, lower=3.94472, upper=4.144975)
+)
+
+# measles duration in days
+MEASLES_DURATION: int = 10
+
+# LRI duration in days
+LRI_DURATION: Tuple = (
+    'lri_duration', get_norm_from_quantiles(mean=7.79, lower=6.2, upper=9.64)
+)
+
+# duration > bin_duration, so there is effectively no remission,
+# and duration within the bin is bin_duration / 2
+EARLY_NEONATAL_CAUSE_DURATION: float = 3.5
+
 
 ############################
 # Disease Model Parameters #

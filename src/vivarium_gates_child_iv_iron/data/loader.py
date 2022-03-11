@@ -49,14 +49,30 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.POPULATION.ACMR: load_standard_data,
         data_keys.POPULATION.CRUDE_BIRTH_RATE: load_standard_data,
 
-        # TODO - add appropriate mappings
-        # data_keys.DIARRHEA_PREVALENCE: load_standard_data,
-        # data_keys.DIARRHEA_INCIDENCE_RATE: load_standard_data,
-        # data_keys.DIARRHEA_REMISSION_RATE: load_standard_data,
-        # data_keys.DIARRHEA_CAUSE_SPECIFIC_MORTALITY_RATE: load_standard_data,
-        # data_keys.DIARRHEA_EXCESS_MORTALITY_RATE: load_standard_data,
-        # data_keys.DIARRHEA_DISABILITY_WEIGHT: load_standard_data,
-        # data_keys.DIARRHEA_RESTRICTIONS: load_metadata,
+        data_keys.DIARRHEA.DURATION: load_duration,
+        data_keys.DIARRHEA.PREVALENCE: load_prevalence_from_incidence_and_duration,
+        data_keys.DIARRHEA.INCIDENCE_RATE: load_standard_data,
+        data_keys.DIARRHEA.REMISSION_RATE: load_remission_rate_from_duration,
+        data_keys.DIARRHEA.DISABILITY_WEIGHT: load_standard_data,
+        data_keys.DIARRHEA.EMR: load_emr_from_csmr_and_prevalence,
+        data_keys.DIARRHEA.CSMR: load_standard_data,
+        data_keys.DIARRHEA.RESTRICTIONS: load_metadata,
+
+        data_keys.MEASLES.PREVALENCE: load_standard_data,
+        data_keys.MEASLES.INCIDENCE_RATE: load_standard_data,
+        data_keys.MEASLES.DISABILITY_WEIGHT: load_standard_data,
+        data_keys.MEASLES.EMR: load_standard_data,
+        data_keys.MEASLES.CSMR: load_standard_data,
+        data_keys.MEASLES.RESTRICTIONS: load_metadata,
+
+        data_keys.LRI.DURATION: load_duration,
+        data_keys.LRI.PREVALENCE: load_prevalence_from_incidence_and_duration,
+        data_keys.LRI.INCIDENCE_RATE: load_standard_data,
+        data_keys.LRI.REMISSION_RATE: load_remission_rate_from_duration,
+        data_keys.LRI.DISABILITY_WEIGHT: load_standard_data,
+        data_keys.LRI.EMR: load_emr_from_csmr_and_prevalence,
+        data_keys.LRI.CSMR: load_standard_data,
+        data_keys.LRI.RESTRICTIONS: load_metadata,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -162,6 +178,77 @@ def _load_em_from_meid(location, meid, measure):
 
 
 # TODO - add project-specific data functions here
+def load_duration(key: str, location: str) -> pd.DataFrame:
+    try:
+        distribution = {
+            data_keys.DIARRHEA.DURATION: data_values.DIARRHEA_DURATION,
+            data_keys.LRI.DURATION: data_values.LRI_DURATION,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+
+    demography = get_data(data_keys.POPULATION.DEMOGRAPHY, location)
+    duration_draws = (
+            get_random_variable_draws(metadata.ARTIFACT_COLUMNS, *distribution)
+            / vivarium_gates_child_iv_iron.constants.metadata.YEAR_DURATION
+    )
+
+    enn_duration = pd.DataFrame(
+        data_values.EARLY_NEONATAL_CAUSE_DURATION / metadata.YEAR_DURATION,
+        columns=metadata.ARTIFACT_COLUMNS,
+        index=demography.query('age_start == 0.0').index
+    )
+
+    all_other_duration = pd.DataFrame(
+        [duration_draws], index=demography.query('age_start != 0.0').index
+    )
+
+    duration = pd.concat([enn_duration, all_other_duration]).sort_index()
+    return duration
+
+
+def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.DataFrame:
+    try:
+        cause = {
+            data_keys.DIARRHEA.PREVALENCE: data_keys.DIARRHEA,
+            data_keys.LRI.PREVALENCE: data_keys.LRI,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+
+    incidence_rate = get_data(cause.INCIDENCE_RATE, location)
+    duration = get_data(cause.DURATION, location)
+    prevalence = incidence_rate * duration
+    return prevalence
+
+
+def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
+    try:
+        cause = {
+            data_keys.DIARRHEA.REMISSION_RATE: data_keys.DIARRHEA,
+            data_keys.LRI.REMISSION_RATE: data_keys.LRI,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+    duration = get_data(cause.DURATION, location)
+    remission_rate = 1 / duration
+    return remission_rate
+
+
+def load_emr_from_csmr_and_prevalence(key: str, location: str) -> pd.DataFrame:
+    try:
+        cause = {
+            data_keys.DIARRHEA.EMR: data_keys.DIARRHEA,
+            data_keys.LRI.EMR: data_keys.LRI,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+
+    csmr = get_data(cause.CSMR, location)
+    prevalence = get_data(cause.PREVALENCE, location)
+    data = (csmr / prevalence).fillna(0)
+    data = data.replace([np.inf, -np.inf], 0)
+    return data
 
 
 def get_entity(key: str):

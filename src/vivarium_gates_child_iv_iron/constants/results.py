@@ -55,15 +55,14 @@ NON_COUNT_TEMPLATES = [
 
 POP_STATES = ('living', 'dead', 'tracked', 'untracked')
 SEXES = ('male', 'female')
-# TODO - add literals for years in the model
 YEARS = tuple(range(2022, 2026))
-# TODO - add literals for ages in the model
 AGE_GROUPS = (
     'early_neonatal',
     'late_neonatal',
     'post_neonatal',
     '1_to_4'
 )
+DICHOTOMOUS_RISK_STATES = ('cat2', 'cat1')
 CAUSES_OF_DEATH = (
     'other_causes',
     models.DIARRHEA.STATE_NAME,

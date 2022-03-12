@@ -23,6 +23,8 @@ from vivarium_inputs.mapping_extension import alternative_risk_factors
 from vivarium_gates_child_iv_iron.constants import data_keys, data_values
 from vivarium_gates_child_iv_iron.constants.metadata import ARTIFACT_INDEX_COLUMNS
 
+from vivarium_gates_child_iv_iron.utilities import get_random_variable_draws
+
 
 def get_data(lookup_key: str, location: str) -> pd.DataFrame:
     """Retrieves data from an appropriate source.

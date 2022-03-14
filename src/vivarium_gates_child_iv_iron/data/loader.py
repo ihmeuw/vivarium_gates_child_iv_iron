@@ -192,7 +192,7 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
     demography = get_data(data_keys.POPULATION.DEMOGRAPHY, location)
     duration_draws = (
             get_random_variable_draws(len(metadata.ARTIFACT_COLUMNS), distribution)
-            / vivarium_gates_child_iv_iron.constants.metadata.YEAR_DURATION
+            / metadata.YEAR_DURATION
     )
 
     enn_duration = pd.DataFrame(

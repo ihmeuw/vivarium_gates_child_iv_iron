@@ -13,6 +13,7 @@ for an example.
    No logging is done here. Logging is done in vivarium inputs itself and forwarded.
 """
 import pandas as pd
+import numpy as np
 
 from gbd_mapping import causes, covariates, risk_factors
 from vivarium.framework.artifact import EntityKey

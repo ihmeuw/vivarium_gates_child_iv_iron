@@ -1,3 +1,5 @@
+import pandas as pd
+
 from typing import NamedTuple
 
 ####################
@@ -5,9 +7,7 @@ from typing import NamedTuple
 ####################
 
 PROJECT_NAME = 'vivarium_gates_child_iv_iron'
-CLUSTER_PROJECT = 'proj_cost_effect'
-# # TODO use proj_csu if a csu project
-# CLUSTER_PROJECT = 'proj_csu'
+CLUSTER_PROJECT = 'proj_simscience'
 
 CLUSTER_QUEUE = 'all.q'
 MAKE_ARTIFACT_MEM = '10G'
@@ -16,7 +16,9 @@ MAKE_ARTIFACT_RUNTIME = '3:00:00'
 MAKE_ARTIFACT_SLEEP = 10
 
 LOCATIONS = [
-    # TODO - project locations here
+    "Sub-Saharan Africa",
+    "South Asia",
+    "LMICs"
 ]
 
 ARTIFACT_INDEX_COLUMNS = [

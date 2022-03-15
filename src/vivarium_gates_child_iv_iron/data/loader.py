@@ -208,8 +208,8 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
     all_other_duration.columns = metadata.ARTIFACT_COLUMNS
 
     duration = pd.concat([enn_duration, all_other_duration]).sort_index()
-    # NAs introduced by restricting demography
-    return duration.fillna(0)
+
+    return duration
 
 
 def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.DataFrame:
@@ -224,7 +224,8 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
     incidence_rate = get_data(cause.INCIDENCE_RATE, location)
     duration = get_data(cause.DURATION, location)
     prevalence = incidence_rate * duration
-    return prevalence
+    # NAs introduced by restricted demography in duration
+    return prevalence.fillna(0)
 
 
 def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:

@@ -205,6 +205,7 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
     all_other_duration = pd.DataFrame(
         [duration_draws], index=demography.query('age_start != 0.0').index
     )
+    all_other_duration.columns = metadata.ARTIFACT_COLUMNS
 
     duration = pd.concat([enn_duration, all_other_duration]).sort_index()
     return duration

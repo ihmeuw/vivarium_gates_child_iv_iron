@@ -21,6 +21,7 @@ from vivarium_inputs import globals as vi_globals, interface, utilities as vi_ut
 from vivarium_inputs.mapping_extension import alternative_risk_factors
 
 from vivarium_gates_child_iv_iron.constants import data_keys
+from vivarium_gates_child_iv_iron.constants.metadata import ARTIFACT_INDEX_COLUMNS
 
 
 def get_data(lookup_key: str, location: str) -> pd.DataFrame:
@@ -67,7 +68,21 @@ def load_population_location(key: str, location: str) -> str:
 
 
 def load_population_structure(key: str, location: str) -> pd.DataFrame:
-    return interface.get_population_structure(location)
+    if location == "LMICs":
+        world_bank_1 = filter_population(interface.get_population_structure("World Bank Low Income"))
+        world_bank_2 = filter_population(interface.get_population_structure("World Bank Lower Middle Income"))
+        population_structure = pd.concat([world_bank_1, world_bank_2])
+    else:
+        population_structure = filter_population(interface.get_population_structure(location))
+    return population_structure
+
+
+def filter_population(unfiltered: pd.DataFrame) -> pd.DataFrame:
+    unfiltered = unfiltered.reset_index()
+    filtered_pop = unfiltered[(unfiltered.age_end <= 5)]
+    filtered_pop = filtered_pop.set_index(ARTIFACT_INDEX_COLUMNS)
+
+    return filtered_pop
 
 
 def load_age_bins(key: str, location: str) -> pd.DataFrame:
@@ -75,7 +90,9 @@ def load_age_bins(key: str, location: str) -> pd.DataFrame:
 
 
 def load_demographic_dimensions(key: str, location: str) -> pd.DataFrame:
-    return interface.get_demographic_dimensions(location)
+    demographic_dimensions = interface.get_demographic_dimensions(location)
+    is_under_five = demographic_dimensions.index.get_level_values('age_end') <= 5
+    return demographic_dimensions[is_under_five]
 
 
 def load_theoretical_minimum_risk_life_expectancy(key: str, location: str) -> pd.DataFrame:

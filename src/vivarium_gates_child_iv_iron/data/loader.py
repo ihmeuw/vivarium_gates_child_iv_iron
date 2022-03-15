@@ -208,7 +208,8 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
     all_other_duration.columns = metadata.ARTIFACT_COLUMNS
 
     duration = pd.concat([enn_duration, all_other_duration]).sort_index()
-    return duration
+    # NAs introduced by restricting demography
+    return duration.fillna(0)
 
 
 def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.DataFrame:

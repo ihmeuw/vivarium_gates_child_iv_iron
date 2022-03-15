@@ -209,7 +209,7 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
 
     duration = pd.concat([enn_duration, all_other_duration]).sort_index()
 
-    return duration
+    return duration.droplevel('location')
 
 
 def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.DataFrame:

@@ -34,7 +34,7 @@ def make_measure_data(data):
         population=get_population_data(data),
         person_time=get_measure_data(data, 'person_time'),
         ylls=get_by_cause_measure_data(data, 'ylls'),
-        # TODO: add back in model 1
+        # TODO: add back in in model 1
         #ylds=get_by_cause_measure_data(data, 'ylds'),
         deaths=get_by_cause_measure_data(data, 'deaths'),
         # TODO duplicate for each model

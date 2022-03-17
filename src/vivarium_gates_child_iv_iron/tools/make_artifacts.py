@@ -35,6 +35,7 @@ def running_from_cluster() -> bool:
 
 
 def check_for_existing(output_dir: Path, location: str, append: bool, replace_keys: Tuple) -> None:
+    # need to explicitly cast to Path from str
     existing_artifacts = set([item.stem for item in output_dir.iterdir()
                               if item.is_file() and item.suffix == '.hdf'])
     locations = set([sanitize_location(loc) for loc in metadata.LOCATIONS])

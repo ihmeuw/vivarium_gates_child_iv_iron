@@ -8,8 +8,6 @@ from typing import NamedTuple
 
 PROJECT_NAME = 'vivarium_gates_child_iv_iron'
 CLUSTER_PROJECT = 'proj_simscience'
-# # TODO use proj_csu if a csu project
-# CLUSTER_PROJECT = 'proj_csu'
 
 CLUSTER_QUEUE = 'all.q'
 MAKE_ARTIFACT_MEM = '10G'

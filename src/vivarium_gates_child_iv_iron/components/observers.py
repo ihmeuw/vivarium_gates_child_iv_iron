@@ -251,7 +251,7 @@ class DiseaseObserver(DiseaseObserver_):
     def __init__(
             self,
             disease: str,
-            stratify_by_wasting: str = 'wasting',
+            stratify_by_wasting: str = 'False',
             stratify_by_stunting: str = 'False',
             stratify_by_diarrhea: str = 'False',
     ):

@@ -5,12 +5,8 @@ import pandas as pd
 from scipy import stats
 
 from vivarium_gates_child_iv_iron.constants.metadata import YEAR_DURATION
-from vivarium_gates_child_iv_iron.utilities import (
-    get_norm_from_quantiles,
-    get_lognorm_from_quantiles,
-    get_truncnorm_from_quantiles,
-    get_truncnorm_from_sd
-)
+from vivarium_gates_child_iv_iron.utilities import get_norm
+
 
 ##########################
 # Cause Model Parameters #
@@ -18,7 +14,8 @@ from vivarium_gates_child_iv_iron.utilities import (
 
 # diarrhea duration in days
 DIARRHEA_DURATION: Tuple = (
-    'diarrheal_diseases_duration', get_norm_from_quantiles(mean=4.04485, lower=3.94472, upper=4.144975)
+    'diarrheal_diseases_duration', get_norm(mean=4.04485,
+                                            ninety_five_pct_confidence_interval=(3.94472, 4.144975))
 )
 
 # measles duration in days
@@ -26,7 +23,8 @@ MEASLES_DURATION: int = 10
 
 # LRI duration in days
 LRI_DURATION: Tuple = (
-    'lri_duration', get_norm_from_quantiles(mean=7.79, lower=6.2, upper=9.64)
+    'lri_duration', get_norm(mean=7.79,
+                             ninety_five_pct_confidence_interval=(6.2, 9.64))
 )
 
 # duration > bin_duration, so there is effectively no remission,

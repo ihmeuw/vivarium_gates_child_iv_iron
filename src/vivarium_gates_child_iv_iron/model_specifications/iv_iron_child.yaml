@@ -11,6 +11,8 @@ components:
             - SIS('lower_respiratory_infections')
     vivarium_gates_child_iv_iron:
         components:
+            - DisabilityObserver()
+            - MortalityObserver()
             - DiseaseObserver('diarrheal_diseases')
             - DiseaseObserver('measles')
             - DiseaseObserver('lower_respiratory_infections')

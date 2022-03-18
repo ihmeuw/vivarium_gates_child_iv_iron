@@ -4,7 +4,8 @@ from typing import Callable, Dict, Iterable, List, Tuple, Union
 import pandas as pd
 from vivarium.framework.engine import Builder
 from vivarium.framework.event import Event
-from vivarium_public_health.metrics import (MortalityObserver as MortalityObserver_,
+from vivarium_public_health.metrics import (utilities,
+                                            MortalityObserver as MortalityObserver_,
                                             DisabilityObserver as DisabilityObserver_,
                                             DiseaseObserver as DiseaseObserver_,
                                             CategoricalRiskObserver as CategoricalRiskObserver_)

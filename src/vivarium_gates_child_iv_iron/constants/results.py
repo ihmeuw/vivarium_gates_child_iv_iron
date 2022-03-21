@@ -54,6 +54,9 @@ COLUMN_TEMPLATES = {
 NON_COUNT_TEMPLATES = [
 ]
 
+THROWAWAY_COLUMNS = [
+]
+
 POP_STATES = ('living', 'dead', 'tracked', 'untracked')
 SEXES = ('male', 'female')
 YEARS = tuple(range(2022, 2026))

@@ -28,15 +28,9 @@ class ResultsStratifier:
 
     def __init__(
             self,
-            observer_name: str = 'False',
-            by_wasting: str = 'False',
-            by_stunting: str = 'False',
-            by_diarrhea: str = 'False'
+            observer_name: str = 'False'
     ):
         self.name = f'{observer_name}_results_stratifier'
-        self.by_wasting = by_wasting != 'False'
-        self.by_stunting = by_stunting != 'False'
-        self.by_diarrhea = by_diarrhea != 'False'
 
     # noinspection PyAttributeOutsideInit
     def setup(self, builder: Builder):

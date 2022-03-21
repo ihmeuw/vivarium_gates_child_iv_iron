@@ -60,23 +60,6 @@ class ResultsStratifier:
             else:
                 columns_required.append(source_name)
 
-        if self.by_wasting:
-            setup_stratification(data_keys.WASTING.name, False, 'wasting_state', models.WASTING.STATES)
-
-        if self.by_stunting:
-            setup_stratification(f'{data_keys.STUNTING.name}.exposure', True, 'stunting_state', range(4, 0, -1))
-
-        if self.by_diarrhea:
-            setup_stratification(
-                source_name=data_keys.DIARRHEA.name,
-                is_pipeline=False,
-                stratification_name='diarrhea',
-                categories={
-                    'cat1': models.DIARRHEA.STATE_NAME,
-                    'cat2': models.DIARRHEA.SUSCEPTIBLE_STATE_NAME
-                }
-            )
-
         self.population_view = builder.population.get_view(columns_required)
         self.stratification_groups: pd.Series = None
 

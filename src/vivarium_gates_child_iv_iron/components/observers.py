@@ -248,17 +248,11 @@ class DiseaseObserver(DiseaseObserver_):
 
     def __init__(
             self,
-            disease: str,
-            stratify_by_wasting: str = 'False',
-            stratify_by_stunting: str = 'False',
-            stratify_by_diarrhea: str = 'False',
+            disease: str
     ):
         super().__init__(disease)
         self.stratifier = ResultsStratifier(
-            self.name,
-            by_wasting=stratify_by_wasting,
-            by_stunting=stratify_by_stunting,
-            by_diarrhea=stratify_by_diarrhea,
+            self.name
         )
 
     @property

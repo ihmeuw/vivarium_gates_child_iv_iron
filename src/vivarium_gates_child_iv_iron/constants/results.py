@@ -27,26 +27,19 @@ STANDARD_COLUMNS = {
 }
 
 TOTAL_POPULATION_COLUMN_TEMPLATE = 'total_population_{POP_STATE}'
-PERSON_TIME_COLUMN_TEMPLATE = 'person_time_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
 DEATH_COLUMN_TEMPLATE = 'death_due_to_{CAUSE_OF_DEATH}_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
 YLLS_COLUMN_TEMPLATE = 'ylls_due_to_{CAUSE_OF_DEATH}_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
 YLDS_COLUMN_TEMPLATE = 'ylds_due_to_{CAUSE_OF_DISABILITY}_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
 STATE_PERSON_TIME_COLUMN_TEMPLATE = '{STATE}_person_time_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
 TRANSITION_COUNT_COLUMN_TEMPLATE = '{TRANSITION}_event_count_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
-DISEASE_STATE_PERSON_TIME_COLUMN_TEMPLATE = '{DISEASE_STATE_EXCL_DIARRHEA}_person_time_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}_wasting_state_{WASTING_STATE}'
-DISEASE_TRANSITION_COUNT_COLUMN_TEMPLATE = '{DISEASE_TRANSITION_EXCL_DIARRHEA}_event_count_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}_wasting_state_{WASTING_STATE}'
-DIARRHEAL_DISEASES_STATE_PERSON_TIME_COLUMN_TEMPLATE = '{DIARRHEAL_DISEASES_STATE}_person_time_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}_wasting_state_{WASTING_STATE}_therapeutic_zinc_{THERAPEUTIC_ZINC_STATE}_preventative_zinc_{PREVENTATIVE_ZINC_STATE}'
-DIARRHEAL_DISEASES_TRANSITION_COUNT_COLUMN_TEMPLATE = '{DIARRHEAL_DISEASES_TRANSITION}_event_count_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}_wasting_state_{WASTING_STATE}_therapeutic_zinc_{THERAPEUTIC_ZINC_STATE}_preventative_zinc_{PREVENTATIVE_ZINC_STATE}'
 
 COLUMN_TEMPLATES = {
     'population': TOTAL_POPULATION_COLUMN_TEMPLATE,
     'deaths': DEATH_COLUMN_TEMPLATE,
     'ylls': YLLS_COLUMN_TEMPLATE,
     'ylds': YLDS_COLUMN_TEMPLATE,
-    'disease_state_person_time': DISEASE_STATE_PERSON_TIME_COLUMN_TEMPLATE,
-    'disease_transition_count': DISEASE_TRANSITION_COUNT_COLUMN_TEMPLATE,
-    'diarrheal_diseases_state_person_time': DIARRHEAL_DISEASES_STATE_PERSON_TIME_COLUMN_TEMPLATE,
-    'diarrheal_diseases_transition_count': DIARRHEAL_DISEASES_TRANSITION_COUNT_COLUMN_TEMPLATE,
+    'state_person_time': STATE_PERSON_TIME_COLUMN_TEMPLATE,
+    'transition_count': TRANSITION_COUNT_COLUMN_TEMPLATE,
 }
 
 
@@ -74,11 +67,6 @@ CAUSES_OF_DISABILITY = (
     models.MEASLES.STATE_NAME,
     models.LRI.STATE_NAME,
 )
-DIARRHEAL_DISEASES_STATES = ('susceptible_to_diarrheal_diseases','diarrheal_diseases')
-DIARRHEAL_DISEASES_TRANSITIONS = (
-    'susceptible_to_diarrheal_diseases_to_diarrheal_diseases',
-    'diarrheal_diseases_to_susceptible_to_diarrheal_diseases'
-)
 
 TEMPLATE_FIELD_MAP = {
     'POP_STATE': POP_STATES,
@@ -87,13 +75,9 @@ TEMPLATE_FIELD_MAP = {
     'AGE_GROUP': AGE_GROUPS,
     'CAUSE_OF_DEATH': CAUSES_OF_DEATH,
     'CAUSE_OF_DISABILITY': CAUSES_OF_DISABILITY,
-    'DISEASE_STATE_EXCL_DIARRHEA': [d for d in models.DISEASE_STATES if 'diarrheal_diseases' not in d],
-    'DISEASE_TRANSITION_EXCL_DIARRHEA': [d for d in models.DISEASE_TRANSITIONS if 'diarrheal_diseases' not in d],
-    'DIARRHEAL_DISEASES_STATE': DIARRHEAL_DISEASES_STATES,
-    'DIARRHEAL_DISEASES_TRANSITION': DIARRHEAL_DISEASES_TRANSITIONS,
-    'DIARRHEA_STATE': DICHOTOMOUS_RISK_STATES,
+    'STATE': models.DISEASE_STATES,
+    'TRANSITION': models.DISEASE_TRANSITIONS,
 }
-
 
 def RESULT_COLUMNS(kind='all'):
     if kind not in COLUMN_TEMPLATES and kind != 'all':
@@ -127,4 +111,3 @@ def RESULTS_MAP(kind):
     df['key'] = columns
     df['measure'] = kind  # per researcher feedback, this column is useful, even when it's identical for all rows
     return df.set_index('key').sort_index()
-

@@ -4,7 +4,8 @@ from typing import Callable, Dict, Iterable, List, Tuple, Union
 import pandas as pd
 from vivarium.framework.engine import Builder
 from vivarium.framework.event import Event
-from vivarium_public_health.metrics import (MortalityObserver as MortalityObserver_,
+from vivarium_public_health.metrics import (utilities,
+                                            MortalityObserver as MortalityObserver_,
                                             DisabilityObserver as DisabilityObserver_,
                                             DiseaseObserver as DiseaseObserver_,
                                             CategoricalRiskObserver as CategoricalRiskObserver_)
@@ -17,13 +18,18 @@ from vivarium_gates_child_iv_iron.constants import models, results, data_keys
 
 class ResultsStratifier:
     """Centralized component for handling results stratification.
+
     This should be used as a sub-component for observers.  The observers
     can then ask this component for population subgroups and labels during
     results production and have this component manage adjustments to the
     final column labels for the subgroups.
+
     """
 
-    def __init__(self, observer_name: str = 'False'):
+    def __init__(
+            self,
+            observer_name: str = 'False'
+    ):
         self.name = f'{observer_name}_results_stratifier'
 
     # noinspection PyAttributeOutsideInit
@@ -52,7 +58,7 @@ class ResultsStratifier:
             if is_pipeline:
                 self.pipelines[source_name] = builder.value.get_value(source_name)
             else:
-                columns_required.append(data_keys.WASTING.name)
+                columns_required.append(source_name)
 
         self.population_view = builder.population.get_view(columns_required)
         self.stratification_groups: pd.Series = None
@@ -88,6 +94,7 @@ class ResultsStratifier:
         Tuple of Stratification Levels. Each Stratification Level is represented as a Dictionary with keys 'metric' and
         'category'. 'metric' refers to the stratification level's name, and 'category' refers to the stratification
         category.
+
         If no stratification levels are defined, returns a List with a single empty Tuple
         """
         # Get list of lists of metric and category pairs for each metric
@@ -103,14 +110,17 @@ class ResultsStratifier:
 
     def group(self, pop: pd.DataFrame) -> Iterable[Tuple[Tuple[str, ...], pd.DataFrame]]:
         """Takes the full population and yields stratified subgroups.
+
         Parameters
         ----------
         pop
             The population to stratify.
+
         Yields
         ------
             A tuple of stratification labels and the population subgroup
             corresponding to those labels.
+
         """
         index = pop.index.intersection(self.stratification_groups.index)
         pop = pop.loc[index]
@@ -128,6 +138,7 @@ class ResultsStratifier:
     @staticmethod
     def update_labels(measure_data: Dict[str, float], labels: Tuple[str, ...]) -> Dict[str, float]:
         """Updates a dict of measure data with stratification labels.
+
         Parameters
         ----------
         measure_data
@@ -136,14 +147,17 @@ class ResultsStratifier:
             The stratification labels. Yielded along with the population
             subgroup the measure data was produced from by a call to
             :obj:`ResultsStratifier.group`.
+
         Returns
         -------
             The measure data with column names updated with the stratification
             labels.
+
         """
         stratification_label = f'_{labels[0]}' if labels[0] else ''
         measure_data = {f'{k}{stratification_label}': v for k, v in measure_data.items()}
         return measure_data
+
 
 class MortalityObserver(MortalityObserver_):
 
@@ -172,8 +186,6 @@ class MortalityObserver(MortalityObserver_):
                 measure_data = measure_getter(*base_args, *extra_args)
                 measure_data = self.stratifier.update_labels(measure_data, labels)
                 metrics.update(measure_data)
-
-        # TODO remove stratification by wasting state of deaths/ylls due to PEM?
 
         the_living = pop[(pop.alive == 'alive') & pop.tracked]
         the_dead = pop[pop.alive == 'dead']
@@ -207,3 +219,74 @@ class DisabilityObserver(DisabilityObserver_):
                          self.disability_weight_pipelines, self.causes)
             measure_data = self.stratifier.update_labels(get_years_lived_with_disability(*base_args), labels)
             self.years_lived_with_disability.update(measure_data)
+
+
+class DiseaseObserver(DiseaseObserver_):
+
+    def __init__(
+            self,
+            disease: str
+    ):
+        super().__init__(disease)
+        self.stratifier = ResultsStratifier(
+            self.name
+        )
+
+    @property
+    def sub_components(self) -> List[ResultsStratifier]:
+        return [self.stratifier]
+
+    @property
+    def name(self):
+        return f'{self.disease}_disease_observer'
+
+    def on_time_step_prepare(self, event: Event):
+        pop = self.population_view.get(event.index)
+        # Ignoring the edge case where the step spans a new year.
+        # Accrue all counts and time to the current year.
+        for labels, pop_in_group in self.stratifier.group(pop):
+            for state in self.states:
+                # noinspection PyTypeChecker
+                state_person_time_this_step = utilities.get_state_person_time(
+                    pop_in_group,
+                    self.config,
+                    self.disease,
+                    state,
+                    self.clock().year,
+                    event.step_size,
+                    self.age_bins
+                )
+                state_person_time_this_step = self.stratifier.update_labels(
+                    state_person_time_this_step, labels
+                )
+                self.person_time.update(state_person_time_this_step)
+
+        # This enables tracking of transitions between states
+        prior_state_pop = self.population_view.get(event.index)
+        prior_state_pop[self.previous_state_column] = prior_state_pop[self.disease]
+        self.population_view.update(prior_state_pop)
+
+    def on_collect_metrics(self, event: Event):
+        pop = self.population_view.get(event.index)
+        for labels, pop_in_group in self.stratifier.group(pop):
+            for transition in self.transitions:
+                transition = TransitionString(transition)
+                # noinspection PyTypeChecker
+                transition_counts_this_step = utilities.get_transition_count(
+                    pop_in_group, self.config, self.disease, transition, event.time, self.age_bins
+                )
+                transition_counts_this_step = self.stratifier.update_labels(
+                    transition_counts_this_step, labels
+                )
+                self.counts.update(transition_counts_this_step)
+
+    def __repr__(self) -> str:
+        return f"DiseaseObserver({self.disease})"
+
+    ################
+    # Name Getters #
+    ################
+
+    @staticmethod
+    def get_previous_state_column_name(disease_name: str) -> str:
+        return f'previous_{disease_name}'

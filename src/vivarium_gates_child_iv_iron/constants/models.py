@@ -38,5 +38,5 @@ CAUSE_MODELS: List[__SISModel] = [
     MEASLES,
 ]
 
-DISEASE_STATES = tuple(state for model in CAUSE_MODELS for state in model.STATES)
-DISEASE_TRANSITIONS = tuple(state for model in CAUSE_MODELS for state in model.TRANSITIONS)
+STATES = tuple(state for model in CAUSE_MODELS for state in model.STATES)
+TRANSITIONS = tuple(state for model in CAUSE_MODELS for state in model.TRANSITIONS)

@@ -76,6 +76,20 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.LRI.EMR: load_emr_from_csmr_and_prevalence,
         data_keys.LRI.CSMR: load_standard_data,
         data_keys.LRI.RESTRICTIONS: load_metadata,
+
+        data_keys.WASTING.DISTRIBUTION: load_metadata,
+        data_keys.WASTING.ALT_DISTRIBUTION: load_metadata,
+        data_keys.WASTING.CATEGORIES: load_metadata,
+        data_keys.WASTING.EXPOSURE: load_standard_data,
+        data_keys.WASTING.RELATIVE_RISK: load_standard_data,
+        data_keys.WASTING.PAF: load_categorical_paf,
+
+        data_keys.STUNTING.DISTRIBUTION: load_metadata,
+        data_keys.STUNTING.ALT_DISTRIBUTION: load_metadata,
+        data_keys.STUNTING.CATEGORIES: load_metadata,
+        data_keys.STUNTING.EXPOSURE: load_standard_data,
+        data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
+        data_keys.STUNTING.PAF: load_categorical_paf,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -140,8 +154,8 @@ def load_metadata(key: str, location: str):
 def load_categorical_paf(key: str, location: str) -> pd.DataFrame:
     try:
         risk = {
-            # todo add keys as needed
-            data_keys.KEYGROUP.PAF: data_keys.KEYGROUP,
+            data_keys.WASTING.PAF: data_keys.WASTING,
+            data_keys.STUNTING.PAF: data_keys.STUNTING,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')

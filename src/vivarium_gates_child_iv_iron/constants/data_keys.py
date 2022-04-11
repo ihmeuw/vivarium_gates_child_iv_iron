@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import NamedTuple
 
 from vivarium_public_health.utilities import TargetString
@@ -171,6 +172,13 @@ class __Stunting(NamedTuple):
 
 
 STUNTING = __Stunting()
+
+
+class CGFCategories(Enum):
+    UNEXPOSED = 'unexposed'
+    MILD = 'mild'
+    MODERATE = 'moderate'
+    SEVERE = 'severe'
 
 
 MAKE_ARTIFACT_KEY_GROUPS = [

@@ -2,7 +2,7 @@ import itertools
 
 import pandas as pd
 
-from vivarium_gates_child_iv_iron.constants import models
+from vivarium_gates_child_iv_iron.constants import data_keys, models
 
 #################################
 # Results columns and variables #
@@ -29,28 +29,50 @@ STANDARD_COLUMNS = {
 THROWAWAY_COLUMNS = [f"{state}_event_count" for state in models.STATES]
 
 TOTAL_POPULATION_COLUMN_TEMPLATE = 'total_population_{POP_STATE}'
-DEATH_COLUMN_TEMPLATE = 'death_due_to_{CAUSE_OF_DEATH}_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
-YLLS_COLUMN_TEMPLATE = 'ylls_due_to_{CAUSE_OF_DEATH}_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
-YLDS_COLUMN_TEMPLATE = 'ylds_due_to_{CAUSE_OF_DISABILITY}_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
-STATE_PERSON_TIME_COLUMN_TEMPLATE = '{STATE}_person_time_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
-TRANSITION_COUNT_COLUMN_TEMPLATE = '{TRANSITION}_event_count_in_{YEAR}_among_{SEX}_in_age_group_{AGE_GROUP}'
+DEATH_COLUMN_TEMPLATE = ('death_due_to_{CAUSE_OF_DEATH}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+                         '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
+YLLS_COLUMN_TEMPLATE = ('ylls_due_to_{CAUSE_OF_DEATH}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+                        '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
+YLDS_COLUMN_TEMPLATE = ('ylds_due_to_{CAUSE_OF_DISABILITY}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+                        '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
+DIARRHEA_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
+    'diarrheal_diseases_{DIARRHEA_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
+LRI_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
+    'lower_respiratory_infections_{LRI_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
+MEASLES_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
+    'measles_{MEASLES_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
+DIARRHEA_TRANSITION_COUNT_COLUMN_TEMPLATE = (
+    'diarrheal_diseases_{DIARRHEA_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
+LRI_TRANSITION_COUNT_COLUMN_TEMPLATE = (
+    'lower_respiratory_infections_{LRI_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
+MEASLES_TRANSITION_COUNT_COLUMN_TEMPLATE = (
+    'measles_{MEASLES_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    '_wasting_state_{CGF_RISK_STATE}_stunting_state_{CGF_RISK_STATE}')
 
 COLUMN_TEMPLATES = {
     'population': TOTAL_POPULATION_COLUMN_TEMPLATE,
     'deaths': DEATH_COLUMN_TEMPLATE,
     'ylls': YLLS_COLUMN_TEMPLATE,
     'ylds': YLDS_COLUMN_TEMPLATE,
-    'state_person_time': STATE_PERSON_TIME_COLUMN_TEMPLATE,
-    'transition_count': TRANSITION_COUNT_COLUMN_TEMPLATE,
+    'diarrhea_state_person_time': DIARRHEA_STATE_PERSON_TIME_COLUMN_TEMPLATE,
+    'measles_state_person_time': MEASLES_STATE_PERSON_TIME_COLUMN_TEMPLATE,
+    'lri_state_person_time': LRI_STATE_PERSON_TIME_COLUMN_TEMPLATE,
+    'diarrhea_transition_count': DIARRHEA_TRANSITION_COUNT_COLUMN_TEMPLATE,
+    'measles_transition_count': MEASLES_TRANSITION_COUNT_COLUMN_TEMPLATE,
+    'lri_transition_count': LRI_TRANSITION_COUNT_COLUMN_TEMPLATE,
 }
-
 
 NON_COUNT_TEMPLATES = [
 ]
 
 POP_STATES = ('living', 'dead', 'tracked', 'untracked')
 SEXES = ('male', 'female')
-YEARS = tuple(range(2022, 2026))
+YEARS = tuple(range(2022, 2025))
 AGE_GROUPS = (
     'early_neonatal',
     'late_neonatal',
@@ -69,6 +91,7 @@ CAUSES_OF_DISABILITY = (
     models.MEASLES.STATE_NAME,
     models.LRI.STATE_NAME,
 )
+CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
 
 TEMPLATE_FIELD_MAP = {
     'POP_STATE': POP_STATES,
@@ -77,8 +100,13 @@ TEMPLATE_FIELD_MAP = {
     'AGE_GROUP': AGE_GROUPS,
     'CAUSE_OF_DEATH': CAUSES_OF_DEATH,
     'CAUSE_OF_DISABILITY': CAUSES_OF_DISABILITY,
-    'STATE': models.STATES,
-    'TRANSITION': models.TRANSITIONS,
+    'DIARRHEA_STATE': models.DIARRHEA.STATES,
+    'LRI_STATE': models.LRI.STATES,
+    'MEASLES_STATE': models.MEASLES.STATES,
+    'DIARRHEA_TRANSITION': models.DIARRHEA.TRANSITIONS,
+    'LRI_TRANSITION': models.LRI.TRANSITIONS,
+    'MEASLES_TRANSITION': models.MEASLES.TRANSITIONS,
+    'CGF_RISK_STATE': CGF_RISK_STATES,
 }
 
 
@@ -94,10 +122,13 @@ def RESULT_COLUMNS(kind='all'):
     else:
         template = COLUMN_TEMPLATES[kind]
         filtered_field_map = {field: values
-                              for field, values in TEMPLATE_FIELD_MAP.items() if f'{{{field}}}' in template}
-        fields, value_groups = filtered_field_map.keys(), itertools.product(*filtered_field_map.values())
+                              for field, values in TEMPLATE_FIELD_MAP.items() if
+                              f'{{{field}}}' in template}
+        fields, value_groups = filtered_field_map.keys(), itertools.product(
+            *filtered_field_map.values())
         for value_group in value_groups:
-            columns.append(template.format(**{field: value for field, value in zip(fields, value_group)}))
+            columns.append(
+                template.format(**{field: value for field, value in zip(fields, value_group)}))
     return columns
 
 
@@ -108,10 +139,13 @@ def RESULTS_MAP(kind):
     columns = []
     template = COLUMN_TEMPLATES[kind]
     filtered_field_map = {field: values
-                          for field, values in TEMPLATE_FIELD_MAP.items() if f'{{{field}}}' in template}
-    fields, value_groups = list(filtered_field_map.keys()), list(itertools.product(*filtered_field_map.values()))
+                          for field, values in TEMPLATE_FIELD_MAP.items() if
+                          f'{{{field}}}' in template}
+    fields, value_groups = list(filtered_field_map.keys()), list(
+        itertools.product(*filtered_field_map.values()))
     for value_group in value_groups:
-        columns.append(template.format(**{field: value for field, value in zip(fields, value_group)}))
+        columns.append(
+            template.format(**{field: value for field, value in zip(fields, value_group)}))
     df = pd.DataFrame(value_groups, columns=map(lambda x: x.lower(), fields))
     df['key'] = columns
     df['measure'] = kind  # per researcher feedback, this column is useful, even when it's identical for all rows

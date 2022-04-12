@@ -34,8 +34,14 @@ def make_measure_data(data):
         ylls=get_by_cause_measure_data(data, 'ylls'),
         ylds=get_by_cause_measure_data(data, 'ylds'),
         deaths=get_by_cause_measure_data(data, 'deaths'),
-        state_person_time=get_state_person_time_measure_data(data, 'state_person_time'),
-        transition_count=get_transition_count_measure_data(data, 'transition_count'),
+        diarrhea_state_person_time=get_state_person_time_measure_data(data, 'diarrhea_state_person_time'),
+        lri_state_person_time=get_state_person_time_measure_data(data,
+                                                                     'lri_state_person_time'),
+        measles_state_person_time=get_state_person_time_measure_data(data,
+                                                                     'measles_state_person_time'),
+        diarrhea_transition_count=get_transition_count_measure_data(data, 'diarrhea_transition_count'),
+        lri_transition_count=get_transition_count_measure_data(data, 'lri_transition_count'),
+        measles_transition_count=get_transition_count_measure_data(data, 'measles_transition_count'),
     )
     return measure_data
 
@@ -45,8 +51,12 @@ class MeasureData(NamedTuple):
     ylls: pd.DataFrame
     ylds: pd.DataFrame
     deaths: pd.DataFrame
-    state_person_time: pd.DataFrame
-    transition_count: pd.DataFrame
+    diarrhea_state_person_time: pd.DataFrame
+    lri_state_person_time: pd.DataFrame
+    measles_state_person_time: pd.DataFrame
+    diarrhea_transition_count: pd.DataFrame
+    lri_transition_count: pd.DataFrame
+    measles_transition_count: pd.DataFrame
 
     def dump(self, output_dir: Path):
         for key, df in self._asdict().items():
@@ -169,6 +179,6 @@ def get_state_person_time_measure_data(data: pd.DataFrame, measure: str) -> pd.D
 
 def get_transition_count_measure_data(data: pd.DataFrame, measure: str) -> pd.DataFrame:
     # Oops, edge case.
-    data = data.drop(columns=[c for c in data.columns if 'event_count' in c and '2041' in c])
+    data = data.drop(columns=[c for c in data.columns if 'event_count' in c and str(results.YEARS[-1]+1) in c])
     data = get_measure_data(data, measure)
     return sort_data(data)

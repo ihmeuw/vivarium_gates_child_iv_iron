@@ -65,16 +65,16 @@ configuration:
             - "age"
         disability:
             include:
-                - 'wasting'
+                - 'wasting_state'
         mortality:
             include:
-                - 'wasting'
+                - 'wasting_state'
         diarrheal_diseases:
             include:
-                - 'wasting'
+                - 'wasting_state'
         measles:
             include:
-                - 'wasting'
+                - 'wasting_state'
         lower_respiratory_infections:
             include:
-                - 'wasting'
+                - 'wasting_state'

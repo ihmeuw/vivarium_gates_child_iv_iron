@@ -15,7 +15,7 @@ for an example.
 import pandas as pd
 import numpy as np
 
-from gbd_mapping import causes, covariates, risk_factors
+from gbd_mapping import causes, covariates, risk_factors, sequelae
 from vivarium.framework.artifact import EntityKey
 from vivarium_gbd_access import gbd
 from vivarium_inputs import globals as vi_globals, interface, utilities as vi_utils, utility_data
@@ -90,6 +90,12 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.STUNTING.EXPOSURE: load_standard_data,
         data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
         data_keys.STUNTING.PAF: load_categorical_paf,
+
+        data_keys.PEM.MAM_DISABILITY_WEIGHT: load_pem_disability_weight,
+        data_keys.PEM.SAM_DISABILITY_WEIGHT: load_pem_disability_weight,
+        data_keys.PEM.EMR: load_standard_data,
+        data_keys.PEM.CSMR: load_standard_data,
+        data_keys.PEM.RESTRICTIONS: load_metadata,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -282,3 +288,31 @@ def get_entity(key: str):
     }
     key = EntityKey(key)
     return type_map[key.type][key.name]
+
+
+def load_pem_disability_weight(key: str, location: str) -> pd.DataFrame:
+    try:
+        pem_sequelae = {
+            data_keys.PEM.MAM_DISABILITY_WEIGHT: [sequelae.moderate_wasting_with_edema,
+                                                  sequelae.moderate_wasting_without_edema],
+            data_keys.PEM.SAM_DISABILITY_WEIGHT: [sequelae.severe_wasting_with_edema,
+                                                  sequelae.severe_wasting_without_edema],
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+
+    prevalence_disability_weight = []
+    state_prevalence = []
+    for s in pem_sequelae:
+        sequela_prevalence = interface.get_measure(s, 'prevalence', location)
+        sequela_disability_weight = interface.get_measure(s, 'disability_weight', location)
+
+        prevalence_disability_weight += [sequela_prevalence * sequela_disability_weight]
+        state_prevalence += [sequela_prevalence]
+
+    disability_weight = (
+        (sum(prevalence_disability_weight) / sum(state_prevalence))
+        .fillna(0)
+        .droplevel('location')
+    )
+    return disability_weight

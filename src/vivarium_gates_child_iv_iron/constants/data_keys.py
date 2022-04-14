@@ -113,6 +113,29 @@ class __LowerRespiratoryInfections(NamedTuple):
 LRI = __LowerRespiratoryInfections()
 
 
+class __ProteinEnergyMalnutrition(NamedTuple):
+
+    # Keys that will be loaded into the artifact. must have a colon type declaration
+    MAM_DISABILITY_WEIGHT: TargetString = TargetString('sequela.moderate_acute_malnutrition.disability_weight')
+    SAM_DISABILITY_WEIGHT: TargetString = TargetString('sequela.severe_acute_malnutrition.disability_weight')
+    EMR: TargetString = TargetString('cause.protein_energy_malnutrition.excess_mortality_rate')
+    CSMR: TargetString = TargetString('cause.protein_energy_malnutrition.cause_specific_mortality_rate')
+    RESTRICTIONS: TargetString = TargetString('cause.protein_energy_malnutrition.restrictions')
+
+    # Useful keys not for the artifact - distinguished by not using the colon type declaration
+
+    @property
+    def name(self):
+        return 'protein_energy_malnutrition'
+
+    @property
+    def log_name(self):
+        return 'protein energy malnutrition'
+
+
+PEM = __ProteinEnergyMalnutrition()
+
+
 ################
 # Risk Factors #
 ################
@@ -188,5 +211,6 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     LRI,
     STUNTING,
     WASTING,
+    PEM,
 ]
 

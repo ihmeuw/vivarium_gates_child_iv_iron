@@ -64,12 +64,17 @@ configuration:
             - "sex"
             - "age"
         disability:
-            include: ['stunting_state', 'wasting_state']
+            include:
+                - 'wasting'
         mortality:
-            include: ['stunting_state', 'wasting_state']
+            include:
+                - 'wasting'
         diarrheal_diseases:
-            include: ['stunting_state', 'wasting_state']
+            include:
+                - 'wasting'
         measles:
-            include: ['stunting_state', 'wasting_state']
+            include:
+                - 'wasting'
         lower_respiratory_infections:
-            include: ['stunting_state', 'wasting_state']
+            include:
+                - 'wasting'

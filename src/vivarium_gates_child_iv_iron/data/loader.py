@@ -323,15 +323,15 @@ def load_pem_disability_weight(key: str, location: str) -> pd.DataFrame:
 
 
 def load_pem_emr(key: str, location: str) -> pd.DataFrame:
-    emr = load_standard_data(data_keys.PEM.EMR)
+    emr = load_standard_data(data_keys.PEM.EMR, location)
     return emr
 
 
 def load_pem_csmr(key: str, location: str) -> pd.DataFrame:
-    csmr = load_standard_data(data_keys.PEM.CSMR)
+    csmr = load_standard_data(data_keys.PEM.CSMR, location)
     return csmr
 
 
 def load_pem_restrictions(key: str, location: str) -> pd.DataFrame:
-    metadata = load_metadata(data_keys.PEM.RESTRICTIONS)
+    metadata = load_metadata(data_keys.PEM.RESTRICTIONS, location)
     return metadata

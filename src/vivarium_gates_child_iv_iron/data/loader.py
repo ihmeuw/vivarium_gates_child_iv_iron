@@ -91,11 +91,15 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
         data_keys.STUNTING.PAF: load_categorical_paf,
 
-        data_keys.PEM.MAM_DISABILITY_WEIGHT: load_pem_disability_weight,
-        data_keys.PEM.SAM_DISABILITY_WEIGHT: load_pem_disability_weight,
-        data_keys.PEM.EMR: load_standard_data,
-        data_keys.PEM.CSMR: load_standard_data,
-        data_keys.PEM.RESTRICTIONS: load_metadata,
+        data_keys.MPEM.DISABILITY_WEIGHT: load_pem_disability_weight,
+        data_keys.MPEM.EMR: load_pem_emr,
+        data_keys.MPEM.CSMR: load_pem_csmr,
+        data_keys.MPEM.RESTRICTIONS: load_pem_restrictions,
+
+        data_keys.SPEM.DISABILITY_WEIGHT: load_pem_disability_weight,
+        data_keys.SPEM.EMR: load_pem_emr,
+        data_keys.SPEM.CSMR: load_pem_csmr,
+        data_keys.SPEM.RESTRICTIONS: load_pem_restrictions,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -293,10 +297,10 @@ def get_entity(key: str):
 def load_pem_disability_weight(key: str, location: str) -> pd.DataFrame:
     try:
         pem_sequelae = {
-            data_keys.PEM.MAM_DISABILITY_WEIGHT: [sequelae.moderate_wasting_with_edema,
-                                                  sequelae.moderate_wasting_without_edema],
-            data_keys.PEM.SAM_DISABILITY_WEIGHT: [sequelae.severe_wasting_with_edema,
-                                                  sequelae.severe_wasting_without_edema],
+            data_keys.MPEM.DISABILITY_WEIGHT: [sequelae.moderate_wasting_with_edema,
+                                               sequelae.moderate_wasting_without_edema],
+            data_keys.SPEM.DISABILITY_WEIGHT: [sequelae.severe_wasting_with_edema,
+                                               sequelae.severe_wasting_without_edema],
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -316,3 +320,18 @@ def load_pem_disability_weight(key: str, location: str) -> pd.DataFrame:
         .droplevel('location')
     )
     return disability_weight
+
+
+def load_pem_emr(key: str, location: str) -> pd.DataFrame:
+    emr = load_standard_data(data_keys.PEM.EMR)
+    return emr
+
+
+def load_pem_csmr(key: str, location: str) -> pd.DataFrame:
+    csmr = load_standard_data(data_keys.PEM.CSMR)
+    return csmr
+
+
+def load_pem_restrictions(key: str, location: str) -> pd.DataFrame:
+    metadata = load_metadata(data_keys.PEM.RESTRICTIONS)
+    return metadata

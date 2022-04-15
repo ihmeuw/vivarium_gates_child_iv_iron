@@ -9,6 +9,8 @@ components:
             - SIS('diarrheal_diseases')
             - SIS_fixed_duration('measles', '10.0')
             - SIS('lower_respiratory_infections')
+            - RiskAttributableDisease('cause.moderate_protein_energy_malnutrition', 'risk_factor.child_wasting')
+            - RiskAttributableDisease('cause.severe_protein_energy_malnutrition', 'risk_factor.child_wasting')
         risks:
             - Risk('risk_factor.child_wasting')
             - RiskEffect('risk_factor.child_wasting', 'cause.diarrheal_diseases.incidence_rate')
@@ -49,14 +51,18 @@ configuration:
             month: 1
             day: 1
         end:
-            year: 2024
+            year: 2023
             month: 12
             day: 31
         step_size: .5 # Days
     population:
-        population_size: 100_000
+        population_size: 10_000
         age_start: 0
         age_end: 5
+    protein_energy_malnutrition:
+        threshold: [ 'cat1', 'cat2' ]
+        mortality: True
+        recoverable: True
 
     observers:
         default:

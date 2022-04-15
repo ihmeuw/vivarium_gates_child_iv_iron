@@ -27,6 +27,8 @@ components:
             - DiseaseObserver('diarrheal_diseases')
             - DiseaseObserver('measles')
             - DiseaseObserver('lower_respiratory_infections')
+            - DiseaseObserver('moderate_protein_energy_malnutrition')
+            - DiseaseObserver('severe_protein_energy_malnutrition')
             - CategoricalRiskObserver('child_stunting')
             - CategoricalRiskObserver('child_wasting')
 
@@ -59,8 +61,12 @@ configuration:
         population_size: 10_000
         age_start: 0
         age_end: 5
-    protein_energy_malnutrition:
-        threshold: [ 'cat1', 'cat2' ]
+    moderate_protein_energy_malnutrition:
+        threshold: ['cat2']
+        mortality: True
+        recoverable: True
+    severe_protein_energy_malnutrition:
+        threshold: ['cat1']
         mortality: True
         recoverable: True
 

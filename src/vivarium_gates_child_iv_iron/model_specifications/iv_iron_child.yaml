@@ -90,3 +90,9 @@ configuration:
         lower_respiratory_infections:
             include:
                 - 'wasting_state'
+        moderate_protein_energy_malnutrition:
+            include:
+                - 'wasting_state'
+        severe_protein_energy_malnutrition:
+            include:
+                - 'wasting_state'

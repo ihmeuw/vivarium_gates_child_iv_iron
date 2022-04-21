@@ -66,10 +66,10 @@ SPEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'severe_protein_energy_malnutrition_{SPEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
 STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'stunting_{CGF_RISK_STATES_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'stunting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'wasting_{CGF_RISK_STATES_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 
 
@@ -137,6 +137,7 @@ TEMPLATE_FIELD_MAP = {
     'MPEM_TRANSITION': models.MPEM.TRANSITIONS,
     'SPEM_TRANSITION': models.SPEM.TRANSITIONS,
     'CGF_RISK_STATE': CGF_RISK_STATES,
+    "CGF_RISK_STATE_NUMERIC": CGF_RISK_STATES_NUMERIC,
 }
 
 

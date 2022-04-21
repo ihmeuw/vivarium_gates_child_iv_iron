@@ -66,10 +66,10 @@ SPEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'severe_protein_energy_malnutrition_{SPEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
 STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'stunting_{CGF_RISK_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'stunting_{CGF_RISK_STATES_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'wasting_{CGF_RISK_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'wasting_{CGF_RISK_STATES_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 
 
@@ -117,6 +117,7 @@ CAUSES_OF_DISABILITY = (
     models.LRI.STATE_NAME,
 )
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
+CGF_RISK_STATES_NUMERIC = ("cat1", "cat2", "cat3", "cat4")
 
 TEMPLATE_FIELD_MAP = {
     'POP_STATE': POP_STATES,

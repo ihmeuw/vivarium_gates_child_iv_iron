@@ -143,7 +143,7 @@ class __ModerateProteinEnergyMalnutrition(NamedTuple):
         return 'moderate protein energy malnutrition'
 
 
-MPEM = __ModerateProteinEnergyMalnutrition()
+MODERATE_PEM = __ModerateProteinEnergyMalnutrition()
 
 
 class __SevereProteinEnergyMalnutrition(NamedTuple):
@@ -164,7 +164,7 @@ class __SevereProteinEnergyMalnutrition(NamedTuple):
     def log_name(self):
         return 'severe protein energy malnutrition'
 
-SPEM = __SevereProteinEnergyMalnutrition()
+SEVERE_PEM = __SevereProteinEnergyMalnutrition()
 
 
 ################
@@ -242,7 +242,7 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     LRI,
     STUNTING,
     WASTING,
-    MPEM,
-    SPEM,
+    MODERATE_PEM,
+    SEVERE_PEM,
 ]
 

@@ -66,10 +66,10 @@ SPEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'severe_protein_energy_malnutrition_{SPEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
 STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'stunting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'child_stunting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'child_wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 
 

@@ -29,7 +29,7 @@ components:
             - DiseaseObserver('lower_respiratory_infections')
             - DiseaseObserver('moderate_protein_energy_malnutrition')
             - DiseaseObserver('severe_protein_energy_malnutrition')
-            - CategoricalRiskObserver('child_stunting')
+#            - CategoricalRiskObserver('child_stunting')
             - CategoricalRiskObserver('child_wasting')
 
     vivarium_gates_child_iv_iron:
@@ -61,7 +61,6 @@ configuration:
         population_size: 10_000
         age_start: 0
         age_end: 5
-        exit_age: 5
     moderate_protein_energy_malnutrition:
         threshold: ['cat2']
         mortality: True

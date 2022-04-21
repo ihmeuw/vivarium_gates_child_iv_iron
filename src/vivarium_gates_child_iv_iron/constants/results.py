@@ -44,11 +44,11 @@ LRI_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
 MEASLES_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'measles_{MEASLES_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
-MPEM_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'moderate_protein_energy_malnutrition_{MPEM_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+MODERATE_PEM_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
+    'moderate_protein_energy_malnutrition_{MODERATE_PEM_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
-SPEM_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'severe_protein_energy_malnutrition_{SPEM_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+SEVERE_PEM_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
+    'severe_protein_energy_malnutrition_{SEVERE_PEM_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
 DIARRHEA_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'diarrheal_diseases_{DIARRHEA_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
@@ -59,17 +59,17 @@ LRI_TRANSITION_COUNT_COLUMN_TEMPLATE = (
 MEASLES_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'measles_{MEASLES_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
-MPEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
-    'moderate_protein_energy_malnutrition_{MPEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+MODERATE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
+    'moderate_protein_energy_malnutrition_{MODERATE_PEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
-SPEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
-    'severe_protein_energy_malnutrition_{SPEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+SEVERE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
+    'severe_protein_energy_malnutrition_{SEVERE_PEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
 STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'child_stunting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'stunting_{CGF_RISK_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'child_wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'wasting_{CGF_RISK_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 
 
@@ -81,13 +81,13 @@ COLUMN_TEMPLATES = {
     'diarrhea_state_person_time': DIARRHEA_STATE_PERSON_TIME_COLUMN_TEMPLATE,
     'measles_state_person_time': MEASLES_STATE_PERSON_TIME_COLUMN_TEMPLATE,
     'lri_state_person_time': LRI_STATE_PERSON_TIME_COLUMN_TEMPLATE,
-    'moderate_pem_state_person_time': MPEM_STATE_PERSON_TIME_COLUMN_TEMPLATE,
-    'severe_pem_state_person_time': SPEM_STATE_PERSON_TIME_COLUMN_TEMPLATE,
+    'moderate_pem_state_person_time': MODERATE_PEM_STATE_PERSON_TIME_COLUMN_TEMPLATE,
+    'severe_pem_state_person_time': SEVERE_PEM_STATE_PERSON_TIME_COLUMN_TEMPLATE,
     'diarrhea_transition_count': DIARRHEA_TRANSITION_COUNT_COLUMN_TEMPLATE,
     'measles_transition_count': MEASLES_TRANSITION_COUNT_COLUMN_TEMPLATE,
     'lri_transition_count': LRI_TRANSITION_COUNT_COLUMN_TEMPLATE,
-    'moderate_pem_transition_count': MPEM_TRANSITION_COUNT_COLUMN_TEMPLATE,
-    'severe_pem_transition_count': SPEM_TRANSITION_COUNT_COLUMN_TEMPLATE,
+    'moderate_pem_transition_count': MODERATE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE,
+    'severe_pem_transition_count': SEVERE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE,
     'stunting_state_person_time': STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE,
     'wasting_state_person_time': WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE,
 }
@@ -97,7 +97,7 @@ NON_COUNT_TEMPLATES = [
 
 POP_STATES = ('living', 'dead', 'tracked', 'untracked')
 SEXES = ('male', 'female')
-YEARS = tuple(range(2022, 2024))
+YEARS = tuple(range(2022, 2025))
 AGE_GROUPS = (
     'early_neonatal',
     'late_neonatal',
@@ -117,7 +117,6 @@ CAUSES_OF_DISABILITY = (
     models.LRI.STATE_NAME,
 )
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
-CGF_RISK_STATES_NUMERIC = ("cat1", "cat2", "cat3", "cat4")
 
 TEMPLATE_FIELD_MAP = {
     'POP_STATE': POP_STATES,
@@ -129,15 +128,14 @@ TEMPLATE_FIELD_MAP = {
     'DIARRHEA_STATE': models.DIARRHEA.STATES,
     'LRI_STATE': models.LRI.STATES,
     'MEASLES_STATE': models.MEASLES.STATES,
-    'MPEM_STATE': models.MPEM.STATES,
-    'SPEM_STATE': models.SPEM.STATES,
+    'MODERATE_PEM_STATE': models.MODERATE_PEM.STATES,
+    'SEVERE_PEM_STATE': models.SEVERE_PEM.STATES,
     'DIARRHEA_TRANSITION': models.DIARRHEA.TRANSITIONS,
     'LRI_TRANSITION': models.LRI.TRANSITIONS,
     'MEASLES_TRANSITION': models.MEASLES.TRANSITIONS,
-    'MPEM_TRANSITION': models.MPEM.TRANSITIONS,
-    'SPEM_TRANSITION': models.SPEM.TRANSITIONS,
+    'MODERATE_PEM_TRANSITION': models.MODERATE_PEM.TRANSITIONS,
+    'SEVERE_PEM_TRANSITION': models.SEVERE_PEM.TRANSITIONS,
     'CGF_RISK_STATE': CGF_RISK_STATES,
-    "CGF_RISK_STATE_NUMERIC": CGF_RISK_STATES_NUMERIC,
 }
 
 

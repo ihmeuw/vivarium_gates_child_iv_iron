@@ -31,11 +31,15 @@ class __SISModel:
 DIARRHEA = __SISModel(data_keys.DIARRHEA.name)
 LRI = __SISModel(data_keys.LRI.name)
 MEASLES = __SISModel(data_keys.MEASLES.name)
+MODERATE_PEM = __SISModel(data_keys.MODERATE_PEM.name)
+SEVERE_PEM = __SISModel(data_keys.SEVERE_PEM.name)
 
 CAUSE_MODELS: List[__SISModel] = [
     DIARRHEA,
     LRI,
     MEASLES,
+    MODERATE_PEM,
+    SEVERE_PEM
 ]
 
 STATES = tuple(state for model in CAUSE_MODELS for state in model.STATES)

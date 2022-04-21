@@ -116,24 +116,55 @@ LRI = __LowerRespiratoryInfections()
 class __ProteinEnergyMalnutrition(NamedTuple):
 
     # Keys that will be loaded into the artifact. must have a colon type declaration
-    MAM_DISABILITY_WEIGHT: TargetString = TargetString('sequela.moderate_acute_malnutrition.disability_weight')
-    SAM_DISABILITY_WEIGHT: TargetString = TargetString('sequela.severe_acute_malnutrition.disability_weight')
     EMR: TargetString = TargetString('cause.protein_energy_malnutrition.excess_mortality_rate')
     CSMR: TargetString = TargetString('cause.protein_energy_malnutrition.cause_specific_mortality_rate')
     RESTRICTIONS: TargetString = TargetString('cause.protein_energy_malnutrition.restrictions')
+
+
+PEM = __ProteinEnergyMalnutrition()
+
+
+class __ModerateProteinEnergyMalnutrition(NamedTuple):
+
+    # Keys that will be loaded into the artifact. must have a colon type declaration
+    DISABILITY_WEIGHT: TargetString = TargetString('cause.moderate_protein_energy_malnutrition.disability_weight')
+    EMR: TargetString = TargetString('cause.moderate_protein_energy_malnutrition.excess_mortality_rate')
+    CSMR: TargetString = TargetString('cause.moderate_protein_energy_malnutrition.cause_specific_mortality_rate')
+    RESTRICTIONS: TargetString = TargetString('cause.moderate_protein_energy_malnutrition.restrictions')
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 
     @property
     def name(self):
-        return 'protein_energy_malnutrition'
+        return 'moderate_protein_energy_malnutrition'
 
     @property
     def log_name(self):
-        return 'protein energy malnutrition'
+        return 'moderate protein energy malnutrition'
 
 
-PEM = __ProteinEnergyMalnutrition()
+MODERATE_PEM = __ModerateProteinEnergyMalnutrition()
+
+
+class __SevereProteinEnergyMalnutrition(NamedTuple):
+
+    # Keys that will be loaded into the artifact. must have a colon type declaration
+    DISABILITY_WEIGHT: TargetString = TargetString('cause.severe_protein_energy_malnutrition.disability_weight')
+    EMR: TargetString = TargetString('cause.severe_protein_energy_malnutrition.excess_mortality_rate')
+    CSMR: TargetString = TargetString('cause.severe_protein_energy_malnutrition.cause_specific_mortality_rate')
+    RESTRICTIONS: TargetString = TargetString('cause.severe_protein_energy_malnutrition.restrictions')
+
+    # Useful keys not for the artifact - distinguished by not using the colon type declaration
+
+    @property
+    def name(self):
+        return 'severe_protein_energy_malnutrition'
+
+    @property
+    def log_name(self):
+        return 'severe protein energy malnutrition'
+
+SEVERE_PEM = __SevereProteinEnergyMalnutrition()
 
 
 ################
@@ -211,6 +242,7 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     LRI,
     STUNTING,
     WASTING,
-    PEM,
+    MODERATE_PEM,
+    SEVERE_PEM,
 ]
 

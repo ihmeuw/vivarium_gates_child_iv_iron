@@ -9,6 +9,8 @@ components:
             - SIS('diarrheal_diseases')
             - SIS_fixed_duration('measles', '10.0')
             - SIS('lower_respiratory_infections')
+            - RiskAttributableDisease('cause.moderate_protein_energy_malnutrition', 'risk_factor.child_wasting')
+            - RiskAttributableDisease('cause.severe_protein_energy_malnutrition', 'risk_factor.child_wasting')
         risks:
             - Risk('risk_factor.child_wasting')
             - RiskEffect('risk_factor.child_wasting', 'cause.diarrheal_diseases.incidence_rate')
@@ -25,6 +27,8 @@ components:
             - DiseaseObserver('diarrheal_diseases')
             - DiseaseObserver('measles')
             - DiseaseObserver('lower_respiratory_infections')
+            - DiseaseObserver('moderate_protein_energy_malnutrition')
+            - DiseaseObserver('severe_protein_energy_malnutrition')
             - CategoricalRiskObserver('child_stunting')
             - CategoricalRiskObserver('child_wasting')
 
@@ -49,14 +53,23 @@ configuration:
             month: 1
             day: 1
         end:
-            year: 2024
+            year: 2023
             month: 12
             day: 31
         step_size: .5 # Days
     population:
-        population_size: 100_000
+        population_size: 10_000
         age_start: 0
         age_end: 5
+        exit_age: 5
+    moderate_protein_energy_malnutrition:
+        threshold: ['cat2']
+        mortality: True
+        recoverable: True
+    severe_protein_energy_malnutrition:
+        threshold: ['cat1']
+        mortality: True
+        recoverable: True
 
     observers:
         default:
@@ -76,5 +89,11 @@ configuration:
             include:
                 - 'wasting_state'
         lower_respiratory_infections:
+            include:
+                - 'wasting_state'
+        moderate_protein_energy_malnutrition:
+            include:
+                - 'wasting_state'
+        severe_protein_energy_malnutrition:
             include:
                 - 'wasting_state'

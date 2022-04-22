@@ -66,10 +66,10 @@ SEVERE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'severe_protein_energy_malnutrition_{SEVERE_PEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
     '_wasting_state_{CGF_RISK_STATE}')
 STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'stunting_{CGF_RISK_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'child_stunting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'wasting_{CGF_RISK_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'child_wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 
 
@@ -97,7 +97,7 @@ NON_COUNT_TEMPLATES = [
 
 POP_STATES = ('living', 'dead', 'tracked', 'untracked')
 SEXES = ('male', 'female')
-YEARS = tuple(range(2022, 2025))
+YEARS = tuple(range(2022, 2024))
 AGE_GROUPS = (
     'early_neonatal',
     'late_neonatal',
@@ -117,6 +117,7 @@ CAUSES_OF_DISABILITY = (
     models.LRI.STATE_NAME,
 )
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
+CGF_RISK_STATES_NUMERIC = ("cat1", "cat2", "cat3", "cat4")
 
 TEMPLATE_FIELD_MAP = {
     'POP_STATE': POP_STATES,
@@ -136,6 +137,7 @@ TEMPLATE_FIELD_MAP = {
     'MODERATE_PEM_TRANSITION': models.MODERATE_PEM.TRANSITIONS,
     'SEVERE_PEM_TRANSITION': models.SEVERE_PEM.TRANSITIONS,
     'CGF_RISK_STATE': CGF_RISK_STATES,
+    "CGF_RISK_STATE_NUMERIC": CGF_RISK_STATES_NUMERIC,
 }
 
 

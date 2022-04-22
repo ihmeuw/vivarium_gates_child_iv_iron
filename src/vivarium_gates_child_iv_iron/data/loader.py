@@ -365,7 +365,7 @@ def load_lbwsg_rr(key: str, location: str) -> pd.DataFrame:
         raise ValueError(f'Unrecognized key {key}')
 
     key = EntityKey(key)
-    entity = utilities.get_entity(key)
+    entity = get_entity(key)
     data = utilities.get_data(key, entity, location, gbd_constants.SOURCES.RR, 'rei_id',
                               metadata.AGE_GROUP.GBD_2019_LBWSG_RELATIVE_RISK, metadata.GBD_2019_ROUND_ID, 'step4')
     data = data[data['year_id'] == 2019].drop(columns='year_id')

@@ -110,11 +110,15 @@ CAUSES_OF_DEATH = (
     models.DIARRHEA.STATE_NAME,
     models.MEASLES.STATE_NAME,
     models.LRI.STATE_NAME,
+    models.MODERATE_PEM.STATE_NAME,
+    models.SEVERE_PEM.STATE_NAME,
 )
 CAUSES_OF_DISABILITY = (
     models.DIARRHEA.STATE_NAME,
     models.MEASLES.STATE_NAME,
     models.LRI.STATE_NAME,
+    models.MODERATE_PEM.STATE_NAME,
+    models.SEVERE_PEM.STATE_NAME,
 )
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
 CGF_RISK_STATES_NUMERIC = ("cat1", "cat2", "cat3", "cat4")

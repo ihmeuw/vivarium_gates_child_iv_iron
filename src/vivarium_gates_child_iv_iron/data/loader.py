@@ -17,12 +17,13 @@ import numpy as np
 
 from gbd_mapping import causes, covariates, risk_factors, sequelae
 from vivarium.framework.artifact import EntityKey
-from vivarium_gbd_access import gbd
+from vivarium_gbd_access import constants as gbd_constants, gbd
 from vivarium_inputs import globals as vi_globals, interface, utilities as vi_utils, utility_data
 from vivarium_inputs.mapping_extension import alternative_risk_factors
 
 from vivarium_gates_child_iv_iron.constants import data_keys, data_values, metadata, paths
 from vivarium_gates_child_iv_iron.constants.metadata import ARTIFACT_INDEX_COLUMNS
+from vivarium_gates_child_iv_iron.data import utilities
 
 from vivarium_gates_child_iv_iron.utilities import get_random_variable_draws
 
@@ -100,6 +101,13 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.SEVERE_PEM.EMR: load_pem_emr,
         data_keys.SEVERE_PEM.CSMR: load_pem_csmr,
         data_keys.SEVERE_PEM.RESTRICTIONS: load_pem_restrictions,
+
+        data_keys.LBWSG.DISTRIBUTION: load_metadata,
+        data_keys.LBWSG.CATEGORIES: load_metadata,
+        data_keys.LBWSG.EXPOSURE: load_lbwsg_exposure,
+        data_keys.LBWSG.RELATIVE_RISK: load_lbwsg_rr,
+        data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR: load_lbwsg_interpolated_rr,
+        data_keys.LBWSG.PAF: load_lbwsg_paf,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -335,3 +343,19 @@ def load_pem_csmr(key: str, location: str) -> pd.DataFrame:
 def load_pem_restrictions(key: str, location: str) -> pd.DataFrame:
     metadata = load_metadata(data_keys.PEM.RESTRICTIONS, location)
     return metadata
+
+
+def load_lbwsg_exposure(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.LBWSG.EXPOSURE:
+        raise ValueError(f'Unrecognized key {key}')
+
+    key = EntityKey(key)
+    entity = utilities.get_entity(key)
+    data = utilities.get_data(key, entity, location, gbd_constants.SOURCES.EXPOSURE, 'rei_id',
+                              metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE, metadata.GBD_2019_ROUND_ID, 'step4')
+    data = data[data['year_id'] == 2019].drop(columns='year_id')
+    data = utilities.process_exposure(data, key, entity, location, metadata.GBD_2019_ROUND_ID,
+                                      metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE | metadata.AGE_GROUP.GBD_2020)
+    data = data[data.index.get_level_values('year_start') == 2019]
+    return data
+

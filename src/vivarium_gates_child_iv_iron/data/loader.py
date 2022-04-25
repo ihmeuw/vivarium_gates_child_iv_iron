@@ -109,7 +109,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.LBWSG.CATEGORIES: load_metadata,
         data_keys.LBWSG.EXPOSURE: load_lbwsg_exposure,
         data_keys.LBWSG.RELATIVE_RISK: load_lbwsg_rr,
-        data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR: load_lbwsg_interpolated_rr,
+        #data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR: load_lbwsg_interpolated_rr,
         data_keys.LBWSG.PAF: load_lbwsg_paf,
     }
     return mapping[lookup_key](lookup_key, location)

@@ -1,20 +1,33 @@
+import warnings
 from itertools import product
 from numbers import Real
-from typing import List, Set, Union, Tuple
-import warnings
+from typing import List, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
-from gbd_mapping import causes, covariates, risk_factors, Cause, ModelableEntity, RiskFactor
+from gbd_mapping import (
+    Cause,
+    ModelableEntity,
+    RiskFactor,
+    causes,
+    covariates,
+    risk_factors,
+)
 from vivarium.framework.artifact import EntityKey
-from vivarium_gbd_access import constants as gbd_constants, gbd
+from vivarium_gbd_access import constants as gbd_constants
+from vivarium_gbd_access import gbd
 from vivarium_gbd_access.utilities import get_draws, query
-from vivarium_inputs import globals as vi_globals, utilities as vi_utils, utility_data
-from vivarium_inputs.mapping_extension import alternative_risk_factors, AlternativeRiskFactor
+from vivarium_inputs import globals as vi_globals
+from vivarium_inputs import utilities as vi_utils
+from vivarium_inputs import utility_data
+from vivarium_inputs.mapping_extension import (
+    AlternativeRiskFactor,
+    alternative_risk_factors,
+)
 from vivarium_inputs.validation.raw import check_metadata
 
 from vivarium_gates_child_iv_iron.constants.metadata import AGE_GROUP, GBD_2019_ROUND_ID
+from vivarium_gates_child_iv_iron.data.loader import get_entity
 
 
 def get_data(key: EntityKey, entity: ModelableEntity, location: str, source: str, gbd_id_type: str,
@@ -277,7 +290,7 @@ def filter_relative_risk_to_cause_restrictions(data: pd.DataFrame) -> pd.DataFra
     affected_measures = set(data.affected_measure)
     for cause, measure in product(affected_entities, affected_measures):
         df = data[(data.affected_entity == cause) & (data.affected_measure == measure)]
-        cause = get_gbd_2020_entity(EntityKey(f'cause.{cause}.{measure}'))
+        cause = get_entity(EntityKey(f'cause.{cause}.{measure}'))
         if measure == 'excess_mortality_rate':
             start, end = vi_utils.get_age_group_ids_by_restriction(cause, 'yll')
         else:  # incidence_rate

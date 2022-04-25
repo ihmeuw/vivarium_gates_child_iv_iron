@@ -353,7 +353,7 @@ def load_lbwsg_exposure(key: str, location: str) -> pd.DataFrame:
                               metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE, metadata.GBD_2019_ROUND_ID, 'step4')
     data = data[data['year_id'] == 2019].drop(columns='year_id')
     data = utilities.process_exposure(data, key, entity, location, metadata.GBD_2019_ROUND_ID,
-                                      metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE | metadata.AGE_GROUP.GBD_2020)
+                                      metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE | metadata.AGE_GROUP.GBD_2019)
     data = data[data.index.get_level_values('year_start') == 2019]
     return data
 

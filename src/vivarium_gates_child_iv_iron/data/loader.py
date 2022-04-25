@@ -12,6 +12,9 @@ for an example.
 
    No logging is done here. Logging is done in vivarium inputs itself and forwarded.
 """
+import pickle
+from typing import Dict, Tuple, Type, Union
+
 import pandas as pd
 import numpy as np
 
@@ -370,7 +373,7 @@ def load_lbwsg_rr(key: str, location: str) -> pd.DataFrame:
                               metadata.AGE_GROUP.GBD_2019_LBWSG_RELATIVE_RISK, metadata.GBD_2019_ROUND_ID, 'step4')
     data = data[data['year_id'] == 2019].drop(columns='year_id')
     data = utilities.process_relative_risk(data, key, entity, location, metadata.GBD_2019_ROUND_ID,
-                                           metadata.AGE_GROUP.GBD_2020, whitelist_sids=True)
+                                           metadata.AGE_GROUP.GBD_2019, whitelist_sids=True)
     data = (
         data.query('year_start == 2019')
         .droplevel(['affected_entity', 'affected_measure'])

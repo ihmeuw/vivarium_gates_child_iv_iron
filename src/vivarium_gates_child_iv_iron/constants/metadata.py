@@ -33,6 +33,7 @@ ARTIFACT_INDEX_COLUMNS = [
 
 DRAW_COUNT = 1000
 ARTIFACT_COLUMNS = pd.Index([f'draw_{i}' for i in range(DRAW_COUNT)])
+GBD_2019_ROUND_ID = 6
 
 
 class __Scenarios(NamedTuple):
@@ -41,3 +42,20 @@ class __Scenarios(NamedTuple):
 
 
 SCENARIOS = __Scenarios()
+
+
+class __AgeGroup(NamedTuple):
+    BIRTH_ID = 164
+    EARLY_NEONATAL_ID = 2
+    LATE_NEONATAL_ID = 3
+    MONTHS_1_TO_5 = 388
+    MONTHS_6_TO_11 = 389
+    MONTHS_12_TO_23 = 238
+    YEARS_2_TO_4 = 34
+
+    GBD_2019_LBWSG_EXPOSURE = {BIRTH_ID, EARLY_NEONATAL_ID, LATE_NEONATAL_ID}
+    GBD_2019_LBWSG_RELATIVE_RISK = {EARLY_NEONATAL_ID, LATE_NEONATAL_ID}
+    GBD_2019_SIDS = {LATE_NEONATAL_ID}
+
+
+AGE_GROUP = __AgeGroup()

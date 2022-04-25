@@ -166,13 +166,13 @@ def load_theoretical_minimum_risk_life_expectancy(key: str, location: str) -> pd
 
 def load_standard_data(key: str, location: str) -> pd.DataFrame:
     key = EntityKey(key)
-    entity = get_entity(key)
+    entity = utilities.get_entity(key)
     return interface.get_measure(entity, key.measure, location).droplevel('location')
 
 
 def load_metadata(key: str, location: str):
     key = EntityKey(key)
-    entity = get_entity(key)
+    entity = utilities.get_entity(key)
     entity_metadata = entity[key.measure]
     if hasattr(entity_metadata, 'to_dict'):
         entity_metadata = entity_metadata.to_dict()
@@ -300,18 +300,6 @@ def load_emr_from_csmr_and_prevalence(key: str, location: str) -> pd.DataFrame:
     return data
 
 
-def get_entity(key: str):
-    # Map of entity types to their gbd mappings.
-    type_map = {
-        'cause': causes,
-        'covariate': covariates,
-        'risk_factor': risk_factors,
-        'alternative_risk_factor': alternative_risk_factors
-    }
-    key = EntityKey(key)
-    return type_map[key.type][key.name]
-
-
 def load_pem_disability_weight(key: str, location: str) -> pd.DataFrame:
     try:
         pem_sequelae = {
@@ -360,7 +348,7 @@ def load_lbwsg_exposure(key: str, location: str) -> pd.DataFrame:
         raise ValueError(f'Unrecognized key {key}')
 
     key = EntityKey(key)
-    entity = get_entity(key)
+    entity = utilities.get_entity(key)
     data = utilities.get_data(key, entity, location, gbd_constants.SOURCES.EXPOSURE, 'rei_id',
                               metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE, metadata.GBD_2019_ROUND_ID, 'step4')
     data = data[data['year_id'] == 2019].drop(columns='year_id')
@@ -375,7 +363,7 @@ def load_lbwsg_rr(key: str, location: str) -> pd.DataFrame:
         raise ValueError(f'Unrecognized key {key}')
 
     key = EntityKey(key)
-    entity = get_entity(key)
+    entity = utilities.get_entity(key)
     data = utilities.get_data(key, entity, location, gbd_constants.SOURCES.RR, 'rei_id',
                               metadata.AGE_GROUP.GBD_2019_LBWSG_RELATIVE_RISK, metadata.GBD_2019_ROUND_ID, 'step4')
     data = data[data['year_id'] == 2019].drop(columns='year_id')

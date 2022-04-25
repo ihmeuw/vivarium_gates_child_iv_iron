@@ -27,7 +27,6 @@ from vivarium_inputs.mapping_extension import (
 from vivarium_inputs.validation.raw import check_metadata
 
 from vivarium_gates_child_iv_iron.constants.metadata import AGE_GROUP, GBD_2019_ROUND_ID
-from vivarium_gates_child_iv_iron.data.loader import get_entity
 
 
 def get_data(key: EntityKey, entity: ModelableEntity, location: str, source: str, gbd_id_type: str,
@@ -54,6 +53,18 @@ def get_data(key: EntityKey, entity: ModelableEntity, location: str, source: str
                      decomp_step=decomp_step,
                      status='best')
     return data
+
+
+def get_entity(key: str):
+    # Map of entity types to their gbd mappings.
+    type_map = {
+        'cause': causes,
+        'covariate': covariates,
+        'risk_factor': risk_factors,
+        'alternative_risk_factor': alternative_risk_factors
+    }
+    key = EntityKey(key)
+    return type_map[key.type][key.name]
 
 
 def process_exposure(data: pd.DataFrame, key: str, entity: Union[RiskFactor, AlternativeRiskFactor],

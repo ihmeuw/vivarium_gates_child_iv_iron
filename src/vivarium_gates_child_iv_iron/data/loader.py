@@ -15,19 +15,26 @@ for an example.
 import pickle
 from typing import Dict, Tuple, Type, Union
 
-import pandas as pd
 import numpy as np
-
+import pandas as pd
 from gbd_mapping import causes, covariates, risk_factors, sequelae
 from vivarium.framework.artifact import EntityKey
-from vivarium_gbd_access import constants as gbd_constants, gbd
-from vivarium_inputs import globals as vi_globals, interface, utilities as vi_utils, utility_data
+from vivarium_gbd_access import constants as gbd_constants
+from vivarium_gbd_access import gbd
+from vivarium_inputs import globals as vi_globals
+from vivarium_inputs import interface
+from vivarium_inputs import utilities as vi_utils
+from vivarium_inputs import utility_data
 from vivarium_inputs.mapping_extension import alternative_risk_factors
 
-from vivarium_gates_child_iv_iron.constants import data_keys, data_values, metadata, paths
+from vivarium_gates_child_iv_iron.constants import (
+    data_keys,
+    data_values,
+    metadata,
+    paths,
+)
 from vivarium_gates_child_iv_iron.constants.metadata import ARTIFACT_INDEX_COLUMNS
 from vivarium_gates_child_iv_iron.data import utilities
-
 from vivarium_gates_child_iv_iron.utilities import get_random_variable_draws
 
 

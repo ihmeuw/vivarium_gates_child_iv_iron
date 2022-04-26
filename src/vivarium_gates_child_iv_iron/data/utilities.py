@@ -1,7 +1,7 @@
 import warnings
 from itertools import product
 from numbers import Real
-from typing import List, Set, Tuple, Union
+from typing import Dict, List, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -309,3 +309,12 @@ def filter_relative_risk_to_cause_restrictions(data: pd.DataFrame) -> pd.DataFra
         temp.append(df[df.age_group_id.isin(range(start, end + 1))])
     data = pd.concat(temp)
     return data
+
+
+def get_intervals_from_categories(cls, categories: Dict[str, str]) -> pd.Series:
+    category_endpoints = pd.Series(
+        {cat: cls.parse_description(description) for cat, description in categories.items()},
+        name=f'{cls.RISK_NAME}.endpoints'
+    )
+    category_endpoints.index.name = 'parameter'
+    return category_endpoints

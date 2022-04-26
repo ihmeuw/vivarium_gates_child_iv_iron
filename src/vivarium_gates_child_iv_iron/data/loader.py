@@ -1,4 +1,4 @@
-"""Loads, standardizes and validates input data for the simulation.
+    """Loads, standardizes and validates input data for the simulation.
 
 Abstract the extract and transform pieces of the artifact ETL.
 The intent here is to provide a uniform interface around this portion

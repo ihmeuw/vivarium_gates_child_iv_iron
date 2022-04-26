@@ -393,12 +393,12 @@ def load_lbwsg_interpolated_rr(key: str, location: str) -> pd.DataFrame:
     )
 
     # get category midpoints
-    def get_category_midpoints(lbwsg_type: Type[LBWSGSubRisk]) -> pd.Series:
+    def get_category_midpoints(lbwsg_type: str) -> pd.Series:
         categories = get_data(f'risk_factor.{data_keys.LBWSG.name}.categories', location)
-        return lbwsg_type.get_intervals_from_categories(categories).apply(lambda x: x.mid)
+        return utilities.get_intervals_from_categories(lbwsg_type, categories).apply(lambda x: x.mid)
 
-    gestational_age_midpoints = get_category_midpoints(ShortGestation)
-    birth_weight_midpoints = get_category_midpoints(LowBirthWeight)
+    gestational_age_midpoints = get_category_midpoints("short_gestation")
+    birth_weight_midpoints = get_category_midpoints("low_birth_weight")
 
     # build grid of gestational age and birth weight
     def get_grid(midpoints: pd.Series, endpoints: Tuple[float, float]) -> np.array:

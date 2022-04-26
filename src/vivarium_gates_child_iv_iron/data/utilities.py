@@ -311,10 +311,31 @@ def filter_relative_risk_to_cause_restrictions(data: pd.DataFrame) -> pd.DataFra
     return data
 
 
-def get_intervals_from_categories(cls, categories: Dict[str, str]) -> pd.Series:
-    category_endpoints = pd.Series(
-        {cat: cls.parse_description(description) for cat, description in categories.items()},
-        name=f'{cls.RISK_NAME}.endpoints'
-    )
+def get_intervals_from_categories(lbwsg_type: str, categories: Dict[str, str]) -> pd.Series:
+    if lbwsg_type == "low_birth_weight":
+        category_endpoints = pd.Series(
+            {cat: parse_low_birth_weight_description(description) for cat, description in categories.items()},
+            name=f'{lbwsg_type}.endpoints'
+        )
+    elif lbwsg_type == "short_gestation":
+        category_endpoints = pd.Series(
+            {cat: parse_short_gestation_description(description) for cat, description in categories.items()},
+            name=f'{lbwsg_type}.endpoints'
+        )
+    else:
+        raise ValueError(f'Unrecognized risk type {lbwsg_type}.  Risk type must be low_birth_weight or short_gestation')
     category_endpoints.index.name = 'parameter'
+
     return category_endpoints
+
+
+def parse_low_birth_weight_description(description: str) -> pd.Interval:
+        # descriptions look like this: 'Birth prevalence - [34, 36) wks, [2000, 2500) g'
+        endpoints = pd.Interval(*[float(val) for val in description.split(', [')[1].split(')')[0].split(', ')])
+        return endpoints
+
+
+def parse_short_gestation_description(description: str) -> pd.Interval:
+        # descriptions look like this: 'Birth prevalence - [34, 36) wks, [2000, 2500) g'
+        endpoints = pd.Interval(*[float(val) for val in description.split('- [')[1].split(')')[0].split(', ')])
+        return endpoints

@@ -21,6 +21,10 @@ components:
             - RiskEffect('risk_factor.child_stunting', 'cause.diarrheal_diseases.incidence_rate')
             - RiskEffect('risk_factor.child_stunting', 'cause.measles.incidence_rate')
             - RiskEffect('risk_factor.child_stunting', 'cause.lower_respiratory_infections.incidence_rate')
+
+            - LBWSGRisk()
+            - LBWSGRiskEffect('cause.diarrheal_diseases.excess_mortality_rate')
+            - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality_rate')
         metrics:
             - DisabilityObserver()
             - MortalityObserver()
@@ -76,24 +80,3 @@ configuration:
             - "year"
             - "sex"
             - "age"
-        disability:
-            include:
-                - 'wasting_state'
-        mortality:
-            include:
-                - 'wasting_state'
-        diarrheal_diseases:
-            include:
-                - 'wasting_state'
-        measles:
-            include:
-                - 'wasting_state'
-        lower_respiratory_infections:
-            include:
-                - 'wasting_state'
-        moderate_protein_energy_malnutrition:
-            include:
-                - 'wasting_state'
-        severe_protein_energy_malnutrition:
-            include:
-                - 'wasting_state'

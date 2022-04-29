@@ -18,7 +18,7 @@ from typing import Dict, Tuple, Type, Union
 
 import numpy as np
 import pandas as pd
-from gbd_mapping import causes, covariates, risk_factors, sequelae
+from gbd_mapping import Cause, causes, covariates, risk_factors, sequelae
 from vivarium.framework.artifact import EntityKey
 from vivarium_gbd_access import constants as gbd_constants
 from vivarium_gbd_access import gbd
@@ -119,6 +119,17 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.LBWSG.RELATIVE_RISK: load_lbwsg_rr,
         data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR: load_lbwsg_interpolated_rr,
         data_keys.LBWSG.PAF: load_lbwsg_paf,
+
+        data_keys.AFFECTED_UNMODELED_CAUSES.URI_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.OTITIS_MEDIA_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.MENINGITIS_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.ENCEPHALITIS_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_PRETERM_BIRTH_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_ENCEPHALOPATHY_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_SEPSIS_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_JAUNDICE_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.OTHER_NEONATAL_DISORDERS_CSMR: load_standard_data,
+        data_keys.AFFECTED_UNMODELED_CAUSES.SIDS_CSMR: load_sids_csmr,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -460,3 +471,19 @@ def load_lbwsg_paf(key: str, location: str) -> pd.DataFrame:
         .fillna(0.0)
     )
     return paf_data
+
+
+def load_sids_csmr(key: str, location: str) -> pd.DataFrame:
+    if key == data_keys.AFFECTED_UNMODELED_CAUSES.SIDS_CSMR:
+        key = EntityKey(key)
+        entity: Cause = utilities.get_entity(key)
+
+        # get around the validation rejecting yll only causes
+        entity.restrictions.yll_only = False
+        entity.restrictions.yld_age_group_id_start = min(metadata.AGE_GROUP.GBD_2019_SIDS)
+        entity.restrictions.yld_age_group_id_end = max(metadata.AGE_GROUP.GBD_2019_SIDS)
+
+        data = interface.get_measure(entity, key.measure, location).droplevel('location')
+        return data
+    else:
+        raise ValueError(f'Unrecognized key {key}')

@@ -39,6 +39,7 @@ components:
     vivarium_gates_child_iv_iron:
         components:
             - ResultsStratifier()
+            - BirthObserver()
 
 configuration:
     input_data:

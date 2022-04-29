@@ -1,11 +1,17 @@
+from collections import Counter
 import pandas as pd
+from typing import Dict
 
+from vivarium import ConfigTree
 from vivarium.framework.engine import Builder
+from vivarium.framework.event import Event
+from vivarium.framework.population import PopulationView
 from vivarium_public_health.metrics.stratification import (
     ResultsStratifier as ResultsStratifier_,
     Source,
     SourceType,
 )
+from vivarium_public_health.utilities import to_years
 
 from vivarium_gates_child_iv_iron.constants import data_keys
 
@@ -66,9 +72,11 @@ class BirthObserver:
 
     metrics_pipeline_name = "metrics"
 
-    # todo name columns
-    birth_weight_column_name = ''
-    gestational_age_column_name = ''
+    birth_weight_column_name = "birth_weight_exposure"
+    gestational_age_column_name = "gestational_age_exposure"
+    columns_required = ["age", birth_weight_column_name, gestational_age_column_name]
+
+    low_birth_weight_limit = 2500 # grams
 
     def __repr__(self):
         return "BirthObserver()"
@@ -104,9 +112,8 @@ class BirthObserver:
     def _get_stratifier(self, builder: Builder) -> ResultsStratifier:
         return builder.components.get_component(ResultsStratifier.name)
 
-
     def _get_population_view(self, builder: Builder) -> PopulationView:
-        # todo get with correct columns
+        return builder.population.get_view(self.columns_required)
 
     def _register_collect_metrics_listener(self, builder: Builder) -> None:
         builder.event.register_listener("time_step", self.on_collect_metrics)
@@ -124,15 +131,15 @@ class BirthObserver:
 
     def on_collect_metrics(self, event: Event) -> None:
         pop = self.population_view.get(event.index)
-        # todo make sure this works with initial initialization
-        pop_born = pop[pop["entrance_time"] == event.time]
+        step_size = to_years(event.step_size)
+        pop_born = pop[pop['age'] <= step_size]
 
         groups = self.stratifier.group(
             pop_born.index, self.config.include, self.config.exclude
         )
         for label, group_mask in groups:
             pop_born_in_group = pop_born[group_mask]
-            low_birth_weight_mask = pop_born_in_group[self.birth_weight_column_name] < birth_weight_limit
+            low_birth_weight_mask = pop_born_in_group[self.birth_weight_column_name] < self.low_birth_weight_limit
             new_observations = {
                 f"live_births_{label}": pop_born_in_group.index.size,
                 f"birth_weight_sum_{label}": pop_born_in_group[self.birth_weight_column_name].sum(),

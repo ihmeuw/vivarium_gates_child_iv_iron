@@ -74,7 +74,7 @@ class BirthObserver:
 
     birth_weight_column_name = "birth_weight_exposure"
     gestational_age_column_name = "gestational_age_exposure"
-    columns_required = ["age", birth_weight_column_name, gestational_age_column_name]
+    columns_required = ["entrance_time", birth_weight_column_name, gestational_age_column_name]
 
     low_birth_weight_limit = 2500 # grams
 
@@ -116,7 +116,7 @@ class BirthObserver:
         return builder.population.get_view(self.columns_required)
 
     def _register_collect_metrics_listener(self, builder: Builder) -> None:
-        builder.event.register_listener("time_step", self.on_collect_metrics)
+        builder.event.register_listener("collect_metrics", self.on_collect_metrics)
 
     def _register_metrics_modifier(self, builder: Builder) -> None:
         builder.value.register_value_modifier(
@@ -131,8 +131,7 @@ class BirthObserver:
 
     def on_collect_metrics(self, event: Event) -> None:
         pop = self.population_view.get(event.index)
-        step_size = to_years(event.step_size)
-        pop_born = pop[pop['age'] <= step_size]
+        pop_born = pop[pop['entrance_time'] == event.time - event.step_size]
 
         groups = self.stratifier.group(
             pop_born.index, self.config.include, self.config.exclude

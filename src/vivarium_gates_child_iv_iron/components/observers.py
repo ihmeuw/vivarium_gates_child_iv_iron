@@ -64,7 +64,7 @@ class BirthObserver:
     configuration_defaults = {
         "observers": {
             "birth": {
-                "exclude": [],
+                "exclude": ["age"],
                 "include": [],
             }
         }

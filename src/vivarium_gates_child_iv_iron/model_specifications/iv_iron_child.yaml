@@ -82,7 +82,3 @@ configuration:
             - "year"
             - "sex"
             - "age"
-        birth:
-            by_age: False
-            by_sex: True
-            by_year: True

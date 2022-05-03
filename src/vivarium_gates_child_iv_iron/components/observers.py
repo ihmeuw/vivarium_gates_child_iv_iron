@@ -133,6 +133,8 @@ class BirthObserver:
         pop = self.population_view.get(event.index)
         pop_born = pop[pop['entrance_time'] == event.time - event.step_size]
 
+        if pop_born.empty:
+            return
         groups = self.stratifier.group(
             pop_born.index, self.config.include, self.config.exclude
         )

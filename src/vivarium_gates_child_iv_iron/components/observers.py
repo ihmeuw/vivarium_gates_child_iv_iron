@@ -1,11 +1,17 @@
+from collections import Counter
 import pandas as pd
+from typing import Dict
 
+from vivarium import ConfigTree
 from vivarium.framework.engine import Builder
+from vivarium.framework.event import Event
+from vivarium.framework.population import PopulationView
 from vivarium_public_health.metrics.stratification import (
     ResultsStratifier as ResultsStratifier_,
     Source,
     SourceType,
 )
+from vivarium_public_health.utilities import to_years
 
 from vivarium_gates_child_iv_iron.constants import data_keys
 
@@ -51,3 +57,102 @@ class ResultsStratifier(ResultsStratifier_):
             "cat2": data_keys.CGFCategories.MODERATE.value,
             "cat1": data_keys.CGFCategories.SEVERE.value,
         }[row.squeeze()]
+
+
+class BirthObserver:
+
+    configuration_defaults = {
+        "observers": {
+            "birth": {
+                "exclude": ["age"],
+                "include": [],
+            }
+        }
+    }
+
+    metrics_pipeline_name = "metrics"
+
+    birth_weight_column_name = "birth_weight_exposure"
+    gestational_age_column_name = "gestational_age_exposure"
+    columns_required = ["entrance_time", birth_weight_column_name, gestational_age_column_name]
+
+    low_birth_weight_limit = 2500 # grams
+
+    def __repr__(self):
+        return "BirthObserver()"
+
+    ##############
+    # Properties #
+    ##############
+
+    @property
+    def name(self):
+        return "birth_observer"
+
+    #################
+    # Setup methods #
+    #################
+
+    # noinspection PyAttributeOutsideInit
+    def setup(self, builder: Builder) -> None:
+        self.config = self._get_stratification_configuration(builder)
+        self.stratifier = self._get_stratifier(builder)
+        self.population_view = self._get_population_view(builder)
+
+        self.counts = Counter()
+
+        self._register_collect_metrics_listener(builder)
+        self._register_metrics_modifier(builder)
+
+    # noinspection PyMethodMayBeStatic
+    def _get_stratification_configuration(self, builder: Builder) -> ConfigTree:
+        return builder.configuration.observers.birth
+
+    # noinspection PyMethodMayBeStatic
+    def _get_stratifier(self, builder: Builder) -> ResultsStratifier:
+        return builder.components.get_component(ResultsStratifier.name)
+
+    def _get_population_view(self, builder: Builder) -> PopulationView:
+        return builder.population.get_view(self.columns_required)
+
+    def _register_collect_metrics_listener(self, builder: Builder) -> None:
+        builder.event.register_listener("collect_metrics", self.on_collect_metrics)
+
+    def _register_metrics_modifier(self, builder: Builder) -> None:
+        builder.value.register_value_modifier(
+            self.metrics_pipeline_name,
+            modifier=self.metrics,
+            requires_columns=["age", "exit_time", "alive"],
+        )
+
+    ########################
+    # Event-driven methods #
+    ########################
+
+    def on_collect_metrics(self, event: Event) -> None:
+        pop = self.population_view.get(event.index)
+        pop_born = pop[pop['entrance_time'] == event.time - event.step_size]
+
+        groups = self.stratifier.group(
+            pop_born.index, self.config.include, self.config.exclude
+        )
+        for label, group_mask in groups:
+            pop_born_in_group = pop_born[group_mask]
+            low_birth_weight_mask = pop_born_in_group[self.birth_weight_column_name] < self.low_birth_weight_limit
+            new_observations = {
+                f"live_births_{label}": pop_born_in_group.index.size,
+                f"birth_weight_sum_{label}": pop_born_in_group[self.birth_weight_column_name].sum(),
+                f"gestational_age_sum_{label}":
+                    pop_born_in_group[self.gestational_age_column_name].sum(),
+                f'low_weight_births_{label}': low_birth_weight_mask.sum()
+            }
+            self.counts.update(new_observations)
+
+    ##################################
+    # Pipeline sources and modifiers #
+    ##################################
+
+    def metrics(self, index: pd.Index, metrics: Dict) -> Dict:
+        metrics.update(self.counts)
+
+        return metrics

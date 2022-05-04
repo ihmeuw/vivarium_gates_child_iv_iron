@@ -29,48 +29,48 @@ STANDARD_COLUMNS = {
 THROWAWAY_COLUMNS = [f"{state}_event_count" for state in models.STATES]
 
 TOTAL_POPULATION_COLUMN_TEMPLATE = 'total_population_{POP_STATE}'
-DEATH_COLUMN_TEMPLATE = ('death_due_to_{CAUSE_OF_DEATH}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-                         '_wasting_state_{CGF_RISK_STATE}')
-YLLS_COLUMN_TEMPLATE = ('ylls_due_to_{CAUSE_OF_DEATH}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-                        '_wasting_state_{CGF_RISK_STATE}')
-YLDS_COLUMN_TEMPLATE = ('ylds_due_to_{CAUSE_OF_DISABILITY}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-                        '_wasting_state_{CGF_RISK_STATE}')
+DEATH_COLUMN_TEMPLATE = 'death_due_to_{CAUSE_OF_DEATH}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+YLLS_COLUMN_TEMPLATE = 'ylls_due_to_{CAUSE_OF_DEATH}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+YLDS_COLUMN_TEMPLATE = 'ylds_due_to_{CAUSE_OF_DISABILITY}_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 DIARRHEA_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'diarrheal_diseases_{DIARRHEA_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 LRI_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'lower_respiratory_infections_{LRI_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 MEASLES_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'measles_{MEASLES_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 MODERATE_PEM_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'moderate_protein_energy_malnutrition_{MODERATE_PEM_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 SEVERE_PEM_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'severe_protein_energy_malnutrition_{SEVERE_PEM_STATE}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 DIARRHEA_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'diarrheal_diseases_{DIARRHEA_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 LRI_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'lower_respiratory_infections_{LRI_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 MEASLES_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'measles_{MEASLES_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 MODERATE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'moderate_protein_energy_malnutrition_{MODERATE_PEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 SEVERE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'severe_protein_energy_malnutrition_{SEVERE_PEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
-    '_wasting_state_{CGF_RISK_STATE}')
+)
 STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'child_stunting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'child_wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
+LOW_BIRTH_WEIGHT_SHORT_GESTATION_SUB_RISK_SUM_COLUM_TEMPLATE = '{LBWSG_SUB_RISK}_sum_year_{YEAR}_sex_{SEX}'
+LIVE_BIRTHS_COLUMN_TEMPLATE = 'live_births_year_{YEAR}_sex_{SEX}'
+LOW_WEIGHT_BIRTHS_COLUMN_TEMPLATE = 'low_weight_births_year_{YEAR}_sex_{SEX}'
 
 
 COLUMN_TEMPLATES = {
@@ -90,6 +90,9 @@ COLUMN_TEMPLATES = {
     'severe_pem_transition_count': SEVERE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE,
     'stunting_state_person_time': STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE,
     'wasting_state_person_time': WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE,
+    'low_birth_weight_and_short_gestation_sum': LOW_BIRTH_WEIGHT_SHORT_GESTATION_SUB_RISK_SUM_COLUM_TEMPLATE,
+    'live_births_count': LIVE_BIRTHS_COLUMN_TEMPLATE,
+    'low_weight_births_count': LOW_WEIGHT_BIRTHS_COLUMN_TEMPLATE,
 }
 
 NON_COUNT_TEMPLATES = [
@@ -122,6 +125,7 @@ CAUSES_OF_DISABILITY = (
 )
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
 CGF_RISK_STATES_NUMERIC = ("cat1", "cat2", "cat3", "cat4")
+LBWSG_SUB_RISKS = ("birth_weight", "gestational_age")
 
 TEMPLATE_FIELD_MAP = {
     'POP_STATE': POP_STATES,
@@ -142,6 +146,7 @@ TEMPLATE_FIELD_MAP = {
     'SEVERE_PEM_TRANSITION': models.SEVERE_PEM.TRANSITIONS,
     'CGF_RISK_STATE': CGF_RISK_STATES,
     "CGF_RISK_STATE_NUMERIC": CGF_RISK_STATES_NUMERIC,
+    "LBWSG_SUB_RISK": LBWSG_SUB_RISKS,
 }
 
 

@@ -46,6 +46,9 @@ def make_measure_data(data):
         severe_pem_transition_count=get_transition_count_measure_data(data, 'severe_pem_transition_count'),
         stunting_state_person_time=get_state_person_time_measure_data(data, 'stunting_state_person_time'),
         wasting_state_person_time=get_state_person_time_measure_data(data, 'wasting_state_person_time'),
+        low_birth_weight_and_short_gestation_sum=get_measure_data(data, 'low_birth_weight_and_short_gestation_sum'),
+        live_births_count=get_measure_data(data, 'live_births_count'),
+        low_weight_births_count=get_measure_data(data, 'low_weight_births_count'),
     )
     return measure_data
 
@@ -67,6 +70,9 @@ class MeasureData(NamedTuple):
     severe_pem_transition_count: pd.DataFrame
     stunting_state_person_time: pd.DataFrame
     wasting_state_person_time: pd.DataFrame
+    low_birth_weight_and_short_gestation_sum: pd.DataFrame
+    live_births_count: pd.DataFrame
+    low_weight_births_count: pd.DataFrame
 
     def dump(self, output_dir: Path):
         for key, df in self._asdict().items():

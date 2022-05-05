@@ -251,18 +251,9 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
             / metadata.YEAR_DURATION
     )
 
-    enn_duration = pd.DataFrame(
-        data_values.EARLY_NEONATAL_CAUSE_DURATION / metadata.YEAR_DURATION,
-        columns=metadata.ARTIFACT_COLUMNS,
-        index=demography.query('age_start == 0.0').index
-    )
-
-    all_other_duration = pd.DataFrame(
-        [duration_draws], index=demography.query('age_start != 0.0').index
-    )
-    all_other_duration.columns = metadata.ARTIFACT_COLUMNS
-
-    duration = pd.concat([enn_duration, all_other_duration]).sort_index()
+    duration = pd.DataFrame([duration_draws],
+                            columns=metadata.ARTIFACT_COLUMNS,
+                            index=demography.index)
 
     return duration.droplevel('location')
 
@@ -298,8 +289,9 @@ def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
+    step_size = .5 / 365 # years
     duration = get_data(cause.DURATION, location)
-    remission_rate = 1 / duration
+    remission_rate = (-1/step_size)*np.log(1-step_size/duration)
     return remission_rate
 
 

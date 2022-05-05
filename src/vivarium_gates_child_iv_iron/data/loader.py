@@ -279,8 +279,15 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
     incidence_rate = get_data(cause.INCIDENCE_RATE, location)
     duration = get_data(cause.DURATION, location)
     prevalence = incidence_rate * duration
-    # NAs introduced by restricted demography in duration
-    return prevalence.fillna(0)
+
+    enn_prevalence = prevalence.query("age_start == 0")
+    enn_prevalence = data_values.DIARRHEA_BIRTH_PREVALENCE + (enn_prevalence / 2)
+
+    all_other_prevalence = prevalence.query("age_start != 0.0")
+
+    prevalence = pd.concat([enn_prevalence, all_other_prevalence]).sort_index()
+
+    return prevalence
 
 
 def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:

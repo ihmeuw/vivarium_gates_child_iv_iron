@@ -272,7 +272,7 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
     prevalence = incidence_rate * duration
 
     enn_prevalence = prevalence.query("age_start == 0")
-    enn_prevalence = data_values.DIARRHEA_BIRTH_PREVALENCE + (enn_prevalence / 2)
+    enn_prevalence = (data_values.DIARRHEA_BIRTH_PREVALENCE + enn_prevalence) / 2
 
     all_other_prevalence = prevalence.query("age_start != 0.0")
 

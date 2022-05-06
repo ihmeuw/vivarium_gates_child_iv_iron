@@ -12,14 +12,14 @@ from vivarium_gates_child_iv_iron.utilities import get_norm
 # Cause Model Parameters #
 ##########################
 
+# diarrhea birth prevalence
+DIARRHEA_BIRTH_PREVALENCE = 0
+
 # diarrhea duration in days
 DIARRHEA_DURATION: Tuple = (
     'diarrheal_diseases_duration', get_norm(mean=4.3,
                                             ninety_five_pct_confidence_interval=(4.2, 4.4))
 )
-
-# diarrhea birth prevalence
-DIARRHEA_BIRTH_PREVALENCE = 0
 
 # measles duration in days
 MEASLES_DURATION: int = 10

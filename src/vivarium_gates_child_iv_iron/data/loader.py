@@ -294,6 +294,11 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
         male_prevalence = birth_prevalence.query("sex_id==1")
         female_prevalence = birth_prevalence.query("sex_id==2")
 
+        # duplicate values for each year to match early neonatal
+        rows_per_sex = len(range(1990, 2020))
+        male_prevalence = male_prevalence.loc[male_prevalence.index.repeat(rows_per_sex)]
+        female_prevalence = female_prevalence.loc[female_prevalence.index.repeat(rows_per_sex)]
+
         draw_cols = [col for col in birth_prevalence.columns if 'draw' in col]
         birth_prevalence = pd.DataFrame(
             pd.concat([female_prevalence, male_prevalence]).reset_index()[draw_cols]

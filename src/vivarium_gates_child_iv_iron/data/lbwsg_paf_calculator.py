@@ -7,6 +7,7 @@ import pandas as pd
 
 from vivarium import Artifact, InteractiveContext
 from vivarium_cluster_tools.utilities import mkdir
+from vivarium_gbd_access import gbd
 
 from vivarium_gates_child_iv_iron.constants import data_keys, metadata
 
@@ -68,8 +69,16 @@ def get_age_bin(config: Path, age_group_id: int) -> pd.Interval:
     artifact_path = sim.configuration.input_data.artifact_path
     artifact = Artifact(artifact_path)
 
-    age_bins = artifact.load(data_keys.POPULATION.AGE_BINS).reset_index().set_index('age_group_id')
+    # Make mapper for age_group_ids
+    gbd_age_bins = gbd.get_age_bins()
+    name_to_id_mapper = dict(zip(gbd_age_bins.age_group_name, gbd_age_bins.age_group_id))
+
+    age_bins = artifact.load(data_keys.POPULATION.AGE_BINS)
+    new_ids = age_bins.reset_index()["age_group_name"].map(name_to_id_mapper)
+    new_ids.index = age_bins.index
+    age_bins = age_bins.set_index("age_group_id", append=True)
     age_bin = pd.Interval(age_bins.loc[age_group_id, 'age_start'], age_bins.loc[age_group_id, 'age_end'])
+
     return age_bin
 
 

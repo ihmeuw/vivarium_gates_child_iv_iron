@@ -263,45 +263,8 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
     prevalence = incidence_rate * duration
 
     # get enn prevalence
+    birth_prevalence = data_values.BIRTH_PREVALENCE_OF_ZERO
     enn_prevalence = prevalence.query("age_start == 0")
-
-    # get birth prevalence
-    location_id = utility_data.get_location_id(location)
-
-    if cause == data_keys.LRI:
-        lri_entity = causes[data_keys.LRI.name]
-        birth_prevalence = get_draws(
-            gbd_id_type="modelable_entity_id",
-            gbd_id=lri_entity.me_id,
-            source=gbd_constants.SOURCES.EPI,
-            location_id=location_id,
-            sex_id=gbd_constants.SEX.MALE + gbd_constants.SEX.FEMALE,
-            age_group_id=metadata.AGE_GROUP.BIRTH_ID,
-            year_id=2019,
-            measure_id=vi_globals.MEASURES["Prevalence"],
-            gbd_round_id=metadata.GBD_2019_ROUND_ID,
-            decomp_step=gbd_constants.DECOMP_STEP.STEP_4,
-            status="best",
-        )
-
-        male_prevalence = birth_prevalence.query("sex_id==1")
-        female_prevalence = birth_prevalence.query("sex_id==2")
-
-        # duplicate values for each year to match early neonatal
-        rows_per_sex = len(range(1990, 2020))
-        male_prevalence = male_prevalence.loc[male_prevalence.index.repeat(rows_per_sex)]
-        female_prevalence = female_prevalence.loc[
-            female_prevalence.index.repeat(rows_per_sex)
-        ]
-
-        draw_cols = [col for col in birth_prevalence.columns if "draw" in col]
-        birth_prevalence = pd.DataFrame(
-            pd.concat([female_prevalence, male_prevalence]).reset_index()[draw_cols]
-        )
-        birth_prevalence.index = enn_prevalence.index
-    else:
-        birth_prevalence = data_values.DIARRHEA_BIRTH_PREVALENCE
-
     enn_prevalence = (birth_prevalence + enn_prevalence) / 2
 
     all_other_prevalence = prevalence.query("age_start != 0.0")

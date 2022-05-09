@@ -13,27 +13,22 @@ for an example.
    No logging is done here. Logging is done in vivarium inputs itself and forwarded.
 """
 import pickle
-from scipy.interpolate import griddata, RectBivariateSpline
 from typing import Dict, Tuple, Type, Union
 
 import numpy as np
 import pandas as pd
 from gbd_mapping import Cause, causes, covariates, risk_factors, sequelae
+from scipy.interpolate import RectBivariateSpline, griddata
 from vivarium.framework.artifact import EntityKey
 from vivarium_gbd_access import constants as gbd_constants
 from vivarium_gbd_access import gbd
+from vivarium_gbd_access.utilities import get_draws
 from vivarium_inputs import globals as vi_globals
 from vivarium_inputs import interface
 from vivarium_inputs import utilities as vi_utils
 from vivarium_inputs import utility_data
-from vivarium_inputs.mapping_extension import alternative_risk_factors
 
-from vivarium_gates_child_iv_iron.constants import (
-    data_keys,
-    data_values,
-    metadata,
-    paths,
-)
+from vivarium_gates_child_iv_iron.constants import data_keys, data_values, metadata, paths
 from vivarium_gates_child_iv_iron.constants.metadata import ARTIFACT_INDEX_COLUMNS
 from vivarium_gates_child_iv_iron.data import utilities
 from vivarium_gates_child_iv_iron.utilities import get_random_variable_draws
@@ -63,7 +58,6 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.POPULATION.TMRLE: load_theoretical_minimum_risk_life_expectancy,
         data_keys.POPULATION.ACMR: load_standard_data,
         data_keys.POPULATION.CRUDE_BIRTH_RATE: load_standard_data,
-
         data_keys.DIARRHEA.DURATION: load_duration,
         data_keys.DIARRHEA.PREVALENCE: load_prevalence_from_incidence_and_duration,
         data_keys.DIARRHEA.INCIDENCE_RATE: load_standard_data,
@@ -72,14 +66,12 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.DIARRHEA.EMR: load_emr_from_csmr_and_prevalence,
         data_keys.DIARRHEA.CSMR: load_standard_data,
         data_keys.DIARRHEA.RESTRICTIONS: load_metadata,
-
         data_keys.MEASLES.PREVALENCE: load_standard_data,
         data_keys.MEASLES.INCIDENCE_RATE: load_standard_data,
         data_keys.MEASLES.DISABILITY_WEIGHT: load_standard_data,
         data_keys.MEASLES.EMR: load_standard_data,
         data_keys.MEASLES.CSMR: load_standard_data,
         data_keys.MEASLES.RESTRICTIONS: load_metadata,
-
         data_keys.LRI.DURATION: load_duration,
         data_keys.LRI.PREVALENCE: load_prevalence_from_incidence_and_duration,
         data_keys.LRI.INCIDENCE_RATE: load_standard_data,
@@ -88,38 +80,32 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.LRI.EMR: load_emr_from_csmr_and_prevalence,
         data_keys.LRI.CSMR: load_standard_data,
         data_keys.LRI.RESTRICTIONS: load_metadata,
-
         data_keys.WASTING.DISTRIBUTION: load_metadata,
         data_keys.WASTING.ALT_DISTRIBUTION: load_metadata,
         data_keys.WASTING.CATEGORIES: load_metadata,
         data_keys.WASTING.EXPOSURE: load_standard_data,
         data_keys.WASTING.RELATIVE_RISK: load_standard_data,
         data_keys.WASTING.PAF: load_categorical_paf,
-
         data_keys.STUNTING.DISTRIBUTION: load_metadata,
         data_keys.STUNTING.ALT_DISTRIBUTION: load_metadata,
         data_keys.STUNTING.CATEGORIES: load_metadata,
         data_keys.STUNTING.EXPOSURE: load_standard_data,
         data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
         data_keys.STUNTING.PAF: load_categorical_paf,
-
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,
         data_keys.MODERATE_PEM.CSMR: load_pem_csmr,
         data_keys.MODERATE_PEM.RESTRICTIONS: load_pem_restrictions,
-
         data_keys.SEVERE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.SEVERE_PEM.EMR: load_pem_emr,
         data_keys.SEVERE_PEM.CSMR: load_pem_csmr,
         data_keys.SEVERE_PEM.RESTRICTIONS: load_pem_restrictions,
-
         data_keys.LBWSG.DISTRIBUTION: load_metadata,
         data_keys.LBWSG.CATEGORIES: load_metadata,
         data_keys.LBWSG.EXPOSURE: load_lbwsg_exposure,
         data_keys.LBWSG.RELATIVE_RISK: load_lbwsg_rr,
         data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR: load_lbwsg_interpolated_rr,
         data_keys.LBWSG.PAF: load_lbwsg_paf,
-
         data_keys.AFFECTED_UNMODELED_CAUSES.URI_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.OTITIS_MEDIA_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.MENINGITIS_CSMR: load_standard_data,
@@ -136,7 +122,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
 
 def load_population_location(key: str, location: str) -> str:
     if key != data_keys.POPULATION.LOCATION:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     return location
 
@@ -144,9 +130,11 @@ def load_population_location(key: str, location: str) -> str:
 def load_population_structure(key: str, location: str) -> pd.DataFrame:
     if location == "LMICs":
         world_bank_1 = filter_population(
-            interface.get_population_structure("World Bank Low Income"))
+            interface.get_population_structure("World Bank Low Income")
+        )
         world_bank_2 = filter_population(
-            interface.get_population_structure("World Bank Lower Middle Income"))
+            interface.get_population_structure("World Bank Lower Middle Income")
+        )
         population_structure = pd.concat([world_bank_1, world_bank_2])
     else:
         population_structure = filter_population(interface.get_population_structure(location))
@@ -163,12 +151,14 @@ def filter_population(unfiltered: pd.DataFrame) -> pd.DataFrame:
 
 def load_age_bins(key: str, location: str) -> pd.DataFrame:
     all_age_bins = interface.get_age_bins().reset_index()
-    return all_age_bins[all_age_bins.age_start < 5].set_index(['age_start', 'age_end', 'age_group_name'])
+    return all_age_bins[all_age_bins.age_start < 5].set_index(
+        ["age_start", "age_end", "age_group_name"]
+    )
 
 
 def load_demographic_dimensions(key: str, location: str) -> pd.DataFrame:
     demographic_dimensions = interface.get_demographic_dimensions(location)
-    is_under_five = demographic_dimensions.index.get_level_values('age_end') <= 5
+    is_under_five = demographic_dimensions.index.get_level_values("age_end") <= 5
     return demographic_dimensions[is_under_five]
 
 
@@ -179,14 +169,14 @@ def load_theoretical_minimum_risk_life_expectancy(key: str, location: str) -> pd
 def load_standard_data(key: str, location: str) -> pd.DataFrame:
     key = EntityKey(key)
     entity = utilities.get_entity(key)
-    return interface.get_measure(entity, key.measure, location).droplevel('location')
+    return interface.get_measure(entity, key.measure, location).droplevel("location")
 
 
 def load_metadata(key: str, location: str):
     key = EntityKey(key)
     entity = utilities.get_entity(key)
     entity_metadata = entity[key.measure]
-    if hasattr(entity_metadata, 'to_dict'):
+    if hasattr(entity_metadata, "to_dict"):
         entity_metadata = entity_metadata.to_dict()
     return entity_metadata
 
@@ -198,11 +188,11 @@ def load_categorical_paf(key: str, location: str) -> pd.DataFrame:
             data_keys.STUNTING.PAF: data_keys.STUNTING,
         }[key]
     except KeyError:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     distribution_type = get_data(risk.DISTRIBUTION, location)
 
-    if distribution_type != 'dichotomous' and 'polytomous' not in distribution_type:
+    if distribution_type != "dichotomous" and "polytomous" not in distribution_type:
         raise NotImplementedError(
             f"Unrecognized distribution {distribution_type} for {risk.name}. Only dichotomous and "
             f"polytomous are recognized categorical distributions."
@@ -214,7 +204,8 @@ def load_categorical_paf(key: str, location: str) -> pd.DataFrame:
     # paf = (sum_categories(exp * rr) - 1) / sum_categories(exp * rr)
     sum_exp_x_rr = (
         (exp * rr)
-        .groupby(list(set(rr.index.names) - {'parameter'})).sum()
+        .groupby(list(set(rr.index.names) - {"parameter"}))
+        .sum()
         .reset_index()
         .set_index(rr.index.names[:-1])
     )
@@ -230,8 +221,8 @@ def _load_em_from_meid(location, meid, measure):
     data = data.filter(vi_globals.DEMOGRAPHIC_COLUMNS + vi_globals.DRAW_COLUMNS)
     data = vi_utils.reshape(data)
     data = vi_utils.scrub_gbd_conventions(data, location)
-    data = vi_utils.split_interval(data, interval_column='age', split_column_prefix='age')
-    data = vi_utils.split_interval(data, interval_column='year', split_column_prefix='year')
+    data = vi_utils.split_interval(data, interval_column="age", split_column_prefix="age")
+    data = vi_utils.split_interval(data, interval_column="year", split_column_prefix="year")
     return vi_utils.sort_hierarchical_data(data)
 
 
@@ -243,28 +234,19 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
             data_keys.LRI.DURATION: data_values.LRI_DURATION,
         }[key]
     except KeyError:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     demography = get_data(data_keys.POPULATION.DEMOGRAPHY, location)
     duration_draws = (
-            get_random_variable_draws(len(metadata.ARTIFACT_COLUMNS), distribution)
-            / metadata.YEAR_DURATION
+        get_random_variable_draws(len(metadata.ARTIFACT_COLUMNS), distribution)
+        / metadata.YEAR_DURATION
     )
 
-    enn_duration = pd.DataFrame(
-        data_values.EARLY_NEONATAL_CAUSE_DURATION / metadata.YEAR_DURATION,
-        columns=metadata.ARTIFACT_COLUMNS,
-        index=demography.query('age_start == 0.0').index
+    duration = pd.DataFrame(
+        [duration_draws], columns=metadata.ARTIFACT_COLUMNS, index=demography.index
     )
 
-    all_other_duration = pd.DataFrame(
-        [duration_draws], index=demography.query('age_start != 0.0').index
-    )
-    all_other_duration.columns = metadata.ARTIFACT_COLUMNS
-
-    duration = pd.concat([enn_duration, all_other_duration]).sort_index()
-
-    return duration.droplevel('location')
+    return duration.droplevel("location")
 
 
 def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.DataFrame:
@@ -274,13 +256,59 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
             data_keys.LRI.PREVALENCE: data_keys.LRI,
         }[key]
     except KeyError:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     incidence_rate = get_data(cause.INCIDENCE_RATE, location)
     duration = get_data(cause.DURATION, location)
     prevalence = incidence_rate * duration
-    # NAs introduced by restricted demography in duration
-    return prevalence.fillna(0)
+
+    # get enn prevalence
+    enn_prevalence = prevalence.query("age_start == 0")
+
+    # get birth prevalence
+    location_id = utility_data.get_location_id(location)
+
+    if cause == data_keys.LRI:
+        lri_entity = causes[data_keys.LRI.name]
+        birth_prevalence = get_draws(
+            gbd_id_type="modelable_entity_id",
+            gbd_id=lri_entity.me_id,
+            source=gbd_constants.SOURCES.EPI,
+            location_id=location_id,
+            sex_id=gbd_constants.SEX.MALE + gbd_constants.SEX.FEMALE,
+            age_group_id=metadata.AGE_GROUP.BIRTH_ID,
+            year_id=2019,
+            measure_id=vi_globals.MEASURES["Prevalence"],
+            gbd_round_id=metadata.GBD_2019_ROUND_ID,
+            decomp_step=gbd_constants.DECOMP_STEP.STEP_4,
+            status="best",
+        )
+
+        male_prevalence = birth_prevalence.query("sex_id==1")
+        female_prevalence = birth_prevalence.query("sex_id==2")
+
+        # duplicate values for each year to match early neonatal
+        rows_per_sex = len(range(1990, 2020))
+        male_prevalence = male_prevalence.loc[male_prevalence.index.repeat(rows_per_sex)]
+        female_prevalence = female_prevalence.loc[
+            female_prevalence.index.repeat(rows_per_sex)
+        ]
+
+        draw_cols = [col for col in birth_prevalence.columns if "draw" in col]
+        birth_prevalence = pd.DataFrame(
+            pd.concat([female_prevalence, male_prevalence]).reset_index()[draw_cols]
+        )
+        birth_prevalence.index = enn_prevalence.index
+    else:
+        birth_prevalence = data_values.DIARRHEA_BIRTH_PREVALENCE
+
+    enn_prevalence = (birth_prevalence + enn_prevalence) / 2
+
+    all_other_prevalence = prevalence.query("age_start != 0.0")
+
+    prevalence = pd.concat([enn_prevalence, all_other_prevalence]).sort_index()
+
+    return prevalence
 
 
 def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
@@ -290,9 +318,10 @@ def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
             data_keys.LRI.REMISSION_RATE: data_keys.LRI,
         }[key]
     except KeyError:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
+    step_size = 0.5 / 365  # years
     duration = get_data(cause.DURATION, location)
-    remission_rate = 1 / duration
+    remission_rate = (-1 / step_size) * np.log(1 - step_size / duration)
     return remission_rate
 
 
@@ -303,7 +332,7 @@ def load_emr_from_csmr_and_prevalence(key: str, location: str) -> pd.DataFrame:
             data_keys.LRI.EMR: data_keys.LRI,
         }[key]
     except KeyError:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     csmr = get_data(cause.CSMR, location)
     prevalence = get_data(cause.PREVALENCE, location)
@@ -315,19 +344,23 @@ def load_emr_from_csmr_and_prevalence(key: str, location: str) -> pd.DataFrame:
 def load_pem_disability_weight(key: str, location: str) -> pd.DataFrame:
     try:
         pem_sequelae = {
-            data_keys.MODERATE_PEM.DISABILITY_WEIGHT: [sequelae.moderate_wasting_with_edema,
-                                               sequelae.moderate_wasting_without_edema],
-            data_keys.SEVERE_PEM.DISABILITY_WEIGHT: [sequelae.severe_wasting_with_edema,
-                                               sequelae.severe_wasting_without_edema],
+            data_keys.MODERATE_PEM.DISABILITY_WEIGHT: [
+                sequelae.moderate_wasting_with_edema,
+                sequelae.moderate_wasting_without_edema,
+            ],
+            data_keys.SEVERE_PEM.DISABILITY_WEIGHT: [
+                sequelae.severe_wasting_with_edema,
+                sequelae.severe_wasting_without_edema,
+            ],
         }[key]
     except KeyError:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     prevalence_disability_weight = []
     state_prevalence = []
     for s in pem_sequelae:
-        sequela_prevalence = interface.get_measure(s, 'prevalence', location)
-        sequela_disability_weight = interface.get_measure(s, 'disability_weight', location)
+        sequela_prevalence = interface.get_measure(s, "prevalence", location)
+        sequela_disability_weight = interface.get_measure(s, "disability_weight", location)
 
         prevalence_disability_weight += [sequela_prevalence * sequela_disability_weight]
         state_prevalence += [sequela_prevalence]
@@ -335,7 +368,7 @@ def load_pem_disability_weight(key: str, location: str) -> pd.DataFrame:
     disability_weight = (
         (sum(prevalence_disability_weight) / sum(state_prevalence))
         .fillna(0)
-        .droplevel('location')
+        .droplevel("location")
     )
     return disability_weight
 
@@ -357,56 +390,84 @@ def load_pem_restrictions(key: str, location: str) -> pd.DataFrame:
 
 def load_lbwsg_exposure(key: str, location: str) -> pd.DataFrame:
     if key != data_keys.LBWSG.EXPOSURE:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     key = EntityKey(key)
     entity = utilities.get_entity(key)
-    data = utilities.get_data(key, entity, location, gbd_constants.SOURCES.EXPOSURE, 'rei_id',
-                              metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE, metadata.GBD_2019_ROUND_ID, 'step4')
-    data = data[data['year_id'] == 2019].drop(columns='year_id')
-    data = utilities.process_exposure(data, key, entity, location, metadata.GBD_2019_ROUND_ID,
-                                      metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE | metadata.AGE_GROUP.GBD_2019)
-    data = data[data.index.get_level_values('year_start') == 2019]
+    data = utilities.get_data(
+        key,
+        entity,
+        location,
+        gbd_constants.SOURCES.EXPOSURE,
+        "rei_id",
+        metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE,
+        metadata.GBD_2019_ROUND_ID,
+        "step4",
+    )
+    data = data[data["year_id"] == 2019].drop(columns="year_id")
+    data = utilities.process_exposure(
+        data,
+        key,
+        entity,
+        location,
+        metadata.GBD_2019_ROUND_ID,
+        metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE | metadata.AGE_GROUP.GBD_2019,
+    )
+    data = data[data.index.get_level_values("year_start") == 2019]
     return data
 
 
 def load_lbwsg_rr(key: str, location: str) -> pd.DataFrame:
     if key != data_keys.LBWSG.RELATIVE_RISK:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     key = EntityKey(key)
     entity = utilities.get_entity(key)
-    data = utilities.get_data(key, entity, location, gbd_constants.SOURCES.RR, 'rei_id',
-                              metadata.AGE_GROUP.GBD_2019_LBWSG_RELATIVE_RISK, metadata.GBD_2019_ROUND_ID, 'step4')
-    data = data[data['year_id'] == 2019].drop(columns='year_id')
-    data = utilities.process_relative_risk(data, key, entity, location, metadata.GBD_2019_ROUND_ID,
-                                           metadata.AGE_GROUP.GBD_2019, whitelist_sids=True)
-    data = (
-        data.query('year_start == 2019')
-        .droplevel(['affected_entity', 'affected_measure'])
+    data = utilities.get_data(
+        key,
+        entity,
+        location,
+        gbd_constants.SOURCES.RR,
+        "rei_id",
+        metadata.AGE_GROUP.GBD_2019_LBWSG_RELATIVE_RISK,
+        metadata.GBD_2019_ROUND_ID,
+        "step4",
     )
+    data = data[data["year_id"] == 2019].drop(columns="year_id")
+    data = utilities.process_relative_risk(
+        data,
+        key,
+        entity,
+        location,
+        metadata.GBD_2019_ROUND_ID,
+        metadata.AGE_GROUP.GBD_2019,
+        whitelist_sids=True,
+    )
+    data = data.query("year_start == 2019").droplevel(["affected_entity", "affected_measure"])
     data = data[~data.index.duplicated()]
     return data
 
 
 def load_lbwsg_interpolated_rr(key: str, location: str) -> pd.DataFrame:
     if key != data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
     rr = get_data(data_keys.LBWSG.RELATIVE_RISK, location).reset_index()
-    rr['parameter'] = pd.Categorical(rr['parameter'], [f'cat{i}' for i in range(1000)])
+    rr["parameter"] = pd.Categorical(rr["parameter"], [f"cat{i}" for i in range(1000)])
     rr = (
-        rr.sort_values('parameter')
-        .set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['parameter'])
+        rr.sort_values("parameter")
+        .set_index(metadata.ARTIFACT_INDEX_COLUMNS + ["parameter"])
         .stack()
-        .unstack('parameter')
+        .unstack("parameter")
         .apply(np.log)
     )
 
     # get category midpoints
     def get_category_midpoints(lbwsg_type: str) -> pd.Series:
-        categories = get_data(f'risk_factor.{data_keys.LBWSG.name}.categories', location)
-        return utilities.get_intervals_from_categories(lbwsg_type, categories).apply(lambda x: x.mid)
+        categories = get_data(f"risk_factor.{data_keys.LBWSG.name}.categories", location)
+        return utilities.get_intervals_from_categories(lbwsg_type, categories).apply(
+            lambda x: x.mid
+        )
 
     gestational_age_midpoints = get_category_midpoints("short_gestation")
     birth_weight_midpoints = get_category_midpoints("low_birth_weight")
@@ -426,14 +487,16 @@ def load_lbwsg_interpolated_rr(key: str, location: str) -> pd.DataFrame:
             (gestational_age_midpoints, birth_weight_midpoints),
             log_rr_for_age_sex_draw,
             (gestational_age_grid[:, None], birth_weight_grid[None, :]),
-            method='nearest',
-            rescale=True
+            method="nearest",
+            rescale=True,
         )
         # return a RectBivariateSpline object from the extrapolated values on grid
-        return RectBivariateSpline(gestational_age_grid, birth_weight_grid, log_rr_grid_nearest, kx=1, ky=1)
+        return RectBivariateSpline(
+            gestational_age_grid, birth_weight_grid, log_rr_grid_nearest, kx=1, ky=1
+        )
 
     log_rr_interpolator = (
-        rr.apply(make_interpolator, axis='columns')
+        rr.apply(make_interpolator, axis="columns")
         .apply(lambda x: pickle.dumps(x).hex())
         .unstack()
     )
@@ -442,34 +505,27 @@ def load_lbwsg_interpolated_rr(key: str, location: str) -> pd.DataFrame:
 
 def load_lbwsg_paf(key: str, location: str) -> pd.DataFrame:
     if key != data_keys.LBWSG.PAF:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")
 
-    paf_files = paths.TEMPORARY_PAF_DIR.glob('*.hdf')
-    paf_data = (
-        pd.concat([pd.read_hdf(paf_file) for paf_file in paf_files])
-        .sort_values(metadata.ARTIFACT_INDEX_COLUMNS + ['draw'])
+    paf_files = paths.TEMPORARY_PAF_DIR.glob("*.hdf")
+    paf_data = pd.concat([pd.read_hdf(paf_file) for paf_file in paf_files]).sort_values(
+        metadata.ARTIFACT_INDEX_COLUMNS + ["draw"]
     )
 
-    paf_data['draw'] = paf_data['draw'].apply(lambda draw: f'draw_{draw}')
+    paf_data["draw"] = paf_data["draw"].apply(lambda draw: f"draw_{draw}")
 
-    paf_data = (
-        paf_data.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['draw'])
-        .unstack()
-    )
+    paf_data = paf_data.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ["draw"]).unstack()
 
     paf_data.columns = paf_data.columns.droplevel(0)
     paf_data.columns.name = None
 
     full_index = (
-        get_data(data_keys.LBWSG.RELATIVE_RISK, location).index
-        .droplevel('parameter')
+        get_data(data_keys.LBWSG.RELATIVE_RISK, location)
+        .index.droplevel("parameter")
         .drop_duplicates()
     )
 
-    paf_data = (
-        paf_data.reindex(full_index)
-        .fillna(0.0)
-    )
+    paf_data = paf_data.reindex(full_index).fillna(0.0)
     return paf_data
 
 
@@ -483,7 +539,7 @@ def load_sids_csmr(key: str, location: str) -> pd.DataFrame:
         entity.restrictions.yld_age_group_id_start = min(metadata.AGE_GROUP.GBD_2019_SIDS)
         entity.restrictions.yld_age_group_id_end = max(metadata.AGE_GROUP.GBD_2019_SIDS)
 
-        data = interface.get_measure(entity, key.measure, location).droplevel('location')
+        data = interface.get_measure(entity, key.measure, location).droplevel("location")
         return data
     else:
-        raise ValueError(f'Unrecognized key {key}')
+        raise ValueError(f"Unrecognized key {key}")

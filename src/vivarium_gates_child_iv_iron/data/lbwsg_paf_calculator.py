@@ -74,8 +74,10 @@ def get_age_bin(config: Path, age_group_id: int) -> pd.Interval:
     name_to_id_mapper = dict(zip(gbd_age_bins.age_group_name, gbd_age_bins.age_group_id))
 
     age_bins = artifact.load(data_keys.POPULATION.AGE_BINS)
-    new_ids = age_bins.reset_index()["age_group_name"].map(name_to_id_mapper)
-    new_ids.index = age_bins.index
+    age_group_ids = age_bins.reset_index()["age_group_name"].map(name_to_id_mapper)
+    age_group_ids.index = age_bins.index
+
+    age_bins["age_group_id"] = age_group_ids
     age_bins = age_bins.reset_index().set_index('age_group_id')
     age_bin = pd.Interval(age_bins.loc[age_group_id, 'age_start'], age_bins.loc[age_group_id, 'age_end'])
 

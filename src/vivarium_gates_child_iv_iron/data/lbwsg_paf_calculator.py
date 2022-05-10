@@ -19,7 +19,17 @@ def get_relative_risks(config: Path, input_draw: int, random_seed: int, age_grou
     artifact_path = sim.configuration.input_data.artifact_path
     artifact = Artifact(artifact_path)
 
-    age_bins = artifact.load(data_keys.POPULATION.AGE_BINS).reset_index().set_index('age_group_id')
+    # Make mapper for age_group_ids
+    gbd_age_bins = gbd.get_age_bins()
+    name_to_id_mapper = dict(zip(gbd_age_bins.age_group_name, gbd_age_bins.age_group_id))
+
+    age_bins = artifact.load(data_keys.POPULATION.AGE_BINS)
+    age_group_ids = age_bins.reset_index()["age_group_name"].map(name_to_id_mapper)
+    age_group_ids.index = age_bins.index
+
+    age_bins["age_group_id"] = age_group_ids
+    age_bins = age_bins.reset_index().set_index('age_group_id')
+
     age_start = age_bins.loc[age_group_id, 'age_start']
     age_end = age_bins.loc[age_group_id, 'age_end']
 

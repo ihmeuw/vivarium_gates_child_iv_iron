@@ -58,7 +58,7 @@ def get_relative_risks(config: Path, input_draw: int, random_seed: int, age_grou
 
     def calculate_rr_by_sex(sex: str) -> float:
         sex_mask = pop['sex'] == sex
-        row_index = (sex, age_start, age_end, year_start, year_end, 'diarrheal_diseases', 'excess_mortality_rate')
+        row_index = (sex, age_start, age_end, year_start, year_end)
         interpolator = pickle.loads(bytes.fromhex(
             interpolators.loc[row_index, f'draw_{input_draw}']
         ))

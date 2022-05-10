@@ -2,6 +2,7 @@ from pathlib import Path
 import pickle
 import sys
 
+from loguru import logger
 import numpy as np
 import pandas as pd
 
@@ -13,7 +14,7 @@ from vivarium_gates_child_iv_iron.constants import data_keys, metadata
 
 
 def get_relative_risks(config: Path, input_draw: int, random_seed: int, age_group_id: int) -> pd.DataFrame:
-
+    logger.remove()
     sim = InteractiveContext(config, setup=False)
 
     artifact_path = sim.configuration.input_data.artifact_path

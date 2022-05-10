@@ -51,7 +51,7 @@ def get_relative_risks(config: Path, input_draw: int, random_seed: int, age_grou
     sim.setup()
 
     pop = sim.get_population()
-    gestational_ages = sim.get_value('short_gestation_exposure')(pop.index)
+    gestational_ages = sim.get_value('gestational_age_exposure')(pop.index)
     birth_weights = sim.get_value('low_birth_weight_exposure')(pop.index)
 
     interpolators = artifact.load(data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR)

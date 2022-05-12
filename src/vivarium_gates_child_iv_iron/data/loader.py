@@ -470,7 +470,12 @@ def load_lbwsg_paf(key: str, location: str) -> pd.DataFrame:
     if key != data_keys.LBWSG.PAF:
         raise ValueError(f"Unrecognized key {key}")
 
-    paf_files = paths.TEMPORARY_PAF_DIR.glob("*.hdf")
+    location_mapper = {"Sub-Saharan Africa": "sub-saharan_africa",
+                        "South Asia": "south_asia",
+                       "LMICs": "lmics"}
+
+    output_dir = paths.TEMPORARY_PAF_DIR / location_mapper[location]
+    paf_files = output_dir.glob("*.hdf")
     paf_data = pd.concat([pd.read_hdf(paf_file) for paf_file in paf_files]).sort_values(
         metadata.ARTIFACT_INDEX_COLUMNS + ["draw"]
     )

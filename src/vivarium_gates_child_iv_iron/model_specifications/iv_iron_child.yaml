@@ -59,8 +59,8 @@ configuration:
             month: 1
             day: 1
         end:
-            year: 2023
-            month: 12
+            year: 2022
+            month: 3
             day: 31
         step_size: .5 # Days
     population:
@@ -69,7 +69,7 @@ configuration:
         age_end: 0.019178
         exit_age: 0.019178
     fertility:
-        number_of_new_simulants_each_year: 714.2857142857143  # pop_size * (step_size/age_bin_duration)
+        number_of_new_simulants_each_year: 260892.85714285713  # pop_size * (step_size/age_bin_duration) * 365.25 days/year
     moderate_protein_energy_malnutrition:
         threshold: ['cat2']
         mortality: True

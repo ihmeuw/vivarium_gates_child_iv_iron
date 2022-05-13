@@ -2,45 +2,13 @@
 components:
     vivarium_public_health:
         population:
-            - BasePopulation()
+#            - BasePopulation()
             - Mortality()
             - FertilityCrudeBirthRate()
-        disease:
-            - SIS('diarrheal_diseases')
-            - SIS_fixed_duration('measles', '10.0')
-            - SIS('lower_respiratory_infections')
-            - RiskAttributableDisease('cause.moderate_protein_energy_malnutrition', 'risk_factor.child_wasting')
-            - RiskAttributableDisease('cause.severe_protein_energy_malnutrition', 'risk_factor.child_wasting')
-        risks:
-            - Risk('risk_factor.child_wasting')
-            - RiskEffect('risk_factor.child_wasting', 'cause.diarrheal_diseases.incidence_rate')
-            - RiskEffect('risk_factor.child_wasting', 'cause.measles.incidence_rate')
-            - RiskEffect('risk_factor.child_wasting', 'cause.lower_respiratory_infections.incidence_rate')
-
-            - Risk('risk_factor.child_stunting')
-            - RiskEffect('risk_factor.child_stunting', 'cause.diarrheal_diseases.incidence_rate')
-            - RiskEffect('risk_factor.child_stunting', 'cause.measles.incidence_rate')
-            - RiskEffect('risk_factor.child_stunting', 'cause.lower_respiratory_infections.incidence_rate')
-
-            - LBWSGRisk()
-            - LBWSGRiskEffect('cause.diarrheal_diseases.excess_mortality_rate')
-            - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality_rate')
-            - LBWSGRiskEffect('cause.affected_unmodeled.cause_specific_mortality_rate')
-        metrics:
-            - DisabilityObserver()
-            - MortalityObserver()
-            - DiseaseObserver('diarrheal_diseases')
-            - DiseaseObserver('measles')
-            - DiseaseObserver('lower_respiratory_infections')
-            - DiseaseObserver('moderate_protein_energy_malnutrition')
-            - DiseaseObserver('severe_protein_energy_malnutrition')
-            - CategoricalRiskObserver('child_stunting')
-            - CategoricalRiskObserver('child_wasting')
 
     vivarium_gates_child_iv_iron:
         components:
-            - ResultsStratifier()
-            - BirthObserver()
+            - BasePopulationNew()
 
 configuration:
     input_data:
@@ -59,15 +27,15 @@ configuration:
             month: 1
             day: 1
         end:
-            year: 2023
-            month: 12
-            day: 31
+            year: 2022
+            month: 1
+            day: 3
         step_size: .5 # Days
     population:
-        population_size: 10_000
+        population_size: 0
         age_start: 0
-        age_end: 5
-        exit_age: 5
+        age_end: 0.019178
+        exit_age: 0.019178
     moderate_protein_energy_malnutrition:
         threshold: ['cat2']
         mortality: True

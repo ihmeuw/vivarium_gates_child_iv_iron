@@ -34,8 +34,8 @@ configuration:
     population:
         population_size: 0
         age_start: 0
-        age_end: 0.019178
-        exit_age: 0.019178
+        age_end: 5
+        exit_age: 5
     moderate_protein_energy_malnutrition:
         threshold: ['cat2']
         mortality: True

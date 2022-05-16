@@ -12,8 +12,8 @@ from vivarium_gates_child_iv_iron.utilities import get_norm
 # Cause Model Parameters #
 ##########################
 
-# diarrhea birth prevalence
-DIARRHEA_BIRTH_PREVALENCE = 0
+# diarrhea and lower respiratory infection birth prevalence
+BIRTH_PREVALENCE_OF_ZERO = 0
 
 # diarrhea duration in days
 DIARRHEA_DURATION: Tuple = (

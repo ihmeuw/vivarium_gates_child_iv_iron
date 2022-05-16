@@ -61,7 +61,7 @@ class BasePopulationNew:
         #seed = builder.configuration.randomness.random_seed
 
         # TODO: read using draw and seed
-        child_data_dir = "/home/hjafari/child_data/"
+        child_data_dir = "/home/albrja/scratch/data/iv_iron_child/"
         file_path = glob.glob(child_data_dir + 'south_asia*.hdf')[0]
         birth_records = pd.read_hdf(file_path)
 

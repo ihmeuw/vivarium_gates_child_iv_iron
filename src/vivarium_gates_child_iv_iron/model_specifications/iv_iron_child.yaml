@@ -4,7 +4,7 @@ components:
         population:
             - BasePopulation()
             - Mortality()
-            - FertilityDeterministic()
+#            - FertilityDeterministic()
         disease:
             - SIS('diarrheal_diseases')
             - SIS_fixed_duration('measles', '10.0')
@@ -59,17 +59,15 @@ configuration:
             month: 1
             day: 1
         end:
-            year: 2023
-            month: 12
-            day: 31
+            year: 2022
+            month: 1
+            day: 8
         step_size: .5 # Days
     population:
         population_size: 10_000
         age_start: 0
         age_end: 0.019178
         exit_age: 0.019178
-    fertility:
-        number_of_new_simulants_each_year: 260892.85714285713  # pop_size * (step_size/age_bin_duration) * 365.25 days/year
     moderate_protein_energy_malnutrition:
         threshold: ['cat2']
         mortality: True

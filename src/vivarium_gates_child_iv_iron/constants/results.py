@@ -103,9 +103,6 @@ SEXES = ('male', 'female')
 YEARS = tuple(range(2022, 2024))
 AGE_GROUPS = (
     'early_neonatal',
-    'late_neonatal',
-    'post_neonatal',
-    '1_to_4'
 )
 DICHOTOMOUS_RISK_STATES = ('cat2', 'cat1')
 CAUSES_OF_DEATH = (

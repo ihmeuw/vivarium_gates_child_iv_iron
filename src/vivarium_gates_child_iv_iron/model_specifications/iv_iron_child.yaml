@@ -29,13 +29,13 @@ components:
         metrics:
             - DisabilityObserver()
             - MortalityObserver()
-            - DiseaseObserver('diarrheal_diseases')
-            - DiseaseObserver('measles')
+#            - DiseaseObserver('diarrheal_diseases')
+#            - DiseaseObserver('measles')
             - DiseaseObserver('lower_respiratory_infections')
-            - DiseaseObserver('moderate_protein_energy_malnutrition')
-            - DiseaseObserver('severe_protein_energy_malnutrition')
-            - CategoricalRiskObserver('child_stunting')
-            - CategoricalRiskObserver('child_wasting')
+#            - DiseaseObserver('moderate_protein_energy_malnutrition')
+#            - DiseaseObserver('severe_protein_energy_malnutrition')
+#            - CategoricalRiskObserver('child_stunting')
+#            - CategoricalRiskObserver('child_wasting')
 
     vivarium_gates_child_iv_iron:
         components:
@@ -62,7 +62,7 @@ configuration:
             year: 2022
             month: 1
             day: 8
-        step_size: .5 # Days
+        step_size: .1 # Days
     population:
         population_size: 1_000_000
         age_start: 0

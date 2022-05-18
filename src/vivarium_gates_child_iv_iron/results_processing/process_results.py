@@ -34,18 +34,18 @@ def make_measure_data(data):
         ylls=get_by_cause_measure_data(data, 'ylls'),
         ylds=get_by_cause_measure_data(data, 'ylds'),
         deaths=get_by_cause_measure_data(data, 'deaths'),
-        diarrhea_state_person_time=get_state_person_time_measure_data(data, 'diarrhea_state_person_time'),
+        # diarrhea_state_person_time=get_state_person_time_measure_data(data, 'diarrhea_state_person_time'),
         lri_state_person_time=get_state_person_time_measure_data(data, 'lri_state_person_time'),
-        measles_state_person_time=get_state_person_time_measure_data(data, 'measles_state_person_time'),
-        moderate_pem_state_person_time=get_state_person_time_measure_data(data, 'moderate_pem_state_person_time'),
-        severe_pem_state_person_time=get_state_person_time_measure_data(data, 'severe_pem_state_person_time'),
-        diarrhea_transition_count=get_transition_count_measure_data(data, 'diarrhea_transition_count'),
+        # measles_state_person_time=get_state_person_time_measure_data(data, 'measles_state_person_time'),
+        # moderate_pem_state_person_time=get_state_person_time_measure_data(data, 'moderate_pem_state_person_time'),
+        # severe_pem_state_person_time=get_state_person_time_measure_data(data, 'severe_pem_state_person_time'),
+        # diarrhea_transition_count=get_transition_count_measure_data(data, 'diarrhea_transition_count'),
         lri_transition_count=get_transition_count_measure_data(data, 'lri_transition_count'),
-        measles_transition_count=get_transition_count_measure_data(data, 'measles_transition_count'),
-        moderate_pem_transition_count=get_transition_count_measure_data(data, 'moderate_pem_transition_count'),
-        severe_pem_transition_count=get_transition_count_measure_data(data, 'severe_pem_transition_count'),
-        stunting_state_person_time=get_state_person_time_measure_data(data, 'stunting_state_person_time'),
-        wasting_state_person_time=get_state_person_time_measure_data(data, 'wasting_state_person_time'),
+        # measles_transition_count=get_transition_count_measure_data(data, 'measles_transition_count'),
+        # moderate_pem_transition_count=get_transition_count_measure_data(data, 'moderate_pem_transition_count'),
+        # severe_pem_transition_count=get_transition_count_measure_data(data, 'severe_pem_transition_count'),
+        # stunting_state_person_time=get_state_person_time_measure_data(data, 'stunting_state_person_time'),
+        # wasting_state_person_time=get_state_person_time_measure_data(data, 'wasting_state_person_time'),
         # low_birth_weight_and_short_gestation_sum=get_measure_data(data, 'low_birth_weight_and_short_gestation_sum'),
         # live_births_count=get_measure_data(data, 'live_births_count'),
         # low_weight_births_count=get_measure_data(data, 'low_weight_births_count'),
@@ -58,18 +58,18 @@ class MeasureData(NamedTuple):
     ylls: pd.DataFrame
     ylds: pd.DataFrame
     deaths: pd.DataFrame
-    diarrhea_state_person_time: pd.DataFrame
+    # diarrhea_state_person_time: pd.DataFrame
     lri_state_person_time: pd.DataFrame
-    measles_state_person_time: pd.DataFrame
-    moderate_pem_state_person_time: pd.DataFrame
-    severe_pem_state_person_time: pd.DataFrame
-    diarrhea_transition_count: pd.DataFrame
+    # measles_state_person_time: pd.DataFrame
+    # moderate_pem_state_person_time: pd.DataFrame
+    # severe_pem_state_person_time: pd.DataFrame
+    # diarrhea_transition_count: pd.DataFrame
     lri_transition_count: pd.DataFrame
-    measles_transition_count: pd.DataFrame
-    moderate_pem_transition_count: pd.DataFrame
-    severe_pem_transition_count: pd.DataFrame
-    stunting_state_person_time: pd.DataFrame
-    wasting_state_person_time: pd.DataFrame
+    # measles_transition_count: pd.DataFrame
+    # moderate_pem_transition_count: pd.DataFrame
+    # severe_pem_transition_count: pd.DataFrame
+    # stunting_state_person_time: pd.DataFrame
+    # wasting_state_person_time: pd.DataFrame
     # low_birth_weight_and_short_gestation_sum: pd.DataFrame
     # live_births_count: pd.DataFrame
     # low_weight_births_count: pd.DataFrame

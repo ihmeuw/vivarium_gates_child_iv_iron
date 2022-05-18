@@ -9,4 +9,5 @@ ARTIFACT_ROOT = Path(f"/share/costeffectiveness/artifacts/{metadata.PROJECT_NAME
 MODEL_SPEC_DIR = BASE_DIR / 'model_specifications'
 RESULTS_ROOT = Path(f'/share/costeffectiveness/results/{metadata.PROJECT_NAME}/')
 
+FERTILITY_TEST_DATA_DIR = Path('/mnt/team/simulation_science/priv/engineering/scratch/vivarium_gates_child_iv_iron/child_data/south_asia.intervention.142.5.hdf')
 TEMPORARY_PAF_DIR = Path('/share/costeffectiveness/auxiliary_data/GBD_2019/01_original_data/population_attributable_fraction/risk_factor/lbwsg/data/')

@@ -38,7 +38,7 @@ components:
 
     vivarium_gates_child_iv_iron:
         components:
-            - FertilityFromOutputs()
+            - FertilityLineList()
             - ResultsStratifier()
             - BirthObserver()
 

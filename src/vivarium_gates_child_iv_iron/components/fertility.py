@@ -19,10 +19,10 @@ from vivarium_public_health.population.data_transformations import (
 PREGNANCY_DURATION = pd.Timedelta(days=9 * utilities.DAYS_PER_MONTH)
 
 
-class FertilityFromOutputs:
+class FertilityLineList:
     """
     This class will determine what simulants need to be added to the state table based on their birth data from existing
-    output data.  Simulants will be registered to the state table on the time steps in which their birth takes place.
+    line list data.  Simulants will be registered to the state table on the time steps in which their birth takes place.
     """
 
     configuration_defaults = {
@@ -32,11 +32,11 @@ class FertilityFromOutputs:
     }
 
     def __repr__(self):
-        return "FertilityFromOutputs()"
+        return "FertilityLineList()"
 
     @property
     def name(self):
-        return "output_data_fertility"
+        return "line_list_fertility"
 
     def setup(self, builder):
         self.clock = builder.time.clock()
@@ -59,7 +59,7 @@ class FertilityFromOutputs:
         return birth_records
 
     def on_time_step(self, event):
-        """Adds new simulants every time step determined by a simulant's birth date in the output data.
+        """Adds new simulants every time step determined by a simulant's birth date in the line list data.
         Parameters
         ----------
         event

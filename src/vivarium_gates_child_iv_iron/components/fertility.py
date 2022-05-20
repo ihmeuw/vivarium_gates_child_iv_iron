@@ -66,10 +66,10 @@ class FertilityLineList:
             The event that triggered the function call.
         """
         birth_records = self.birth_records
+        # todo: make sure this is behaving as expected - simulants born during previous time step i.e. they are now new births for current step
         born_previous_step_mask = (birth_records['birth_date'] < self.clock()) & (
             birth_records['birth_date'] > self.clock() - event.step_size)
         born_previous_step = birth_records[born_previous_step_mask]
-        born_previous_step_idx = born_previous_step.index
         simulants_to_add = len(born_previous_step)
 
         if simulants_to_add > 0:
@@ -79,6 +79,6 @@ class FertilityLineList:
                     "age_start": 0,
                     "age_end": 0,
                     "sim_state": "time_step",
-                    "new_births": born_previous_step_idx
+                    "new_births": born_previous_step
                 },
             )

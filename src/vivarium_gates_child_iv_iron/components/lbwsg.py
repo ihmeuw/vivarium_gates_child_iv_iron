@@ -21,6 +21,13 @@ class LBWSGLineList(LBWSGRisk):
     def __init__(self):
         super().__init__()
 
+    @property
+    def name(self)-> str:
+        return "line_list_low_birth_weight_and_short_gestation"
+
+    def __repr__(self):
+        return "LBWSGLineList()"
+
     # noinspection PyAttributeOutsideInit
     def setup(self, builder: Builder):
         super().setup(builder)

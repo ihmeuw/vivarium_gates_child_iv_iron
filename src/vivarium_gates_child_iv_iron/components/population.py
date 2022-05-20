@@ -32,6 +32,9 @@ class PopulationLineList(BasePopulation):
     def name(self) -> str:
         return "line_list_population"
 
+    def __repr__(self) -> str:
+        return "PopulationLineList()"
+
     def on_initialize_simulants(self, pop_data: SimulantData) -> None:
         """
         Creates simulants based on their birth date from the line list data.  Their demographic characteristics are also

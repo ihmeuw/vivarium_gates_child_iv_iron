@@ -21,7 +21,6 @@ components:
             - RiskEffect('risk_factor.child_stunting', 'cause.measles.incidence_rate')
             - RiskEffect('risk_factor.child_stunting', 'cause.lower_respiratory_infections.incidence_rate')
 
-            - LBWSGRisk()
             - LBWSGRiskEffect('cause.diarrheal_diseases.excess_mortality_rate')
             - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality_rate')
             - LBWSGRiskEffect('cause.affected_unmodeled.cause_specific_mortality_rate')
@@ -38,7 +37,9 @@ components:
 
     vivarium_gates_child_iv_iron:
         components:
+            - PopulationLineList()
             - FertilityLineList()
+            - LBWSGLineList()
             - ResultsStratifier()
             - BirthObserver()
 

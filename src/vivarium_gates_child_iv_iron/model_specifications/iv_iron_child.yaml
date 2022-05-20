@@ -46,7 +46,7 @@ components:
 configuration:
     input_data:
         input_draw_number: 0
-        artifact_path: '/ihme/costeffectiveness/artifacts/vivarium_gates_child_iv_iron/south_asia.hdf'
+        artifact_path: '/home/albrja/scratch/data/iv_iron_child/'
     interpolation:
         order: 0
         extrapolate: True

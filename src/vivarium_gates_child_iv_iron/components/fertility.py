@@ -41,7 +41,8 @@ class FertilityLineList:
     def setup(self, builder):
         self.clock = builder.time.clock()
         self.birth_records = self._get_birth_records()
-        self.fertility_data_directory = builder.fertility.fertility_input_data_path
+        self.fertility_data_directory = builder.configuration.fertility.input_data_path
+        breakpoint()
         self.randomness = builder.randomness
         self.simulant_creator = builder.population.get_simulant_creator()
 

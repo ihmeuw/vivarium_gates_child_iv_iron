@@ -25,11 +25,7 @@ class FertilityLineList:
     line list data.  Simulants will be registered to the state table on the time steps in which their birth takes place.
     """
 
-    configuration_defaults = {
-        "fertility": {
-            "fertility_input_data_path": ""
-        }
-    }
+    configuration_defaults = {}
 
     def __repr__(self):
         return "FertilityLineList()"
@@ -40,9 +36,8 @@ class FertilityLineList:
 
     def setup(self, builder):
         self.clock = builder.time.clock()
+        self.fertility_data_directory = builder.configuration.input_data.fertility_input_data_path
         self.birth_records = self._get_birth_records()
-        self.fertility_data_directory = builder.configuration.fertility.input_data_path
-        breakpoint()
         self.randomness = builder.randomness
         self.simulant_creator = builder.population.get_simulant_creator()
 
@@ -53,7 +48,7 @@ class FertilityLineList:
         Method to load existing fertility data to use as birth records.
         """
         fertility_data_dir = self.fertility_data_directory
-        file_path = glob.glob(fertility_data_dir + 'south_asia*.hdf')[0]
+        file_path = glob.glob(fertility_data_dir + '*.hdf')[0]
         # todo: fix path names to incorporate what draw and seed to use
         birth_records = pd.read_hdf(file_path)
 
@@ -72,7 +67,7 @@ class FertilityLineList:
             birth_records['birth_date'] > self.clock() - event.step_size)
         born_previous_step = birth_records[born_previous_step_mask]
         simulants_to_add = len(born_previous_step)
-
+        breakpoint()
         if simulants_to_add > 0:
             self.simulant_creator(
                 simulants_to_add,

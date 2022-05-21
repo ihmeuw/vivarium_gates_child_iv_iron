@@ -33,6 +33,7 @@ class LBWSGLineList(LBWSGRisk):
         super().setup(builder)
 
     def on_initialize_simulants(self, pop_data: SimulantData) -> None:
+        # todo: fix this like population component
         new_births = pop_data.user_data["new_births"]
         new_births = new_births.rename(columns={"birth_weight": "birth_weight_exposure",
                                                 "gestational_age": "gestational_age_exposure"

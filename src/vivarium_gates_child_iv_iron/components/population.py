@@ -12,6 +12,7 @@ import pandas as pd
 
 from vivarium.framework.engine import Builder
 from vivarium.framework.population import SimulantData
+from vivarium.framework.time import get_time_stamp
 
 from vivarium_public_health.population.base_population import BasePopulation
 
@@ -25,6 +26,7 @@ class PopulationLineList(BasePopulation):
 
     def setup(self, builder: Builder) -> None:
         super().setup(builder)
+        self.start_time = get_time_stamp(builder.configuration.time.start)
         self.location = self._get_location(builder)
 
     @property
@@ -39,15 +41,24 @@ class PopulationLineList(BasePopulation):
         Creates simulants based on their birth date from the line list data.  Their demographic characteristics are also
         determined by the input data.
         """
+        columns = ["age", "sex", "alive", "location", "entrance_time", "exit_time"]
+        new_simulants = pd.DataFrame(columns=columns)
 
-        new_births = pop_data.user_data["new_births"]
-        new_births["alive"] = "alive"
-        new_births["location"] = self.location
-        new_births["entrance_time"] = pop_data.creation_time
-        new_births["exit_time"] = pd.NaT
-        new_births["location"] = self.location
+        if pop_data.creation_time >= self.start_time:
+            new_births = pop_data.user_data["new_births"]
+            new_births = new_births.reindex(index=pop_data.index)
+            new_simulants = new_simulants.reindex(index=pop_data.index)
 
-        self.population_view.update(new_births)
+            # Create columns for state table
+            new_simulants["age"] = 0
+            new_simulants["sex"] = new_births["sex"]
+            # todo: make sure indexes work for sex
+            new_simulants["alive"] = "alive"
+            new_simulants["location"] = self.location
+            new_simulants["entrance_time"] = pop_data.creation_time
+            new_simulants["exit_time"] = pd.NaT
+
+        self.population_view.update(new_simulants)
 
     def _get_location(self, builder: Builder) -> str:
         return builder.data.load("population.location")

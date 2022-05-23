@@ -44,12 +44,12 @@ class PopulationLineList(BasePopulation):
         columns = ["age", "sex", "alive", "location", "entrance_time", "exit_time"]
         new_simulants = pd.DataFrame(columns=columns)
 
-        if pop_data.creation_time >= self.start_time:
+        if pop_data.creation_time >= self.start_time:  # todo: is this logic right?
             new_births = pop_data.user_data["new_births"]
             new_births = new_births.reindex(index=pop_data.index)
-            new_simulants = new_simulants.reindex(index=pop_data.index)
 
             # Create columns for state table
+            new_simulants = new_simulants.reindex(index=pop_data.index)
             new_simulants["age"] = 0
             new_simulants["sex"] = new_births["sex"]
             # todo: make sure indexes work for sex

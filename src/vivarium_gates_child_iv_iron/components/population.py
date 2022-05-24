@@ -51,7 +51,6 @@ class PopulationLineList(BasePopulation):
             # Create columns for state table
             new_simulants["age"] = 0.0
             new_simulants["sex"] = new_births["sex"]
-            # todo: make sure indexes work for sex
             new_simulants["alive"] = "alive"
             new_simulants["location"] = self.location
             new_simulants["entrance_time"] = pop_data.creation_time

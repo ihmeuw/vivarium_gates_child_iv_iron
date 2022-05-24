@@ -7,7 +7,6 @@ Fertility module to create simulants from existing data
 
 """
 import numpy as np
-import glob
 import pandas as pd
 from pathlib import Path
 

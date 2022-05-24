@@ -37,14 +37,13 @@ class LBWSGLineList(LBWSGRisk):
     def on_initialize_simulants(self, pop_data: SimulantData) -> None:
 
         columns = ["birth_weight_exposure", "gestational_age_exposure"]
-        new_simulants = pd.DataFrame(columns=columns)
+        new_simulants = pd.DataFrame(columns=columns, index=pop_data.index)
 
         if pop_data.creation_time >= self.start_time:
             new_births = pop_data.user_data["new_births"]
-            new_births = new_births.reindex(index=pop_data.index)
+            new_births.index = pop_data.index
 
             # Create columns for state table
-            new_simulants = new_simulants.reindex(index=pop_data.index)
             new_simulants["birth_weight_exposure"] = new_births["birth_weight"]
             new_simulants["gestational_age_exposure"] = new_births["gestational_age"]
 

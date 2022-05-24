@@ -36,10 +36,15 @@ class FertilityLineList:
 
     def setup(self, builder):
         self.clock = builder.time.clock()
-        self.fertility_data_directory = builder.configuration.input_data.fertility_input_data_path
-        self.birth_records = self._get_birth_records()
         self.randomness = builder.randomness
         self.simulant_creator = builder.population.get_simulant_creator()
+
+        # Requirements for input data
+        self.fertility_data_directory = builder.configuration.input_data.fertility_input_data_path
+        self.draw = builder.configuration.input_data.input_draw_number
+        self.seed = builder.configuration.randomness.random_seed
+        self.intervention = builder.configuration.intervention.scenario
+        self.birth_records = self._get_birth_records()
 
         builder.event.register_listener("time_step", self.on_time_step)
 
@@ -48,8 +53,7 @@ class FertilityLineList:
         Method to load existing fertility data to use as birth records.
         """
         fertility_data_dir = self.fertility_data_directory
-        file_path = glob.glob(fertility_data_dir + '*.hdf')[0]
-        # todo: fix path names to incorporate what draw and seed to use
+        file_path = fertility_data_dir + f'scenario_{self.intervention}_draw_{self.draw}_seed_{self.seed}.hdf'
         birth_records = pd.read_hdf(file_path)
 
         return birth_records

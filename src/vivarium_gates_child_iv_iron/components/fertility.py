@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
+from vivarium.framework.event import Event
 from vivarium_public_health import utilities
 from vivarium_public_health.population.data_transformations import (
     get_live_births_per_year,
@@ -42,7 +43,7 @@ class FertilityLineList:
         self.fertility_data_directory = builder.configuration.input_data.fertility_input_data_path
         self.draw = builder.configuration.input_data.input_draw_number
         self.seed = builder.configuration.randomness.random_seed
-        self.intervention = builder.configuration.intervention.scenario
+        self.scenario = builder.configuration.intervention.scenario
         self.birth_records = self._get_birth_records()
 
         builder.event.register_listener("time_step", self.on_time_step)
@@ -52,12 +53,12 @@ class FertilityLineList:
         Method to load existing fertility data to use as birth records.
         """
         fertility_data_dir = self.fertility_data_directory
-        file_path = fertility_data_dir + f'scenario_{self.intervention}_draw_{self.draw}_seed_{self.seed}.hdf'
+        file_path = fertility_data_dir + f'scenario_{self.scenario}_draw_{self.draw}_seed_{self.seed}.hdf'
         birth_records = pd.read_hdf(file_path)
 
         return birth_records
 
-    def on_time_step(self, event):
+    def on_time_step(self, event: Event) -> None:
         """Adds new simulants every time step determined by a simulant's birth date in the line list data.
         Parameters
         ----------

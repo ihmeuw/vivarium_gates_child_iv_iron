@@ -16,8 +16,6 @@ from vivarium.framework.time import get_time_stamp
 
 from vivarium_public_health.population.base_population import BasePopulation
 
-from vivarium_gates_child_iv_iron.constants.metadata import LOCATIONS
-
 
 class PopulationLineList(BasePopulation):
     """
@@ -44,7 +42,7 @@ class PopulationLineList(BasePopulation):
         columns = ["age", "sex", "alive", "location", "entrance_time", "exit_time"]
         new_simulants = pd.DataFrame(columns=columns, index=pop_data.index)
 
-        if pop_data.creation_time >= self.start_time:  # todo: is this logic right?
+        if pop_data.creation_time >= self.start_time:
             new_births = pop_data.user_data["new_births"]
             new_births.index = pop_data.index
 

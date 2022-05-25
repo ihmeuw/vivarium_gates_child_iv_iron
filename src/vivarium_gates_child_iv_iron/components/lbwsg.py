@@ -19,9 +19,6 @@ class LBWSGLineList(LBWSGRisk):
     """
     Component to initialize low birthweight and short gestation data for simulants based on existing line list data.
     """
-    def __init__(self):
-        super().__init__()
-
     @property
     def name(self)-> str:
         return "line_list_low_birth_weight_and_short_gestation"

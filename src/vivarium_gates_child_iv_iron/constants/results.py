@@ -18,7 +18,7 @@ RANDOM_SEED_COLUMN = 'random_seed'
 
 OUTPUT_INPUT_DRAW_COLUMN = 'input_data.input_draw_number'
 OUTPUT_RANDOM_SEED_COLUMN = 'randomness.random_seed'
-OUTPUT_SCENARIO_COLUMN = 'placeholder_branch_name.scenario'
+OUTPUT_SCENARIO_COLUMN = 'intervention.scenario'
 
 STANDARD_COLUMNS = {
     'total_population': TOTAL_POPULATION_COLUMN,
@@ -100,7 +100,7 @@ NON_COUNT_TEMPLATES = [
 
 POP_STATES = ('living', 'dead', 'tracked', 'untracked')
 SEXES = ('male', 'female')
-YEARS = tuple(range(2022, 2024))
+YEARS = tuple(range(2022, 2028))
 AGE_GROUPS = (
     'early_neonatal',
     'late_neonatal',

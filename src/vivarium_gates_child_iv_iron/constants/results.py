@@ -18,7 +18,7 @@ RANDOM_SEED_COLUMN = 'random_seed'
 
 OUTPUT_INPUT_DRAW_COLUMN = 'input_data.input_draw_number'
 OUTPUT_RANDOM_SEED_COLUMN = 'randomness.random_seed'
-OUTPUT_SCENARIO_COLUMN = 'intervention'
+OUTPUT_SCENARIO_COLUMN = 'intervention.scenario'
 
 STANDARD_COLUMNS = {
     'total_population': TOTAL_POPULATION_COLUMN,

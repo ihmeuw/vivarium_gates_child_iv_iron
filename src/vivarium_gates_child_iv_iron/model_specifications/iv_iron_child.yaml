@@ -42,6 +42,11 @@ components:
             - ResultsStratifier()
             - BirthObserver()
 
+            - MaternalSupplementation()
+            - AdditiveRiskEffect('risk_factor.iron_folic_acid_supplementation', 'risk_factor.low_birth_weight.birth_exposure')
+            - AdditiveRiskEffect('risk_factor.multiple_micronutrient_supplementation', 'risk_factor.low_birth_weight.birth_exposure')
+            - AdditiveRiskEffect('risk_factor.balanced_energy_protein_supplementation', 'risk_factor.low_birth_weight.birth_exposure')
+
 configuration:
     input_data:
         input_draw_number: 0

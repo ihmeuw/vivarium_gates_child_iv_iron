@@ -291,6 +291,9 @@ class __AdditiveRisk(NamedTuple):
 
     # Keys that will be loaded into the artifact. must have a colon type declaration
     EXPOSURE: TargetString
+    DISTRIBUTION: TargetString
+    CATEGORIES: TargetString
+    # analogous to excess mortality rate
     EXCESS_SHIFT: TargetString
     # analogous to cause specific mortality rate
     RISK_SPECIFIC_SHIFT: TargetString
@@ -311,6 +314,8 @@ class __AdditiveRisk(NamedTuple):
 def _get_additive_risk_keys(treatment_type: str) -> __AdditiveRisk:
     return __AdditiveRisk(
         EXPOSURE=TargetString(f'risk_factor.{treatment_type}.exposure'),
+        DISTRIBUTION=TargetString(f'risk_factor.{treatment_type}.distribution'),
+        CATEGORIES=TargetString(f'risk_factor.{treatment_type}.categories'),
         EXCESS_SHIFT=TargetString(f'risk_factor.{treatment_type}.excess_shift'),
         RISK_SPECIFIC_SHIFT=TargetString(f'risk_factor.{treatment_type}.risk_specific_shift'),
     )
@@ -331,5 +336,8 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     SEVERE_PEM,
     LBWSG,
     AFFECTED_UNMODELED_CAUSES,
+    IFA_SUPPLEMENTATION,
+    MMN_SUPPLEMENTATION,
+    BEP_SUPPLEMENTATION,
 ]
 

@@ -4,7 +4,7 @@ Component for maternal supplementation and risk effects
 
 import numpy as np
 import pandas as pd
-from typing import Callable, Dict
+from typing import Callable, Dict, List
 
 from vivarium.framework.engine import Builder
 from vivarium.framework.lookup import LookupTable
@@ -25,18 +25,21 @@ from vivarium_public_health.treatment import LinearScaleUp
 from vivarium_gates_child_iv_iron.constants.data_keys import (
     BEP_SUPPLEMENTATION,
     IFA_SUPPLEMENTATION,
-    MMN_SUPPLEMENTATION
+    LBWSG,
+    MMN_SUPPLEMENTATION,
+    STUNTING,
 )
+from vivarium_gates_child_iv_iron.constants import data_values
+from vivarium_gates_child_iv_iron.utilities import get_random_variable
 
 
 class MaternalSupplementation:
 
     def __init__(self):
         self.exposure_column_name = "maternal_supplementation_coverage.exposure"
-        self.bep_exposure_pipeline_name = BEP_SUPPLEMENTATION.EXPOSURE
-        self.ifa_exposure_pipeline_name = IFA_SUPPLEMENTATION.EXPOSURE
-        self.mmn_exposure_pipeline_name = MMN_SUPPLEMENTATION.EXPOSURE
-
+        self.bep_exposure_pipeline_name = f'{BEP_SUPPLEMENTATION.name}.exposure'
+        self.ifa_exposure_pipeline_name = f'{IFA_SUPPLEMENTATION.name}.exposure'
+        self.mmn_exposure_pipeline_name = f'{MMN_SUPPLEMENTATION.name}.exposure'
 
     @property
     def name(self) -> str:
@@ -49,9 +52,21 @@ class MaternalSupplementation:
     # noinspection PyAttributeOutsideInit
     def setup(self, builder: Builder) -> None:
         self.start_time = get_time_stamp(builder.configuration.time.start)
-        self.bep_exposure_pipeline = self._get_exposure_pipeline(builder, self.bep_exposure_pipeline_name)
-        self.ifa_exposure_pipeline = self._get_exposure_pipeline(builder, self.ifa_exposure_pipeline_name)
-        self.mmn_exposure_pipeline = self._get_exposure_pipeline(builder, self.mmn_exposure_pipeline_name)
+        self.bep_exposure_pipeline = self._get_exposure_pipeline(
+            builder,
+            self.bep_exposure_pipeline_name,
+            self._get_bep_exposure
+        )
+        self.ifa_exposure_pipeline = self._get_exposure_pipeline(
+            builder,
+            self.ifa_exposure_pipeline_name,
+            self._get_ifa_exposure
+        )
+        self.mmn_exposure_pipeline = self._get_exposure_pipeline(
+            builder,
+            self.mmn_exposure_pipeline_name,
+            self._get_mmn_exposure
+        )
         self.population_view = self._get_population_view(builder)
 
         self._register_simulant_initializer(builder)
@@ -222,7 +237,7 @@ class BirthWeightShiftEffect:
         self.bep_effect_pipeline_name = f'{BEP_SUPPLEMENTATION.name}.effect'
 
         self.stunting_exposure_parameters_pipeline_name = (
-            f'risk_factor.{data_keys.STUNTING.name}.exposure_parameters'
+            f'risk_factor.{STUNTING.name}.exposure_parameters'
 
         )
         self.wasting_effect_pipeline_name = 'birth_weight_shift_on_mild_wasting.effect_size'
@@ -297,7 +312,7 @@ class BirthWeightShiftEffect:
         )
 
     # noinspection PyMethodMayBeStatic
-    def _get_stunting_effect_per_gram(self, builder: Builder) -> float:
+    def _get_stunting_effect_per_gram(self, builder: Builder) -> pd.Series:
         return get_random_variable(
             builder.configuration.input_data.input_draw_number,
             *data_values.LBWSG.STUNTING_EFFECT_PER_GRAM
@@ -305,15 +320,15 @@ class BirthWeightShiftEffect:
 
 
 def apply_birth_weight_effect(target: pd.DataFrame, cat3_increase: pd.Series) -> pd.DataFrame:
-    sam_and_mam = target[data_keys.STUNTING.CAT1] + target[data_keys.STUNTING.CAT2]
+    sam_and_mam = target[STUNTING.CAT1] + target[STUNTING.CAT2]
     apply_effect = cat3_increase < sam_and_mam
-    target.loc[apply_effect, data_keys.STUNTING.CAT3] = (
-            target[data_keys.STUNTING.CAT3] + cat3_increase
+    target.loc[apply_effect, STUNTING.CAT3] = (
+            target[STUNTING.CAT3] + cat3_increase
     )
-    target.loc[apply_effect, data_keys.STUNTING.CAT2] = (
-            target[data_keys.STUNTING.CAT2] * (1 - cat3_increase / sam_and_mam)
+    target.loc[apply_effect, STUNTING.CAT2] = (
+            target[STUNTING.CAT2] * (1 - cat3_increase / sam_and_mam)
     )
-    target.loc[apply_effect, data_keys.STUNTING.CAT1] = (
-            target[data_keys.STUNTING.CAT1] * (1 - cat3_increase / sam_and_mam)
+    target.loc[apply_effect, STUNTING.CAT1] = (
+            target[STUNTING.CAT1] * (1 - cat3_increase / sam_and_mam)
     )
     return target

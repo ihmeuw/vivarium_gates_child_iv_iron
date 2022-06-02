@@ -58,6 +58,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.POPULATION.TMRLE: load_theoretical_minimum_risk_life_expectancy,
         data_keys.POPULATION.ACMR: load_standard_data,
         data_keys.POPULATION.CRUDE_BIRTH_RATE: load_standard_data,
+
         data_keys.DIARRHEA.DURATION: load_duration,
         data_keys.DIARRHEA.PREVALENCE: load_prevalence_from_incidence_and_duration,
         data_keys.DIARRHEA.INCIDENCE_RATE: load_standard_data,
@@ -66,12 +67,14 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.DIARRHEA.EMR: load_emr_from_csmr_and_prevalence,
         data_keys.DIARRHEA.CSMR: load_standard_data,
         data_keys.DIARRHEA.RESTRICTIONS: load_metadata,
+
         data_keys.MEASLES.PREVALENCE: load_standard_data,
         data_keys.MEASLES.INCIDENCE_RATE: load_standard_data,
         data_keys.MEASLES.DISABILITY_WEIGHT: load_standard_data,
         data_keys.MEASLES.EMR: load_standard_data,
         data_keys.MEASLES.CSMR: load_standard_data,
         data_keys.MEASLES.RESTRICTIONS: load_metadata,
+
         data_keys.LRI.DURATION: load_duration,
         data_keys.LRI.PREVALENCE: load_prevalence_from_incidence_and_duration,
         data_keys.LRI.INCIDENCE_RATE: load_standard_data,
@@ -80,6 +83,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.LRI.EMR: load_emr_from_csmr_and_prevalence,
         data_keys.LRI.CSMR: load_standard_data,
         data_keys.LRI.RESTRICTIONS: load_metadata,
+
         data_keys.WASTING.DISTRIBUTION: load_metadata,
         data_keys.WASTING.ALT_DISTRIBUTION: load_metadata,
         data_keys.WASTING.CATEGORIES: load_metadata,
@@ -92,6 +96,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.STUNTING.EXPOSURE: load_standard_data,
         data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
         data_keys.STUNTING.PAF: load_categorical_paf,
+
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,
         data_keys.MODERATE_PEM.CSMR: load_pem_csmr,
@@ -100,12 +105,14 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.SEVERE_PEM.EMR: load_pem_emr,
         data_keys.SEVERE_PEM.CSMR: load_pem_csmr,
         data_keys.SEVERE_PEM.RESTRICTIONS: load_pem_restrictions,
+
         data_keys.LBWSG.DISTRIBUTION: load_metadata,
         data_keys.LBWSG.CATEGORIES: load_metadata,
         data_keys.LBWSG.EXPOSURE: load_lbwsg_exposure,
         data_keys.LBWSG.RELATIVE_RISK: load_lbwsg_rr,
         data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR: load_lbwsg_interpolated_rr,
         data_keys.LBWSG.PAF: load_lbwsg_paf,
+
         data_keys.AFFECTED_UNMODELED_CAUSES.URI_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.OTITIS_MEDIA_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.MENINGITIS_CSMR: load_standard_data,
@@ -116,6 +123,24 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_JAUNDICE_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.OTHER_NEONATAL_DISORDERS_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.SIDS_CSMR: load_sids_csmr,
+
+        data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
+        data_keys.IFA_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,
+        data_keys.IFA_SUPPLEMENTATION.EXPOSURE: load_dichotomous_treatment_exposure,
+        data_keys.IFA_SUPPLEMENTATION.EXCESS_SHIFT: load_treatment_excess_shift,
+        data_keys.IFA_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
+
+        data_keys.MMN_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
+        data_keys.MMN_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,
+        data_keys.MMN_SUPPLEMENTATION.EXPOSURE: load_dichotomous_treatment_exposure,
+        data_keys.MMN_SUPPLEMENTATION.EXCESS_SHIFT: load_treatment_excess_shift,
+        data_keys.MMN_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
+
+        data_keys.BEP_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
+        data_keys.BEP_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,
+        data_keys.BEP_SUPPLEMENTATION.EXPOSURE: load_dichotomous_treatment_exposure,
+        data_keys.BEP_SUPPLEMENTATION.EXCESS_SHIFT: load_treatment_excess_shift,
+        data_keys.BEP_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -238,7 +263,7 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
 
     demography = get_data(data_keys.POPULATION.DEMOGRAPHY, location)
     duration_draws = (
-        get_random_variable_draws(len(metadata.ARTIFACT_COLUMNS), distribution)
+        get_random_variable_draws(metadata.ARTIFACT_COLUMNS, *distribution)
         / metadata.YEAR_DURATION
     )
 
@@ -511,3 +536,153 @@ def load_sids_csmr(key: str, location: str) -> pd.DataFrame:
         return data
     else:
         raise ValueError(f"Unrecognized key {key}")
+
+
+def load_intervention_distribution(key: str, location: str) -> str:
+    try:
+        return {
+            data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_SUPPLEMENTATION.DISTRIBUTION,
+            data_keys.MMN_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_SUPPLEMENTATION.DISTRIBUTION,
+            data_keys.BEP_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_SUPPLEMENTATION.DISTRIBUTION,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+
+
+def load_intervention_categories(key: str, location: str) -> str:
+    try:
+        return {
+            data_keys.IFA_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_SUPPLEMENTATION.CATEGORIES,
+            data_keys.MMN_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_SUPPLEMENTATION.CATEGORIES,
+            data_keys.BEP_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_SUPPLEMENTATION.CATEGORIES,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+
+
+def load_dichotomous_treatment_exposure(key: str, location: str, **kwargs) -> pd.DataFrame:
+    try:
+        distribution_data = {
+            data_keys.IFA_SUPPLEMENTATION.EXPOSURE:
+                load_baseline_ifa_supplementation_coverage(location),
+            data_keys.MMN_SUPPLEMENTATION.EXPOSURE:
+                data_values.MATERNAL_SUPPLEMENTATION.BASELINE_MMN_COVERAGE,
+            data_keys.BEP_SUPPLEMENTATION.EXPOSURE:
+                data_values.MATERNAL_SUPPLEMENTATION.BASELINE_BEP_COVERAGE,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+    return load_dichotomous_exposure(location, distribution_data, is_risk=False, **kwargs)
+
+
+def load_treatment_excess_shift(key: str, location: str) -> pd.DataFrame:
+    try:
+        distribution_data = {
+            data_keys.IFA_SUPPLEMENTATION.EXCESS_SHIFT:
+                data_values.MATERNAL_SUPPLEMENTATION.IFA_BIRTH_WEIGHT_SHIFT,
+            data_keys.MMN_SUPPLEMENTATION.EXCESS_SHIFT:
+                data_values.MATERNAL_SUPPLEMENTATION.MMN_BIRTH_WEIGHT_SHIFT,
+            data_keys.BEP_SUPPLEMENTATION.EXCESS_SHIFT:
+                data_values.MATERNAL_SUPPLEMENTATION.BEP_BIRTH_WEIGHT_SHIFT,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+    return load_dichotomous_excess_shift(location, distribution_data, is_risk=False)
+
+
+def load_dichotomous_exposure(
+        location: str,
+        distribution_data: Union[float, pd.DataFrame],
+        is_risk: bool,
+        coverage: float = 1.0,
+        has_under_6mo_exposure: bool = True,
+) -> pd.DataFrame:
+    index = get_data(data_keys.POPULATION.DEMOGRAPHY, location).index
+    if type(distribution_data) == float:
+        base_exposure = pd.Series(distribution_data, index=metadata.ARTIFACT_INDEX_COLUMNS)
+        exposed = pd.DataFrame([base_exposure * coverage], index=index).droplevel("location")
+    else:
+        base_exposure = distribution_data
+        exposed = base_exposure * coverage
+
+    if not has_under_6mo_exposure:
+        exposed.loc[exposed.index.get_level_values('age_end') <= 0.5] = 0.0
+    unexposed = 1 - exposed
+
+    exposed['parameter'] = 'cat1' if is_risk else 'cat2'
+    unexposed['parameter'] = 'cat2' if is_risk else 'cat1'
+
+    exposure = pd.concat([exposed, unexposed]).set_index('parameter', append=True).sort_index()
+    return exposure
+
+
+def load_dichotomous_excess_shift(
+        location: str, distribution_data: Tuple, is_risk: bool
+) -> pd.DataFrame:
+    index = get_data(data_keys.POPULATION.DEMOGRAPHY, location).index
+    shift = get_random_variable_draws(metadata.ARTIFACT_COLUMNS, *distribution_data)
+
+    exposed = pd.DataFrame([shift], index=index)
+    exposed['parameter'] = 'cat1' if is_risk else 'cat2'
+    unexposed = pd.DataFrame([pd.Series(0.0, index=metadata.ARTIFACT_COLUMNS)], index=index)
+    unexposed['parameter'] = 'cat2' if is_risk else 'cat1'
+
+    excess_shift = pd.concat([exposed, unexposed])
+    excess_shift['affected_entity'] = data_keys.LBWSG.BIRTH_WEIGHT_EXPOSURE.name
+    excess_shift['affected_measure'] = data_keys.LBWSG.BIRTH_WEIGHT_EXPOSURE.measure
+
+    excess_shift = (
+        excess_shift
+        .set_index(['affected_entity', 'affected_measure', 'parameter'], append=True)
+        .sort_index()
+    )
+    return excess_shift
+
+
+def load_risk_specific_shift(key: str, location: str) -> pd.DataFrame:
+    try:
+        key_group: data_keys.__AdditiveRisk = {
+            data_keys.IFA_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: data_keys.IFA_SUPPLEMENTATION,
+            data_keys.MMN_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: data_keys.MMN_SUPPLEMENTATION,
+            data_keys.BEP_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: data_keys.BEP_SUPPLEMENTATION,
+        }[key]
+    except KeyError:
+        raise ValueError(f'Unrecognized key {key}')
+
+    # p_exposed * exposed_shift
+    exposure = (
+        get_data(key_group.EXPOSURE, location)
+    )
+    excess_shift = (
+        get_data(key_group.EXCESS_SHIFT, location)
+    )
+
+    risk_specific_shift = (
+        (exposure * excess_shift)
+            .groupby(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure'])
+            .sum()
+    )
+    return risk_specific_shift
+
+
+def load_baseline_ifa_supplementation_coverage(location: str) -> pd.DataFrame:
+
+    index = get_data(data_keys.POPULATION.DEMOGRAPHY, location).index
+    location_id = utility_data.get_location_id(location)
+    intervention_scenarios = pd.read_csv(paths.MATERNAL_INTERVENTION_COVERAGE_CSV)
+
+    df = intervention_scenarios.drop(
+        columns=['Unnamed: 0', 'scale_up', 'oral_iron_scenario', 'antenatal_iv_iron_scenario',
+                 'postpartum_iv_iron_scenario', 'antenatal_and_postpartum_iv_iron_scenario']
+    )
+    df = df.query('intervention == "ifa" & baseline_scenario == 1')
+    df = df.set_index(['location_id', 'year', 'draw']).loc[location_id].drop(
+        columns=['intervention', 'baseline_scenario'])
+    df = df.value.unstack()
+    df.columns.name = None
+    df = df.reset_index().drop(columns=['year'])
+    df = df.iloc[[0]]
+
+    exposure = pd.DataFrame(data=np.repeat(df.values, len(index), axis=0), columns=df.columns,
+                            index=index).droplevel("location")
+    return exposure

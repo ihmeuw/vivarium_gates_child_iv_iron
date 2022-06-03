@@ -91,3 +91,6 @@ configuration:
             - "year"
             - "sex"
             - "age"
+        birth:
+            - exclude:
+                  - "age"

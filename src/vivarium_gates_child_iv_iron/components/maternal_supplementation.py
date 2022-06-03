@@ -112,23 +112,23 @@ class MaternalSupplementation:
         pop = self.population_view.get(index)
         has_bep = pop[self.exposure_column_name] == "bep"
 
-        exposure = pd.Series('uncovered', index=index)
+        exposure = pd.Series(BEP_SUPPLEMENTATION.CAT1, index=index)
         exposure[has_bep] = BEP_SUPPLEMENTATION.CAT2
         return exposure
 
     def _get_ifa_exposure(self, index: pd.Index) -> pd.Series:
         pop = self.population_view.get(index)
-        has_ifa = pop[self.exposure_column_name] == "ifa"
+        has_ifa = pop[self.exposure_column_name].isin(["ifa", "mmn", "bep"])
 
-        exposure = pd.Series('uncovered', index=index)
+        exposure = pd.Series(IFA_SUPPLEMENTATION.CAT1, index=index)
         exposure[has_ifa] = IFA_SUPPLEMENTATION.CAT2
         return exposure
 
     def _get_mmn_exposure(self, index: pd.Index) -> pd.Series:
         pop = self.population_view.get(index)
-        has_mmn = pop[self.exposure_column_name] == "mmn"
+        has_mmn = pop[self.exposure_column_name].isin(["mmn", "bep"])
 
-        exposure = pd.Series('uncovered', index=index)
+        exposure = pd.Series(MMN_SUPPLEMENTATION.CAT1, index=index)
         exposure[has_mmn] = MMN_SUPPLEMENTATION.CAT2
         return exposure
 

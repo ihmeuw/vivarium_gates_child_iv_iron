@@ -594,25 +594,26 @@ def load_dichotomous_exposure(
         location: str,
         distribution_data: Union[float, pd.DataFrame],
         is_risk: bool,
-        coverage: float = 1.0,
-        has_under_6mo_exposure: bool = True,
 ) -> pd.DataFrame:
     index = get_data(data_keys.POPULATION.DEMOGRAPHY, location).index
     if type(distribution_data) == float:
-        base_exposure = pd.Series(distribution_data, index=metadata.ARTIFACT_INDEX_COLUMNS)
-        exposed = pd.DataFrame([base_exposure * coverage], index=index).droplevel("location")
+        base_exposure = pd.Series(distribution_data, index=index)
+        exposed = (
+            pd.DataFrame({f'draw_{i}': base_exposure for i in range(1000)})
+            .droplevel('location')
+        )
     else:
-        base_exposure = distribution_data
-        exposed = base_exposure * coverage
+        exposed = distribution_data
 
-    if not has_under_6mo_exposure:
-        exposed.loc[exposed.index.get_level_values('age_end') <= 0.5] = 0.0
     unexposed = 1 - exposed
-
     exposed['parameter'] = 'cat1' if is_risk else 'cat2'
     unexposed['parameter'] = 'cat2' if is_risk else 'cat1'
 
-    exposure = pd.concat([exposed, unexposed]).set_index('parameter', append=True).sort_index()
+    exposure = (
+        pd.concat([exposed, unexposed])
+        .set_index('parameter', append=True)
+        .sort_index()
+    )
     return exposure
 
 

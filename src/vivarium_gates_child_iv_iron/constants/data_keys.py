@@ -239,7 +239,7 @@ class __LowBirthWeightShortGestation(NamedTuple):
     PAF: TargetString = 'risk_factor.low_birth_weight_and_short_gestation.population_attributable_fraction'
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
-    BIRTH_WEIGHT_EXPOSURE = TargetString('risk_factor.low_birth_weight.birth_exposure')
+    BIRTH_WEIGHT_EXPOSURE = TargetString('risk_factor.birth_weight.birth_exposure')
 
     @property
     def name(self):
@@ -287,6 +287,44 @@ class CGFCategories(Enum):
     SEVERE = 'severe'
 
 
+class __AdditiveRisk(NamedTuple):
+
+    # Keys that will be loaded into the artifact. must have a colon type declaration
+    EXPOSURE: TargetString
+    DISTRIBUTION: TargetString
+    CATEGORIES: TargetString
+    # analogous to excess mortality rate
+    EXCESS_SHIFT: TargetString
+    # analogous to cause specific mortality rate
+    RISK_SPECIFIC_SHIFT: TargetString
+
+    # Useful keys not for the artifact - distinguished by not using the colon type declaration
+    CAT1 = 'cat1'
+    CAT2 = 'cat2'
+
+    @property
+    def name(self):
+        return self.EXPOSURE.name
+
+    @property
+    def log_name(self):
+        return self.name.replace('_', ' ')
+
+
+def _get_additive_risk_keys(treatment_type: str) -> __AdditiveRisk:
+    return __AdditiveRisk(
+        EXPOSURE=TargetString(f'risk_factor.{treatment_type}.exposure'),
+        DISTRIBUTION=TargetString(f'risk_factor.{treatment_type}.distribution'),
+        CATEGORIES=TargetString(f'risk_factor.{treatment_type}.categories'),
+        EXCESS_SHIFT=TargetString(f'risk_factor.{treatment_type}.excess_shift'),
+        RISK_SPECIFIC_SHIFT=TargetString(f'risk_factor.{treatment_type}.risk_specific_shift'),
+    )
+
+
+IFA_SUPPLEMENTATION = _get_additive_risk_keys('iron_folic_acid_supplementation')
+MMN_SUPPLEMENTATION = _get_additive_risk_keys('multiple_micronutrient_supplementation')
+BEP_SUPPLEMENTATION = _get_additive_risk_keys('balanced_energy_protein_supplementation')
+
 MAKE_ARTIFACT_KEY_GROUPS = [
     POPULATION,
     DIARRHEA,
@@ -298,5 +336,8 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     SEVERE_PEM,
     LBWSG,
     AFFECTED_UNMODELED_CAUSES,
+    IFA_SUPPLEMENTATION,
+    MMN_SUPPLEMENTATION,
+    BEP_SUPPLEMENTATION,
 ]
 

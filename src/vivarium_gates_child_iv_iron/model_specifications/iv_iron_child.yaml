@@ -40,7 +40,7 @@ components:
             - FertilityLineList()
             - LBWSGLineList()
             - ResultsStratifier()
-#            - BirthObserver()
+            - BirthObserver()
 
             - MaternalSupplementation()
             - AdditiveRiskEffect('risk_factor.iron_folic_acid_supplementation', 'risk_factor.birth_weight.birth_exposure')
@@ -92,5 +92,7 @@ configuration:
             - "sex"
             - "age"
         birth:
-            - exclude:
-                  - "age"
+            exclude:
+                - "age"
+            include:
+                - "maternal_supplementation"

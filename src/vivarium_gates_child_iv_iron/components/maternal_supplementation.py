@@ -2,30 +2,23 @@
 Component for maternal supplementation and risk effects
 """
 
-import numpy as np
 import pandas as pd
-from typing import Callable, Dict, List
+from typing import Callable, Dict
 
 from vivarium.framework.engine import Builder
 from vivarium.framework.lookup import LookupTable
 from vivarium.framework.population import PopulationView, SimulantData
-from vivarium.framework.randomness import RandomnessStream
 from vivarium.framework.time import get_time_stamp
 from vivarium.framework.values import Pipeline
 from vivarium_public_health.risks import RiskEffect
 from vivarium_public_health.risks.data_transformations import (
-    get_distribution_type,
-    get_exposure_post_processor,
     pivot_categorical,
     rebin_relative_risk_data
 )
-from vivarium_public_health.risks.distributions import SimulationDistribution
-from vivarium_public_health.treatment import LinearScaleUp
 
 from vivarium_gates_child_iv_iron.constants.data_keys import (
     BEP_SUPPLEMENTATION,
     IFA_SUPPLEMENTATION,
-    LBWSG,
     MMN_SUPPLEMENTATION,
     STUNTING,
 )
@@ -156,7 +149,6 @@ class AdditiveRiskEffect(RiskEffect):
     def __init__(self, risk: str, target: str):
         super().__init__(risk, target)
         self.effect_pipeline_name = f'{self.risk.name}.effect'
-        self.target_risk_specific_shift_pipeline_name = f'{self.target.name}.risk_specific_shift'
 
     # noinspection PyAttributeOutsideInit
     def setup(self, builder: Builder) -> None:
@@ -164,7 +156,6 @@ class AdditiveRiskEffect(RiskEffect):
         self.effect = self._get_effect_pipeline(builder)
         self.excess_shift_source = self._get_excess_shift_source(builder)
         self.risk_specific_shift_source = self._get_risk_specific_shift_source(builder)
-        self._register_risk_specific_shift_modifier(builder)
 
     # NOTE: this RR will never be used. Overriding superclass to avoid error
     def _get_relative_risk_source(self, builder: Builder) -> LookupTable:
@@ -198,7 +189,8 @@ class AdditiveRiskEffect(RiskEffect):
     def _get_target_modifier(self, builder: Builder) -> Callable[[pd.Index, pd.Series], pd.Series]:
         def adjust_target(index: pd.Index, target: pd.Series) -> pd.Series:
             effect = self.effect(index)
-            affected_rates = target + effect
+            risk_specific_shift = self.risk_specific_shift_source(index)
+            affected_rates = target - risk_specific_shift + effect
             return affected_rates
         return adjust_target
 
@@ -216,13 +208,6 @@ class AdditiveRiskEffect(RiskEffect):
 
     def _register_paf_modifier(self, builder: Builder) -> None:
         pass
-
-    def _register_risk_specific_shift_modifier(self, builder: Builder) -> None:
-        builder.value.register_value_modifier(
-            self.target_risk_specific_shift_pipeline_name,
-            modifier=self.risk_specific_shift_modifier,
-            requires_columns=['age', 'sex']
-        )
 
     ##################################
     # Pipeline sources and modifiers #

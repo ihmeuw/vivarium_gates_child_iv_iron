@@ -239,7 +239,7 @@ class __LowBirthWeightShortGestation(NamedTuple):
     PAF: TargetString = 'risk_factor.low_birth_weight_and_short_gestation.population_attributable_fraction'
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
-    BIRTH_WEIGHT_EXPOSURE = TargetString('risk_factor.low_birth_weight.birth_exposure')
+    BIRTH_WEIGHT_EXPOSURE = TargetString('risk_factor.birth_weight.birth_exposure')
 
     @property
     def name(self):

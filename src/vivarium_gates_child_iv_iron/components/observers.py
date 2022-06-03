@@ -11,7 +11,6 @@ from vivarium_public_health.metrics.stratification import (
     Source,
     SourceType,
 )
-from vivarium_public_health.utilities import to_years
 
 from vivarium_gates_child_iv_iron.constants import data_keys
 
@@ -44,13 +43,20 @@ class ResultsStratifier(ResultsStratifier_):
             mapper=self.child_growth_risk_factor_stratification_mapper,
         )
 
+        self.setup_stratification(
+            builder,
+            name="maternal_supplementation",
+            sources=[Source("maternal_supplementation_coverage.exposure", SourceType.COLUMN)],
+            categories=["uncovered", "ifa", "mmn", "bep"],
+        )
+
     ###########################
     # Stratifications Details #
     ###########################
 
     # noinspection PyMethodMayBeStatic
     def child_growth_risk_factor_stratification_mapper(self, row: pd.Series) -> str:
-    # applicable to stunting and wasting
+        # applicable to stunting and wasting
         return {
             "cat4": data_keys.CGFCategories.UNEXPOSED.value,
             "cat3": data_keys.CGFCategories.MILD.value,
@@ -76,7 +82,7 @@ class BirthObserver:
     gestational_age_column_name = "gestational_age_exposure"
     columns_required = ["entrance_time", birth_weight_column_name, gestational_age_column_name]
 
-    low_birth_weight_limit = 2500 # grams
+    low_birth_weight_limit = 2500   # grams
 
     def __repr__(self):
         return "BirthObserver()"

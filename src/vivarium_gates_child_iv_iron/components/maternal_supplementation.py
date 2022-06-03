@@ -35,6 +35,24 @@ from vivarium_gates_child_iv_iron.utilities import get_random_variable
 
 class MaternalSupplementation:
 
+    configuration_defaults = {
+        IFA_SUPPLEMENTATION.name: {
+            "exposure": "data",
+            "rebinned_exposed": [],
+            "category_thresholds": [],
+        },
+        MMN_SUPPLEMENTATION.name: {
+            "exposure": "data",
+            "rebinned_exposed": [],
+            "category_thresholds": [],
+        },
+        BEP_SUPPLEMENTATION.name: {
+            "exposure": "data",
+            "rebinned_exposed": [],
+            "category_thresholds": [],
+        }
+    }
+
     def __init__(self):
         self.exposure_column_name = "maternal_supplementation_coverage.exposure"
         self.bep_exposure_pipeline_name = f'{BEP_SUPPLEMENTATION.name}.exposure'

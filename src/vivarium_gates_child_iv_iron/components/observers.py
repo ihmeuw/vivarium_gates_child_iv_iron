@@ -47,14 +47,14 @@ class ResultsStratifier(ResultsStratifier_):
             builder,
             name="maternal_supplementation",
             sources=[Source("maternal_supplementation_exposure", SourceType.COLUMN)],
-            categories=["uncovered", "ifa", "mmn", "bep"],
+            categories={"uncovered", "ifa", "mmn", "bep"},
         )
 
         self.setup_stratification(
             builder,
             name="iv_iron",
             sources=[Source("iv_iron_exposure", SourceType.COLUMN)],
-            categories=["uncovered", "covered"],
+            categories={"uncovered", "covered"},
         )
 
     ###########################

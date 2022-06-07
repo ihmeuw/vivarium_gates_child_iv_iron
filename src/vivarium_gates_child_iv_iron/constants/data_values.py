@@ -1,16 +1,9 @@
-from datetime import datetime
 from typing import Dict, NamedTuple, Tuple
 
-import pandas as pd
 from scipy import stats
 
-from vivarium_gates_child_iv_iron.constants.metadata import YEAR_DURATION
-from vivarium_gates_child_iv_iron.utilities import (
-    get_norm_from_quantiles,
-    get_lognorm_from_quantiles,
-    get_truncnorm_from_quantiles,
-    get_truncnorm_from_sd
-)
+from vivarium_gates_child_iv_iron.utilities import get_norm_from_quantiles
+
 
 ##########################
 # Cause Model Parameters #
@@ -52,7 +45,7 @@ class __LBWSG(NamedTuple):
 LBWSG = __LBWSG()
 
 
-class __MaternalSupplementation(NamedTuple):
+class __MaternalIntervention(NamedTuple):
 
     DISTRIBUTION: str = 'dichotomous'
     CATEGORIES: Dict[str, str] = {
@@ -74,7 +67,10 @@ class __MaternalSupplementation(NamedTuple):
         'bep_birth_weight_shift', get_norm_from_quantiles(mean=66.96, lower=13.13, upper=120.78)
     )
 
-    ALTERNATIVE_COVERAGE: float = 0.9
+    BASELINE_IV_IRON_COVERAGE: float = 0.0
+    IV_IRON_BIRTH_WEIGHT_SHIFT: Tuple[str, stats.norm] = (
+        'iv_iron_birth_weight_shift', get_norm_from_quantiles(mean=50.0, lower=50.0, upper=50.0)
+    )
 
 
-MATERNAL_SUPPLEMENTATION = __MaternalSupplementation()
+MATERNAL_INTERVENTION = __MaternalIntervention()

@@ -3,7 +3,7 @@ Component for maternal supplementation and risk effects
 """
 
 import pandas as pd
-from typing import Callable, Dict
+from typing import Callable, Dict, List
 
 from vivarium.framework.engine import Builder
 from vivarium.framework.lookup import LookupTable
@@ -26,7 +26,7 @@ from vivarium_gates_child_iv_iron.constants import data_values
 from vivarium_gates_child_iv_iron.utilities import get_random_variable
 
 
-class MaternalSupplementation:
+class MaternalInterventions:
 
     configuration_defaults = {
         IFA_SUPPLEMENTATION.name: {
@@ -43,18 +43,28 @@ class MaternalSupplementation:
             "exposure": "data",
             "rebinned_exposed": [],
             "category_thresholds": [],
-        }
+        },
+        "iv_iron": {
+            "exposure": "data",
+            "rebinned_exposed": [],
+            "category_thresholds": [],
+        },
     }
 
     def __init__(self):
-        self.exposure_column_name = "maternal_supplementation_coverage.exposure"
+        self.supplementation_exposure_column_name = "maternal_supplementation_exposure"
+        self.iv_iron_exposure_column_name = "iv_iron_exposure"
         self.bep_exposure_pipeline_name = f'{BEP_SUPPLEMENTATION.name}.exposure'
         self.ifa_exposure_pipeline_name = f'{IFA_SUPPLEMENTATION.name}.exposure'
         self.mmn_exposure_pipeline_name = f'{MMN_SUPPLEMENTATION.name}.exposure'
+        self.iv_iron_exposure_pipeline_name = f'iv_iron.exposure'
+
+    def __repr__(self):
+        return "MaternalInterventions()"
 
     @property
     def name(self) -> str:
-        return 'maternal_supplementation'
+        return 'maternal_interventions'
 
     #################
     # Setup methods #
@@ -66,18 +76,28 @@ class MaternalSupplementation:
         self.bep_exposure_pipeline = self._get_exposure_pipeline(
             builder,
             self.bep_exposure_pipeline_name,
-            self._get_bep_exposure
+            self._get_bep_exposure,
+            [self.supplementation_exposure_column_name],
         )
         self.ifa_exposure_pipeline = self._get_exposure_pipeline(
             builder,
             self.ifa_exposure_pipeline_name,
-            self._get_ifa_exposure
+            self._get_ifa_exposure,
+            [self.supplementation_exposure_column_name],
         )
         self.mmn_exposure_pipeline = self._get_exposure_pipeline(
             builder,
             self.mmn_exposure_pipeline_name,
-            self._get_mmn_exposure
+            self._get_mmn_exposure,
+            [self.supplementation_exposure_column_name],
         )
+        self.iv_iron_exposure_pipeline = self._get_exposure_pipeline(
+            builder,
+            self.iv_iron_exposure_pipeline_name,
+            self._get_iv_iron_exposure,
+            [self.iv_iron_exposure_column_name],
+        )
+
         self.population_view = self._get_population_view(builder)
 
         self._register_simulant_initializer(builder)
@@ -85,35 +105,53 @@ class MaternalSupplementation:
     def _register_simulant_initializer(self, builder: Builder) -> None:
         builder.population.initializes_simulants(
             self.on_initialize_simulants,
-            creates_columns=[self.exposure_column_name],
+            creates_columns=[
+                self.supplementation_exposure_column_name,
+                self.iv_iron_exposure_column_name,
+            ],
         )
 
-    def _get_exposure_pipeline(self, builder: Builder, supplementation: str, exposure_source: Callable) -> Pipeline:
+    @staticmethod
+    def _get_exposure_pipeline(
+        builder: Builder,
+        supplementation: str,
+        exposure_source: Callable,
+        requires_columns: List[str],
+    ) -> Pipeline:
         return builder.value.register_value_producer(
-                    supplementation,
-                    source=exposure_source,
-                    requires_columns=[self.exposure_column_name],
-                )
+            supplementation,
+            source=exposure_source,
+            requires_columns=requires_columns,
+        )
 
     def on_initialize_simulants(self, pop_data: SimulantData) -> None:
         """
-        Initialize simulants from line list data. Population configuration contains a key "new_births" which is the
-        line list data.
+        Initialize simulants from line list data. Population configuration
+        contains a key "new_births" which is the line list data.
         """
-        columns = [self.exposure_column_name]
+        columns = [self.supplementation_exposure_column_name, self.iv_iron_exposure_column_name]
         new_simulants = pd.DataFrame(columns=columns, index=pop_data.index)
 
         if pop_data.creation_time >= self.start_time:
             new_births = pop_data.user_data["new_births"]
             new_births.index = pop_data.index
 
-            new_simulants[self.exposure_column_name] = new_births['maternal_supplementation_coverage']
+            new_simulants[self.supplementation_exposure_column_name] = (
+                new_births['maternal_supplementation_coverage']
+            )
+
+            new_simulants[self.iv_iron_exposure_column_name] = (
+                new_births['maternal_antenatal_iv_iron_coverage']
+            )
 
         self.population_view.update(new_simulants)
 
     def _get_population_view(self, builder: Builder) -> PopulationView:
         return builder.population.get_view(
-            [self.exposure_column_name]
+            [
+                self.supplementation_exposure_column_name,
+                self.iv_iron_exposure_column_name,
+            ]
         )
 
     ##################################
@@ -121,7 +159,7 @@ class MaternalSupplementation:
     ##################################
     def _get_bep_exposure(self, index: pd.Index) -> pd.Series:
         pop = self.population_view.get(index)
-        has_bep = pop[self.exposure_column_name] == "bep"
+        has_bep = pop[self.supplementation_exposure_column_name] == "bep"
 
         exposure = pd.Series(BEP_SUPPLEMENTATION.CAT1, index=index)
         exposure[has_bep] = BEP_SUPPLEMENTATION.CAT2
@@ -129,7 +167,7 @@ class MaternalSupplementation:
 
     def _get_ifa_exposure(self, index: pd.Index) -> pd.Series:
         pop = self.population_view.get(index)
-        has_ifa = pop[self.exposure_column_name].isin(["ifa", "mmn", "bep"])
+        has_ifa = pop[self.supplementation_exposure_column_name].isin(["ifa", "mmn", "bep"])
 
         exposure = pd.Series(IFA_SUPPLEMENTATION.CAT1, index=index)
         exposure[has_ifa] = IFA_SUPPLEMENTATION.CAT2
@@ -137,10 +175,16 @@ class MaternalSupplementation:
 
     def _get_mmn_exposure(self, index: pd.Index) -> pd.Series:
         pop = self.population_view.get(index)
-        has_mmn = pop[self.exposure_column_name].isin(["mmn", "bep"])
+        has_mmn = pop[self.supplementation_exposure_column_name].isin(["mmn", "bep"])
 
         exposure = pd.Series(MMN_SUPPLEMENTATION.CAT1, index=index)
         exposure[has_mmn] = MMN_SUPPLEMENTATION.CAT2
+        return exposure
+
+    def _get_iv_iron_exposure(self, index: pd.Index) -> pd.Series:
+        pop = self.population_view.get(index)
+        exposure = pd.Series("cat1", index=index, name=self.iv_iron_exposure_pipeline_name)
+        exposure[pop[self.iv_iron_exposure_column_name] == "covered"] = "cat2"
         return exposure
 
 

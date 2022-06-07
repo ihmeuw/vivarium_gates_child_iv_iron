@@ -123,9 +123,9 @@ class MaternalInterventions:
                 new_births['maternal_supplementation_coverage']
             )
 
-            new_simulants[self.iv_iron_exposure_column_name] = (
-                new_births['maternal_antenatal_iv_iron_coverage']
-            )
+            iv_iron_exposure = new_births['maternal_antenatal_iv_iron_coverage'].copy()
+            iv_iron_exposure[iv_iron_exposure == "invalid"] = "uncovered"
+            new_simulants[self.iv_iron_exposure_column_name] = iv_iron_exposure
 
         self.population_view.update(new_simulants)
 

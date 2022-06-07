@@ -68,9 +68,15 @@ STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
 WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'child_wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
-LOW_BIRTH_WEIGHT_SHORT_GESTATION_SUB_RISK_SUM_COLUM_TEMPLATE = '{LBWSG_SUB_RISK}_sum_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}'
-LIVE_BIRTHS_COLUMN_TEMPLATE = 'live_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}'
-LOW_WEIGHT_BIRTHS_COLUMN_TEMPLATE = 'low_weight_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}'
+LOW_BIRTH_WEIGHT_SHORT_GESTATION_SUB_RISK_SUM_COLUM_TEMPLATE = (
+    '{LBWSG_SUB_RISK}_sum_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}'
+)
+LIVE_BIRTHS_COLUMN_TEMPLATE = (
+    'live_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}'
+)
+LOW_WEIGHT_BIRTHS_COLUMN_TEMPLATE = (
+    'low_weight_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}'
+)
 
 
 COLUMN_TEMPLATES = {
@@ -127,6 +133,7 @@ CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories]
 CGF_RISK_STATES_NUMERIC = ("cat1", "cat2", "cat3", "cat4")
 LBWSG_SUB_RISKS = ("birth_weight", "gestational_age")
 MATERNAL_SUPPLEMENTATION_TYPES = ("uncovered", "ifa", "mmn", "bep")
+DICHOTOMOUS_COVERAGE_STATES = ("uncovered", "covered")
 
 TEMPLATE_FIELD_MAP = {
     'POP_STATE': POP_STATES,
@@ -149,6 +156,7 @@ TEMPLATE_FIELD_MAP = {
     "CGF_RISK_STATE_NUMERIC": CGF_RISK_STATES_NUMERIC,
     "LBWSG_SUB_RISK": LBWSG_SUB_RISKS,
     "SUPPLEMENTATION": MATERNAL_SUPPLEMENTATION_TYPES,
+    "IV_IRON": DICHOTOMOUS_COVERAGE_STATES,
 }
 
 

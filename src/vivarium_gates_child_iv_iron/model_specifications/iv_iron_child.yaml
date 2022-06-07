@@ -97,3 +97,4 @@ configuration:
                 - "age"
             include:
                 - "maternal_supplementation"
+                - "iv_iron"

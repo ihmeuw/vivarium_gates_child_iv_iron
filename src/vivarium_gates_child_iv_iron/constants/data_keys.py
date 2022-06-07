@@ -324,6 +324,7 @@ def _get_additive_risk_keys(treatment_type: str) -> __AdditiveRisk:
 IFA_SUPPLEMENTATION = _get_additive_risk_keys('iron_folic_acid_supplementation')
 MMN_SUPPLEMENTATION = _get_additive_risk_keys('multiple_micronutrient_supplementation')
 BEP_SUPPLEMENTATION = _get_additive_risk_keys('balanced_energy_protein_supplementation')
+IV_IRON = _get_additive_risk_keys('iv_iron')
 
 MAKE_ARTIFACT_KEY_GROUPS = [
     POPULATION,
@@ -339,5 +340,6 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     IFA_SUPPLEMENTATION,
     MMN_SUPPLEMENTATION,
     BEP_SUPPLEMENTATION,
+    IV_IRON,
 ]
 

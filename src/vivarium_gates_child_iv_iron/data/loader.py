@@ -13,16 +13,15 @@ for an example.
    No logging is done here. Logging is done in vivarium inputs itself and forwarded.
 """
 import pickle
-from typing import Dict, Tuple, Type, Union
+from typing import Tuple, Union
 
 import numpy as np
 import pandas as pd
-from gbd_mapping import Cause, causes, covariates, risk_factors, sequelae
+from gbd_mapping import Cause, sequelae
 from scipy.interpolate import RectBivariateSpline, griddata
 from vivarium.framework.artifact import EntityKey
 from vivarium_gbd_access import constants as gbd_constants
 from vivarium_gbd_access import gbd
-from vivarium_gbd_access.utilities import get_draws
 from vivarium_inputs import globals as vi_globals
 from vivarium_inputs import interface
 from vivarium_inputs import utilities as vi_utils
@@ -141,6 +140,12 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.BEP_SUPPLEMENTATION.EXPOSURE: load_dichotomous_treatment_exposure,
         data_keys.BEP_SUPPLEMENTATION.EXCESS_SHIFT: load_treatment_excess_shift,
         data_keys.BEP_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
+
+        data_keys.IV_IRON.DISTRIBUTION: load_intervention_distribution,
+        data_keys.IV_IRON.CATEGORIES: load_intervention_categories,
+        data_keys.IV_IRON.EXPOSURE: load_dichotomous_treatment_exposure,
+        data_keys.IV_IRON.EXCESS_SHIFT: load_treatment_excess_shift,
+        data_keys.IV_IRON.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -541,9 +546,10 @@ def load_sids_csmr(key: str, location: str) -> pd.DataFrame:
 def load_intervention_distribution(key: str, location: str) -> str:
     try:
         return {
-            data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_SUPPLEMENTATION.DISTRIBUTION,
-            data_keys.MMN_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_SUPPLEMENTATION.DISTRIBUTION,
-            data_keys.BEP_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_SUPPLEMENTATION.DISTRIBUTION,
+            data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_INTERVENTION.DISTRIBUTION,
+            data_keys.MMN_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_INTERVENTION.DISTRIBUTION,
+            data_keys.BEP_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_INTERVENTION.DISTRIBUTION,
+            data_keys.IV_IRON.DISTRIBUTION: data_values.MATERNAL_INTERVENTION.DISTRIBUTION,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -552,9 +558,10 @@ def load_intervention_distribution(key: str, location: str) -> str:
 def load_intervention_categories(key: str, location: str) -> str:
     try:
         return {
-            data_keys.IFA_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_SUPPLEMENTATION.CATEGORIES,
-            data_keys.MMN_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_SUPPLEMENTATION.CATEGORIES,
-            data_keys.BEP_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_SUPPLEMENTATION.CATEGORIES,
+            data_keys.IFA_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_INTERVENTION.CATEGORIES,
+            data_keys.MMN_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_INTERVENTION.CATEGORIES,
+            data_keys.BEP_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_INTERVENTION.CATEGORIES,
+            data_keys.IV_IRON.CATEGORIES: data_values.MATERNAL_INTERVENTION.CATEGORIES,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -566,9 +573,11 @@ def load_dichotomous_treatment_exposure(key: str, location: str, **kwargs) -> pd
             data_keys.IFA_SUPPLEMENTATION.EXPOSURE:
                 load_baseline_ifa_supplementation_coverage(location),
             data_keys.MMN_SUPPLEMENTATION.EXPOSURE:
-                data_values.MATERNAL_SUPPLEMENTATION.BASELINE_MMN_COVERAGE,
+                data_values.MATERNAL_INTERVENTION.BASELINE_MMN_COVERAGE,
             data_keys.BEP_SUPPLEMENTATION.EXPOSURE:
-                data_values.MATERNAL_SUPPLEMENTATION.BASELINE_BEP_COVERAGE,
+                data_values.MATERNAL_INTERVENTION.BASELINE_BEP_COVERAGE,
+            data_keys.IV_IRON.EXPOSURE:
+                data_values.MATERNAL_INTERVENTION.BASELINE_IV_IRON_COVERAGE,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -579,11 +588,13 @@ def load_treatment_excess_shift(key: str, location: str) -> pd.DataFrame:
     try:
         distribution_data = {
             data_keys.IFA_SUPPLEMENTATION.EXCESS_SHIFT:
-                data_values.MATERNAL_SUPPLEMENTATION.IFA_BIRTH_WEIGHT_SHIFT,
+                data_values.MATERNAL_INTERVENTION.IFA_BIRTH_WEIGHT_SHIFT,
             data_keys.MMN_SUPPLEMENTATION.EXCESS_SHIFT:
-                data_values.MATERNAL_SUPPLEMENTATION.MMN_BIRTH_WEIGHT_SHIFT,
+                data_values.MATERNAL_INTERVENTION.MMN_BIRTH_WEIGHT_SHIFT,
             data_keys.BEP_SUPPLEMENTATION.EXCESS_SHIFT:
-                data_values.MATERNAL_SUPPLEMENTATION.BEP_BIRTH_WEIGHT_SHIFT,
+                data_values.MATERNAL_INTERVENTION.BEP_BIRTH_WEIGHT_SHIFT,
+            data_keys.IV_IRON.EXCESS_SHIFT:
+                data_values.MATERNAL_INTERVENTION.IV_IRON_BIRTH_WEIGHT_SHIFT,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -646,6 +657,7 @@ def load_risk_specific_shift(key: str, location: str) -> pd.DataFrame:
             data_keys.IFA_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: data_keys.IFA_SUPPLEMENTATION,
             data_keys.MMN_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: data_keys.MMN_SUPPLEMENTATION,
             data_keys.BEP_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: data_keys.BEP_SUPPLEMENTATION,
+            data_keys.IV_IRON.RISK_SPECIFIC_SHIFT: data_keys.IV_IRON,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -660,8 +672,8 @@ def load_risk_specific_shift(key: str, location: str) -> pd.DataFrame:
 
     risk_specific_shift = (
         (exposure * excess_shift)
-            .groupby(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure'])
-            .sum()
+        .groupby(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure'])
+        .sum()
     )
     return risk_specific_shift
 

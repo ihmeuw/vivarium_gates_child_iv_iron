@@ -46,7 +46,7 @@ class ResultsStratifier(ResultsStratifier_):
         self.setup_stratification(
             builder,
             name="maternal_supplementation",
-            sources=[Source("maternal_supplementation_coverage.exposure", SourceType.COLUMN)],
+            sources=[Source("maternal_supplementation_exposure", SourceType.COLUMN)],
             categories=["uncovered", "ifa", "mmn", "bep"],
         )
 

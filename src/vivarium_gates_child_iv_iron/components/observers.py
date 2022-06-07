@@ -50,6 +50,13 @@ class ResultsStratifier(ResultsStratifier_):
             categories=["uncovered", "ifa", "mmn", "bep"],
         )
 
+        self.setup_stratification(
+            builder,
+            name="iv_iron",
+            sources=[Source("iv_iron_exposure", SourceType.COLUMN)],
+            categories=["uncovered", "covered"],
+        )
+
     ###########################
     # Stratifications Details #
     ###########################

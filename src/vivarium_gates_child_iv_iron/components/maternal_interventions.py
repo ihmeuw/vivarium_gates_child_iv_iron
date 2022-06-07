@@ -3,7 +3,7 @@ Component for maternal supplementation and risk effects
 """
 
 import pandas as pd
-from typing import Callable, Dict, List
+from typing import Callable, Dict
 
 from vivarium.framework.engine import Builder
 from vivarium.framework.lookup import LookupTable
@@ -73,29 +73,25 @@ class MaternalInterventions:
     # noinspection PyAttributeOutsideInit
     def setup(self, builder: Builder) -> None:
         self.start_time = get_time_stamp(builder.configuration.time.start)
-        self.bep_exposure_pipeline = self._get_exposure_pipeline(
-            builder,
+        self.bep_exposure_pipeline = builder.value.register_value_producer(
             self.bep_exposure_pipeline_name,
-            self._get_bep_exposure,
-            [self.supplementation_exposure_column_name],
+            source=self._get_bep_exposure,
+            requires_columns=[self.supplementation_exposure_column_name],
         )
-        self.ifa_exposure_pipeline = self._get_exposure_pipeline(
-            builder,
+        self.ifa_exposure_pipeline = builder.value.register_value_producer(
             self.ifa_exposure_pipeline_name,
-            self._get_ifa_exposure,
-            [self.supplementation_exposure_column_name],
+            source=self._get_ifa_exposure,
+            requires_columns=[self.supplementation_exposure_column_name],
         )
-        self.mmn_exposure_pipeline = self._get_exposure_pipeline(
-            builder,
+        self.mmn_exposure_pipeline = builder.value.register_value_producer(
             self.mmn_exposure_pipeline_name,
-            self._get_mmn_exposure,
-            [self.supplementation_exposure_column_name],
+            source=self._get_mmn_exposure,
+            requires_columns=[self.supplementation_exposure_column_name],
         )
-        self.iv_iron_exposure_pipeline = self._get_exposure_pipeline(
-            builder,
+        self.iv_iron_exposure_pipeline = builder.value.register_value_producer(
             self.iv_iron_exposure_pipeline_name,
-            self._get_iv_iron_exposure,
-            [self.iv_iron_exposure_column_name],
+            source=self._get_iv_iron_exposure,
+            requires_columns=[self.iv_iron_exposure_column_name],
         )
 
         self.population_view = self._get_population_view(builder)
@@ -109,19 +105,6 @@ class MaternalInterventions:
                 self.supplementation_exposure_column_name,
                 self.iv_iron_exposure_column_name,
             ],
-        )
-
-    @staticmethod
-    def _get_exposure_pipeline(
-        builder: Builder,
-        supplementation: str,
-        exposure_source: Callable,
-        requires_columns: List[str],
-    ) -> Pipeline:
-        return builder.value.register_value_producer(
-            supplementation,
-            source=exposure_source,
-            requires_columns=requires_columns,
         )
 
     def on_initialize_simulants(self, pop_data: SimulantData) -> None:

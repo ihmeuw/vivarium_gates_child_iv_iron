@@ -53,7 +53,7 @@ configuration:
     input_data:
         input_draw_number: 0
         artifact_path: '/ihme/costeffectiveness/artifacts/vivarium_gates_child_iv_iron/south_asia.hdf'
-        fertility_input_data_path: "/ihme/costeffectiveness/results/vivarium_gates_iv_iron/v8.0_intervention_scenarios/south_asia/2022_06_02_14_26_07/child_data/"
+        fertility_input_data_path: "/mnt/share/costeffectiveness/results/vivarium_gates_iv_iron/v8.0_intervention_scenarios/south_asia/2022_06_07_11_48_50/child_data/"
     interpolation:
         order: 0
         extrapolate: True

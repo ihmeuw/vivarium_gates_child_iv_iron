@@ -146,6 +146,12 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.IV_IRON.EXPOSURE: load_dichotomous_treatment_exposure,
         data_keys.IV_IRON.EXCESS_SHIFT: load_treatment_excess_shift,
         data_keys.IV_IRON.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
+
+        data_keys.MATERNAL_BMI_ANEMIA.DISTRIBUTION: load_maternal_bmi_anemia_distribution,
+        data_keys.MATERNAL_BMI_ANEMIA.CATEGORIES: load_maternal_bmi_anemia_categories,
+        data_keys.MATERNAL_BMI_ANEMIA.EXPOSURE: load_maternal_bmi_anemia_exposure,
+        data_keys.MATERNAL_BMI_ANEMIA.EXCESS_SHIFT: load_maternal_bmi_anemia_excess_shift,
+        data_keys.MATERNAL_BMI_ANEMIA.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
     }
     return mapping[lookup_key](lookup_key, location)
 
@@ -546,10 +552,10 @@ def load_sids_csmr(key: str, location: str) -> pd.DataFrame:
 def load_intervention_distribution(key: str, location: str) -> str:
     try:
         return {
-            data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_INTERVENTION.DISTRIBUTION,
-            data_keys.MMN_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_INTERVENTION.DISTRIBUTION,
-            data_keys.BEP_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_INTERVENTION.DISTRIBUTION,
-            data_keys.IV_IRON.DISTRIBUTION: data_values.MATERNAL_INTERVENTION.DISTRIBUTION,
+            data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_CHARACTERISTICS.DISTRIBUTION,
+            data_keys.MMN_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_CHARACTERISTICS.DISTRIBUTION,
+            data_keys.BEP_SUPPLEMENTATION.DISTRIBUTION: data_values.MATERNAL_CHARACTERISTICS.DISTRIBUTION,
+            data_keys.IV_IRON.DISTRIBUTION: data_values.MATERNAL_CHARACTERISTICS.DISTRIBUTION,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -558,10 +564,10 @@ def load_intervention_distribution(key: str, location: str) -> str:
 def load_intervention_categories(key: str, location: str) -> str:
     try:
         return {
-            data_keys.IFA_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_INTERVENTION.CATEGORIES,
-            data_keys.MMN_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_INTERVENTION.CATEGORIES,
-            data_keys.BEP_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_INTERVENTION.CATEGORIES,
-            data_keys.IV_IRON.CATEGORIES: data_values.MATERNAL_INTERVENTION.CATEGORIES,
+            data_keys.IFA_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_CHARACTERISTICS.CATEGORIES,
+            data_keys.MMN_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_CHARACTERISTICS.CATEGORIES,
+            data_keys.BEP_SUPPLEMENTATION.CATEGORIES: data_values.MATERNAL_CHARACTERISTICS.CATEGORIES,
+            data_keys.IV_IRON.CATEGORIES: data_values.MATERNAL_CHARACTERISTICS.CATEGORIES,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -573,11 +579,11 @@ def load_dichotomous_treatment_exposure(key: str, location: str, **kwargs) -> pd
             data_keys.IFA_SUPPLEMENTATION.EXPOSURE:
                 load_baseline_ifa_supplementation_coverage(location),
             data_keys.MMN_SUPPLEMENTATION.EXPOSURE:
-                data_values.MATERNAL_INTERVENTION.BASELINE_MMN_COVERAGE,
+                data_values.MATERNAL_CHARACTERISTICS.BASELINE_MMN_COVERAGE,
             data_keys.BEP_SUPPLEMENTATION.EXPOSURE:
-                data_values.MATERNAL_INTERVENTION.BASELINE_BEP_COVERAGE,
+                data_values.MATERNAL_CHARACTERISTICS.BASELINE_BEP_COVERAGE,
             data_keys.IV_IRON.EXPOSURE:
-                data_values.MATERNAL_INTERVENTION.BASELINE_IV_IRON_COVERAGE,
+                data_values.MATERNAL_CHARACTERISTICS.BASELINE_IV_IRON_COVERAGE,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -588,13 +594,13 @@ def load_treatment_excess_shift(key: str, location: str) -> pd.DataFrame:
     try:
         distribution_data = {
             data_keys.IFA_SUPPLEMENTATION.EXCESS_SHIFT:
-                data_values.MATERNAL_INTERVENTION.IFA_BIRTH_WEIGHT_SHIFT,
+                data_values.MATERNAL_CHARACTERISTICS.IFA_BIRTH_WEIGHT_SHIFT,
             data_keys.MMN_SUPPLEMENTATION.EXCESS_SHIFT:
-                data_values.MATERNAL_INTERVENTION.MMN_BIRTH_WEIGHT_SHIFT,
+                data_values.MATERNAL_CHARACTERISTICS.MMN_BIRTH_WEIGHT_SHIFT,
             data_keys.BEP_SUPPLEMENTATION.EXCESS_SHIFT:
-                data_values.MATERNAL_INTERVENTION.BEP_BIRTH_WEIGHT_SHIFT,
+                data_values.MATERNAL_CHARACTERISTICS.BEP_BIRTH_WEIGHT_SHIFT,
             data_keys.IV_IRON.EXCESS_SHIFT:
-                data_values.MATERNAL_INTERVENTION.IV_IRON_BIRTH_WEIGHT_SHIFT,
+                data_values.MATERNAL_CHARACTERISTICS.IV_IRON_BIRTH_WEIGHT_SHIFT,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -658,6 +664,7 @@ def load_risk_specific_shift(key: str, location: str) -> pd.DataFrame:
             data_keys.MMN_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: data_keys.MMN_SUPPLEMENTATION,
             data_keys.BEP_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: data_keys.BEP_SUPPLEMENTATION,
             data_keys.IV_IRON.RISK_SPECIFIC_SHIFT: data_keys.IV_IRON,
+            data_keys.MATERNAL_BMI_ANEMIA.RISK_SPECIFIC_SHIFT: data_keys.MATERNAL_BMI_ANEMIA,
         }[key]
     except KeyError:
         raise ValueError(f'Unrecognized key {key}')
@@ -699,3 +706,114 @@ def load_baseline_ifa_supplementation_coverage(location: str) -> pd.DataFrame:
     exposure = pd.DataFrame(data=np.repeat(df.values, len(index), axis=0), columns=df.columns,
                             index=index).droplevel("location")
     return exposure
+
+
+def load_maternal_bmi_anemia_distribution(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.MATERNAL_BMI_ANEMIA.DISTRIBUTION:
+        raise ValueError(f"Unrecognized key {key}")
+    return 'ordered_polytomous'
+
+
+def load_maternal_bmi_anemia_categories(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.MATERNAL_BMI_ANEMIA.CATEGORIES:
+        raise ValueError(f"Unrecognized key {key}")
+    return {
+        "cat4": "Pre-pregnancy/first trimester BMI exposure >= 18.5 and Early pregnancy "
+                "“untreated” hemoglobin exposure >= 10g/dL",
+        "cat3": "Pre-pregnancy/first trimester BMI exposure < 18.5 and Early pregnancy "
+                "“untreated” hemoglobin exposure >= 10g/dL",
+        "cat2": "Pre-pregnancy/first trimester BMI exposure >= 18.5 and Early pregnancy "
+                "“untreated” hemoglobin exposure < 10g/dL",
+        "cat1": "Pre-pregnancy/first trimester BMI exposure < 18.5 and Early pregnancy "
+                "“untreated” hemoglobin exposure < 10g/dL",
+    }
+
+
+def load_maternal_bmi_anemia_exposure(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.MATERNAL_BMI_ANEMIA.EXPOSURE:
+        raise ValueError(f"Unrecognized key {key}")
+
+    location_id = utility_data.get_location_id(location)
+    index = get_data(data_keys.POPULATION.DEMOGRAPHY, location).index.droplevel('location')
+
+    def _read_hgb_data(filename: str) -> pd.Series:
+        raw_data = pd.read_csv(paths.RAW_DATA_DIR / filename)
+        data = (
+            raw_data.loc[raw_data['location_id'] == location_id, ['draw', 'value']]
+            .set_index('draw')
+            .squeeze()
+        )
+        data.index.name = None
+        return data
+
+    p_low_hgb = _read_hgb_data("pregnant_proportion_with_hgb_below_100.csv")
+    p_low_bmi_given_low_hgb = _read_hgb_data(
+        "prevalence_of_low_bmi_given_hemoglobin_below_10_age_weighted.csv"
+    )
+    p_low_bmi_given_high_hgb = _read_hgb_data(
+        "prevalence_of_low_bmi_given_hemoglobin_above_10_age_weighted.csv"
+    )
+
+    cat4_exposure = pd.DataFrame([(1 - p_low_hgb) * (1 - p_low_bmi_given_high_hgb)], index=index)
+    cat4_exposure['parameter'] = 'cat4'
+
+    cat3_exposure = pd.DataFrame([(1 - p_low_hgb) * p_low_bmi_given_high_hgb], index=index)
+    cat3_exposure['parameter'] = 'cat3'
+
+    cat2_exposure = pd.DataFrame([p_low_hgb * (1 - p_low_bmi_given_low_hgb)], index=index)
+    cat2_exposure['parameter'] = 'cat2'
+
+    cat1_exposure = pd.DataFrame([p_low_hgb * p_low_bmi_given_low_hgb], index=index)
+    cat1_exposure['parameter'] = 'cat1'
+
+    exposure = pd.concat([cat4_exposure, cat3_exposure, cat2_exposure, cat1_exposure])
+
+    exposure = (
+        exposure
+        .set_index(['parameter'], append=True)
+        .sort_index()
+    )
+
+    return exposure
+
+
+def load_maternal_bmi_anemia_excess_shift(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.MATERNAL_BMI_ANEMIA.EXCESS_SHIFT:
+        raise ValueError(f"Unrecognized key {key}")
+
+    index = get_data(data_keys.POPULATION.DEMOGRAPHY, location).index.droplevel('location')
+    cat3_draws = get_random_variable_draws(
+        metadata.ARTIFACT_COLUMNS,
+        *data_values.MATERNAL_CHARACTERISTICS.BMI_ANEMIA_CAT3_BIRTH_WEIGHT_SHIFT
+    )
+    cat2_draws = get_random_variable_draws(
+        metadata.ARTIFACT_COLUMNS,
+        *data_values.MATERNAL_CHARACTERISTICS.BMI_ANEMIA_CAT2_BIRTH_WEIGHT_SHIFT
+    )
+    cat1_draws = get_random_variable_draws(
+        metadata.ARTIFACT_COLUMNS,
+        *data_values.MATERNAL_CHARACTERISTICS.BMI_ANEMIA_CAT1_BIRTH_WEIGHT_SHIFT
+    )
+
+    cat4_shift = pd.DataFrame(0.0, columns=metadata.ARTIFACT_COLUMNS, index=index)
+    cat4_shift['parameter'] = 'cat4'
+    
+    cat3_shift = pd.DataFrame([cat3_draws], index=index)
+    cat3_shift['parameter'] = 'cat3'
+    
+    cat2_shift = pd.DataFrame([cat2_draws], index=index)
+    cat2_shift['parameter'] = 'cat2'
+    
+    cat1_shift = pd.DataFrame([cat1_draws], index=index)
+    cat1_shift['parameter'] = 'cat1'
+
+    excess_shift = pd.concat([cat4_shift, cat3_shift, cat2_shift, cat1_shift])
+    excess_shift['affected_entity'] = data_keys.LBWSG.BIRTH_WEIGHT_EXPOSURE.name
+    excess_shift['affected_measure'] = data_keys.LBWSG.BIRTH_WEIGHT_EXPOSURE.measure
+
+    excess_shift = (
+        excess_shift
+        .set_index(['affected_entity', 'affected_measure', 'parameter'], append=True)
+        .sort_index()
+    )
+    return excess_shift

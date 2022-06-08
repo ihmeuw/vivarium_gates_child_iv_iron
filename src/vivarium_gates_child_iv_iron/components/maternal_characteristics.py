@@ -26,7 +26,7 @@ from vivarium_gates_child_iv_iron.constants import data_values
 from vivarium_gates_child_iv_iron.utilities import get_random_variable
 
 
-class MaternalInterventions:
+class MaternalCharacteristics:
 
     configuration_defaults = {
         IFA_SUPPLEMENTATION.name: {
@@ -49,22 +49,30 @@ class MaternalInterventions:
             "rebinned_exposed": [],
             "category_thresholds": [],
         },
+        "maternal_bmi_anemia": {
+            "exposure": "data",
+            "rebinned_exposed": [],
+            "category_thresholds": [],
+        },
     }
 
     def __init__(self):
         self.supplementation_exposure_column_name = "maternal_supplementation_exposure"
         self.iv_iron_exposure_column_name = "iv_iron_exposure"
+        self.maternal_bmi_anemia_exposure_column_name = "maternal_bmi_anemia_exposure"
+
         self.bep_exposure_pipeline_name = f'{BEP_SUPPLEMENTATION.name}.exposure'
         self.ifa_exposure_pipeline_name = f'{IFA_SUPPLEMENTATION.name}.exposure'
         self.mmn_exposure_pipeline_name = f'{MMN_SUPPLEMENTATION.name}.exposure'
         self.iv_iron_exposure_pipeline_name = f'iv_iron.exposure'
+        self.maternal_bmi_anemia_exposure_pipeline_name = "maternal_bmi_anemia.exposure"
 
     def __repr__(self):
-        return "MaternalInterventions()"
+        return "MaternalCharacteristics()"
 
     @property
     def name(self) -> str:
-        return 'maternal_interventions'
+        return 'maternal_characteristics'
 
     #################
     # Setup methods #
@@ -93,6 +101,11 @@ class MaternalInterventions:
             source=self._get_iv_iron_exposure,
             requires_columns=[self.iv_iron_exposure_column_name],
         )
+        self.maternal_bmi_anemia_exposure_pipeline = builder.value.register_value_producer(
+            self.maternal_bmi_anemia_exposure_pipeline_name,
+            source=self._get_maternal_bmi_anemia_exposure,
+            requires_columns=[self.maternal_bmi_anemia_exposure_column_name],
+        )
 
         self.population_view = self._get_population_view(builder)
 
@@ -104,6 +117,7 @@ class MaternalInterventions:
             creates_columns=[
                 self.supplementation_exposure_column_name,
                 self.iv_iron_exposure_column_name,
+                self.maternal_bmi_anemia_exposure_column_name,
             ],
         )
 
@@ -112,7 +126,11 @@ class MaternalInterventions:
         Initialize simulants from line list data. Population configuration
         contains a key "new_births" which is the line list data.
         """
-        columns = [self.supplementation_exposure_column_name, self.iv_iron_exposure_column_name]
+        columns = [
+            self.supplementation_exposure_column_name,
+            self.iv_iron_exposure_column_name,
+            self.maternal_bmi_anemia_exposure_column_name,
+        ]
         new_simulants = pd.DataFrame(columns=columns, index=pop_data.index)
 
         if pop_data.creation_time >= self.start_time:
@@ -121,12 +139,15 @@ class MaternalInterventions:
 
             maternal_supplementation = new_births['maternal_supplementation_coverage'].copy()
             maternal_supplementation[maternal_supplementation == 'invalid'] = 'uncovered'
-
             new_simulants[self.supplementation_exposure_column_name] = maternal_supplementation
 
             iv_iron_exposure = new_births['maternal_antenatal_iv_iron_coverage'].copy()
             iv_iron_exposure[iv_iron_exposure == "invalid"] = "uncovered"
             new_simulants[self.iv_iron_exposure_column_name] = iv_iron_exposure
+
+            new_simulants[self.maternal_bmi_anemia_exposure_column_name] = (
+                new_births['joint_bmi_anemia_category']
+            )
 
         self.population_view.update(new_simulants)
 
@@ -135,6 +156,7 @@ class MaternalInterventions:
             [
                 self.supplementation_exposure_column_name,
                 self.iv_iron_exposure_column_name,
+                self.maternal_bmi_anemia_exposure_column_name,
             ]
         )
 
@@ -166,6 +188,12 @@ class MaternalInterventions:
         return exposure
 
     def _get_iv_iron_exposure(self, index: pd.Index) -> pd.Series:
+        pop = self.population_view.get(index)
+        exposure = pd.Series("cat1", index=index, name=self.iv_iron_exposure_pipeline_name)
+        exposure[pop[self.iv_iron_exposure_column_name] == "covered"] = "cat2"
+        return exposure
+
+    def _get_maternal_bmi_anemia_exposure(self, index: pd.Index) -> pd.Series:
         pop = self.population_view.get(index)
         exposure = pd.Series("cat1", index=index, name=self.iv_iron_exposure_pipeline_name)
         exposure[pop[self.iv_iron_exposure_column_name] == "covered"] = "cat2"

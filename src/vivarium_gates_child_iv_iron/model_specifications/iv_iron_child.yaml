@@ -93,6 +93,14 @@ configuration:
             - "year"
             - "sex"
             - "age"
+        child_stunting:
+            include:
+                - "maternal_supplementation"
+                - "iv_iron"
+        child_wasting:
+            include:
+                - "maternal_supplementation"
+                - "iv_iron"
         birth:
             exclude:
                 - "age"

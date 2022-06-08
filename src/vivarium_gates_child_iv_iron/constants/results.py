@@ -69,13 +69,13 @@ WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
     'child_wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 LOW_BIRTH_WEIGHT_SHORT_GESTATION_SUB_RISK_SUM_COLUM_TEMPLATE = (
-    '{LBWSG_SUB_RISK}_sum_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}'
+    '{LBWSG_SUB_RISK}_sum_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}_bmi_anemia_(BMI_ANEMIA}'
 )
 LIVE_BIRTHS_COLUMN_TEMPLATE = (
-    'live_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}'
+    'live_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}_bmi_anemia_(BMI_ANEMIA}'
 )
 LOW_WEIGHT_BIRTHS_COLUMN_TEMPLATE = (
-    'low_weight_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}'
+    'low_weight_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}_bmi_anemia_(BMI_ANEMIA}'
 )
 
 
@@ -130,9 +130,9 @@ CAUSES_OF_DISABILITY = (
     models.SEVERE_PEM.STATE_NAME,
 )
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
-CGF_RISK_STATES_NUMERIC = ("cat1", "cat2", "cat3", "cat4")
+TETRACHOTOMTOUS_RISK_STATES = ("cat1", "cat2", "cat3", "cat4")
 LBWSG_SUB_RISKS = ("birth_weight", "gestational_age")
-MATERNAL_SUPPLEMENTATION_TYPES = ("uncovered", "ifa", "mmn", "bep")
+MATERNAL_SUPPLEMENTATION_TYPES = ("uncovered", "ifa", "mms", "bep")
 DICHOTOMOUS_COVERAGE_STATES = ("uncovered", "covered")
 
 TEMPLATE_FIELD_MAP = {
@@ -153,10 +153,11 @@ TEMPLATE_FIELD_MAP = {
     'MODERATE_PEM_TRANSITION': models.MODERATE_PEM.TRANSITIONS,
     'SEVERE_PEM_TRANSITION': models.SEVERE_PEM.TRANSITIONS,
     'CGF_RISK_STATE': CGF_RISK_STATES,
-    "CGF_RISK_STATE_NUMERIC": CGF_RISK_STATES_NUMERIC,
+    "CGF_RISK_STATE_NUMERIC": TETRACHOTOMTOUS_RISK_STATES,
     "LBWSG_SUB_RISK": LBWSG_SUB_RISKS,
     "SUPPLEMENTATION": MATERNAL_SUPPLEMENTATION_TYPES,
     "IV_IRON": DICHOTOMOUS_COVERAGE_STATES,
+    "BMI_ANEMIA": TETRACHOTOMTOUS_RISK_STATES,
 }
 
 

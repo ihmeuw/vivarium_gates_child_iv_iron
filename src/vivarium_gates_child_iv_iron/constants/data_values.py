@@ -45,7 +45,7 @@ class __LBWSG(NamedTuple):
 LBWSG = __LBWSG()
 
 
-class __MaternalIntervention(NamedTuple):
+class __MaternalCharacteristics(NamedTuple):
 
     DISTRIBUTION: str = 'dichotomous'
     CATEGORIES: Dict[str, str] = {
@@ -72,5 +72,20 @@ class __MaternalIntervention(NamedTuple):
         'iv_iron_birth_weight_shift', get_norm_from_quantiles(mean=50.0, lower=50.0, upper=50.0)
     )
 
+    BMI_ANEMIA_CAT3_BIRTH_WEIGHT_SHIFT: Tuple[str, stats.norm] = (
+        'bmi_anemia_cat3_birth_weight_shift',
+        get_norm_from_quantiles(mean=-182.0, lower=-239.0, upper=-125.0)
+    )
 
-MATERNAL_INTERVENTION = __MaternalIntervention()
+    BMI_ANEMIA_CAT2_BIRTH_WEIGHT_SHIFT: Tuple[str, stats.norm] = (
+        'bmi_anemia_cat2_birth_weight_shift',
+        get_norm_from_quantiles(mean=-94.0, lower=-142.0, upper=-46.0)
+    )
+
+    BMI_ANEMIA_CAT1_BIRTH_WEIGHT_SHIFT: Tuple[str, stats.norm] = (
+        'bmi_anemia_cat1_birth_weight_shift',
+        get_norm_from_quantiles(mean=-275.0, lower=-336.0, upper=-213.0)
+    )
+
+
+MATERNAL_CHARACTERISTICS = __MaternalCharacteristics()

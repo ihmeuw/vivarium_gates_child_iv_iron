@@ -325,6 +325,7 @@ IFA_SUPPLEMENTATION = _get_additive_risk_keys('iron_folic_acid_supplementation')
 MMN_SUPPLEMENTATION = _get_additive_risk_keys('multiple_micronutrient_supplementation')
 BEP_SUPPLEMENTATION = _get_additive_risk_keys('balanced_energy_protein_supplementation')
 IV_IRON = _get_additive_risk_keys('iv_iron')
+MATERNAL_BMI_ANEMIA = _get_additive_risk_keys("maternal_bmi_anemia")
 
 MAKE_ARTIFACT_KEY_GROUPS = [
     POPULATION,
@@ -341,5 +342,6 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     MMN_SUPPLEMENTATION,
     BEP_SUPPLEMENTATION,
     IV_IRON,
+    MATERNAL_BMI_ANEMIA,
 ]
 

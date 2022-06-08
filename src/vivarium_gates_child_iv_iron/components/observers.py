@@ -57,6 +57,13 @@ class ResultsStratifier(ResultsStratifier_):
             categories={"uncovered", "covered"},
         )
 
+        self.setup_stratification(
+            builder,
+            name="bmi_anemia",
+            sources=[Source("maternal_bmi_anemia_exposure", SourceType.COLUMN)],
+            categories={"cat4", "cat3", "cat2", "cat1"},
+        )
+
     ###########################
     # Stratifications Details #
     ###########################

@@ -48,7 +48,7 @@ components:
             - AdditiveRiskEffect('risk_factor.balanced_energy_protein_supplementation', 'risk_factor.birth_weight.birth_exposure')
             - AdditiveRiskEffect('risk_factor.iv_iron', 'risk_factor.birth_weight.birth_exposure')
             - AdditiveRiskEffect('risk_factor.maternal_bmi_anemia', 'risk_factor.birth_weight.birth_exposure')
-#            - BirthWeightShiftEffect()
+            - BirthWeightShiftEffect()
 
 configuration:
     input_data:

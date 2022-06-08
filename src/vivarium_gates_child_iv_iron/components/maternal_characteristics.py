@@ -3,7 +3,7 @@ Component for maternal supplementation and risk effects
 """
 
 import pandas as pd
-from typing import Callable, Dict
+from typing import Callable
 
 from vivarium.framework.engine import Builder
 from vivarium.framework.lookup import LookupTable
@@ -21,6 +21,7 @@ from vivarium_gates_child_iv_iron.constants.data_keys import (
     IFA_SUPPLEMENTATION,
     MMN_SUPPLEMENTATION,
     STUNTING,
+    WASTING,
 )
 from vivarium_gates_child_iv_iron.constants import data_values
 from vivarium_gates_child_iv_iron.utilities import get_random_variable
@@ -64,7 +65,7 @@ class MaternalCharacteristics:
         self.bep_exposure_pipeline_name = f'{BEP_SUPPLEMENTATION.name}.exposure'
         self.ifa_exposure_pipeline_name = f'{IFA_SUPPLEMENTATION.name}.exposure'
         self.mmn_exposure_pipeline_name = f'{MMN_SUPPLEMENTATION.name}.exposure'
-        self.iv_iron_exposure_pipeline_name = f'iv_iron.exposure'
+        self.iv_iron_exposure_pipeline_name = 'iv_iron.exposure'
         self.maternal_bmi_anemia_exposure_pipeline_name = "maternal_bmi_anemia.exposure"
 
     def __repr__(self):
@@ -293,12 +294,17 @@ class BirthWeightShiftEffect:
         self.ifa_effect_pipeline_name = f'{IFA_SUPPLEMENTATION.name}.effect'
         self.mmn_effect_pipeline_name = f'{MMN_SUPPLEMENTATION.name}.effect'
         self.bep_effect_pipeline_name = f'{BEP_SUPPLEMENTATION.name}.effect'
+        self.iv_iron_effect_pipeline_name = 'iv_iron.effect'
 
         self.stunting_exposure_parameters_pipeline_name = (
             f'risk_factor.{STUNTING.name}.exposure_parameters'
 
         )
-        self.wasting_effect_pipeline_name = 'birth_weight_shift_on_mild_wasting.effect_size'
+
+        self.wasting_exposure_parameters_pipeline_name = (
+            f'risk_factor.{WASTING.name}.exposure_parameters'
+
+        )
 
     def __repr__(self):
         return f"BirthWeightShiftEffect()"
@@ -318,34 +324,26 @@ class BirthWeightShiftEffect:
     # noinspection PyAttributeOutsideInit
     def setup(self, builder: Builder) -> None:
         self.stunting_effect_per_gram = self._get_stunting_effect_per_gram(builder)
+        self.wasting_effect_per_gram = data_values.LBWSG.WASTING_EFFECT_PER_GRAM
 
-        self.pipelines = self._get_pipelines(builder)
-        self.wasting_effect_pipeline = self._get_effect_on_wasting_exposure_pipeline(builder)
-        self._register_stunting_exposure_modifier(builder)
-
-    def _get_pipelines(self, builder: Builder) -> Dict[str, Pipeline]:
-        return {
+        self.pipelines = {
             pipeline_name: builder.value.get_value(pipeline_name) for pipeline_name in [
                 self.ifa_effect_pipeline_name,
                 self.mmn_effect_pipeline_name,
                 self.bep_effect_pipeline_name,
+                self.iv_iron_effect_pipeline_name,
             ]
         }
 
-    def _register_stunting_exposure_modifier(self, builder: Builder) -> None:
         builder.value.register_value_modifier(
             self.stunting_exposure_parameters_pipeline_name,
             modifier=self._modify_stunting_exposure_parameters,
             requires_values=list(self.pipelines.keys()),
         )
 
-    def _get_effect_on_wasting_exposure_pipeline(self, builder: Builder) -> Pipeline:
-        return builder.value.register_value_producer(
-            self.wasting_effect_pipeline_name,
-            source=(
-                lambda idx:
-                self._get_total_birth_weight_shift(idx) * data_values.LBWSG.WASTING_EFFECT_PER_GRAM
-            ),
+        builder.value.register_value_modifier(
+            self.wasting_exposure_parameters_pipeline_name,
+            modifier=self._modify_wasting_exposure_parameters,
             requires_values=list(self.pipelines.keys()),
         )
 
@@ -357,7 +355,13 @@ class BirthWeightShiftEffect:
             self, index: pd.Index, target: pd.DataFrame
     ) -> pd.DataFrame:
         cat3_increase = self._get_total_birth_weight_shift(index) * self.stunting_effect_per_gram
-        return apply_birth_weight_effect(target, cat3_increase)
+        return self._apply_birth_weight_effect(target, cat3_increase)
+
+    def _modify_wasting_exposure_parameters(
+            self, index: pd.Index, target: pd.DataFrame
+    ) -> pd.DataFrame:
+        cat3_increase = self._get_total_birth_weight_shift(index) * self.wasting_effect_per_gram
+        return self._apply_birth_weight_effect(target, cat3_increase)
 
     ##################
     # Helper methods #
@@ -376,17 +380,17 @@ class BirthWeightShiftEffect:
             *data_values.LBWSG.STUNTING_EFFECT_PER_GRAM
         )
 
-
-def apply_birth_weight_effect(target: pd.DataFrame, cat3_increase: pd.Series) -> pd.DataFrame:
-    sam_and_mam = target[STUNTING.CAT1] + target[STUNTING.CAT2]
-    apply_effect = cat3_increase < sam_and_mam
-    target.loc[apply_effect, STUNTING.CAT3] = (
-            target[STUNTING.CAT3] + cat3_increase
-    )
-    target.loc[apply_effect, STUNTING.CAT2] = (
-            target[STUNTING.CAT2] * (1 - cat3_increase / sam_and_mam)
-    )
-    target.loc[apply_effect, STUNTING.CAT1] = (
-            target[STUNTING.CAT1] * (1 - cat3_increase / sam_and_mam)
-    )
-    return target
+    @staticmethod
+    def _apply_birth_weight_effect(target: pd.DataFrame, cat3_increase: pd.Series) -> pd.DataFrame:
+        sam_and_mam = target[STUNTING.CAT1] + target[STUNTING.CAT2]
+        apply_effect = cat3_increase < sam_and_mam
+        target.loc[apply_effect, STUNTING.CAT3] = (
+                target[STUNTING.CAT3] + cat3_increase
+        )
+        target.loc[apply_effect, STUNTING.CAT2] = (
+                target[STUNTING.CAT2] * (1 - cat3_increase / sam_and_mam)
+        )
+        target.loc[apply_effect, STUNTING.CAT1] = (
+                target[STUNTING.CAT1] * (1 - cat3_increase / sam_and_mam)
+        )
+        return target

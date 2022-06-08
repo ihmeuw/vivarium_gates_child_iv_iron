@@ -294,7 +294,7 @@ class BirthWeightShiftEffect:
         self.ifa_effect_pipeline_name = f'{IFA_SUPPLEMENTATION.name}.effect'
         self.mmn_effect_pipeline_name = f'{MMN_SUPPLEMENTATION.name}.effect'
         self.bep_effect_pipeline_name = f'{BEP_SUPPLEMENTATION.name}.effect'
-        self.iv_iron_exposure_pipeline_name = 'iv_iron.exposure'
+        self.iv_iron_exposure_pipeline_name = 'iv_iron.effect'
 
         self.stunting_exposure_parameters_pipeline_name = (
             f'risk_factor.{STUNTING.name}.exposure_parameters'

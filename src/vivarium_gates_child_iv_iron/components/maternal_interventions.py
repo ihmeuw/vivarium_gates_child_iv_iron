@@ -150,7 +150,7 @@ class MaternalInterventions:
 
     def _get_ifa_exposure(self, index: pd.Index) -> pd.Series:
         pop = self.population_view.get(index)
-        has_ifa = pop[self.supplementation_exposure_column_name].isin(["ifa", "mmn", "bep"])
+        has_ifa = pop[self.supplementation_exposure_column_name].isin(["ifa", "mms", "bep"])
 
         exposure = pd.Series(IFA_SUPPLEMENTATION.CAT1, index=index)
         exposure[has_ifa] = IFA_SUPPLEMENTATION.CAT2
@@ -158,7 +158,7 @@ class MaternalInterventions:
 
     def _get_mmn_exposure(self, index: pd.Index) -> pd.Series:
         pop = self.population_view.get(index)
-        has_mmn = pop[self.supplementation_exposure_column_name].isin(["mmn", "bep"])
+        has_mmn = pop[self.supplementation_exposure_column_name].isin(["mms", "bep"])
 
         exposure = pd.Series(MMN_SUPPLEMENTATION.CAT1, index=index)
         exposure[has_mmn] = MMN_SUPPLEMENTATION.CAT2

@@ -132,7 +132,7 @@ CAUSES_OF_DISABILITY = (
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
 TETRACHOTOMTOUS_RISK_STATES = ("cat1", "cat2", "cat3", "cat4")
 LBWSG_SUB_RISKS = ("birth_weight", "gestational_age")
-MATERNAL_SUPPLEMENTATION_TYPES = ("uncovered", "ifa", "mmn", "bep")
+MATERNAL_SUPPLEMENTATION_TYPES = ("uncovered", "ifa", "mms", "bep")
 DICHOTOMOUS_COVERAGE_STATES = ("uncovered", "covered")
 
 TEMPLATE_FIELD_MAP = {

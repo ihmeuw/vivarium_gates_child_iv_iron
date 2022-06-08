@@ -194,9 +194,8 @@ class MaternalCharacteristics:
         return exposure
 
     def _get_maternal_bmi_anemia_exposure(self, index: pd.Index) -> pd.Series:
-        pop = self.population_view.get(index)
-        exposure = pd.Series("cat1", index=index, name=self.iv_iron_exposure_pipeline_name)
-        exposure[pop[self.iv_iron_exposure_column_name] == "covered"] = "cat2"
+        exposure = self.population_view.get(index)[self.maternal_bmi_anemia_exposure_column_name]
+        exposure.name = self.maternal_bmi_anemia_exposure_pipeline_name
         return exposure
 
 

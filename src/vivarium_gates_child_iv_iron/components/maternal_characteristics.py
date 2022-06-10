@@ -2,6 +2,7 @@
 Component for maternal supplementation and risk effects
 """
 
+import numpy as np
 import pandas as pd
 from typing import Callable
 
@@ -244,9 +245,7 @@ class AdditiveRiskEffect(RiskEffect):
 
     def _get_target_modifier(self, builder: Builder) -> Callable[[pd.Index, pd.Series], pd.Series]:
         def adjust_target(index: pd.Index, target: pd.Series) -> pd.Series:
-            effect = self.effect(index)
-            risk_specific_shift = self.risk_specific_shift_source(index)
-            affected_rates = target - risk_specific_shift + effect
+            affected_rates = target + self.effect(index)
             return affected_rates
         return adjust_target
 
@@ -284,7 +283,10 @@ class AdditiveRiskEffect(RiskEffect):
         relative_risk.columns = index_columns + ['value']
         relative_risk = relative_risk.set_index(index_columns)
 
-        effect = relative_risk.loc[exposure.index, 'value'].droplevel(self.risk.name)
+        raw_effect = relative_risk.loc[exposure.index, 'value'].droplevel(self.risk.name)
+
+        risk_specific_shift = self.risk_specific_shift_source(index)
+        effect = raw_effect - risk_specific_shift
         return effect
 
 
@@ -382,15 +384,16 @@ class BirthWeightShiftEffect:
 
     @staticmethod
     def _apply_birth_weight_effect(target: pd.DataFrame, cat3_increase: pd.Series) -> pd.DataFrame:
-        sam_and_mam = target[STUNTING.CAT1] + target[STUNTING.CAT2]
-        apply_effect = cat3_increase < sam_and_mam
-        target.loc[apply_effect, STUNTING.CAT3] = (
-                target[STUNTING.CAT3] + cat3_increase
+        sam_and_mam = target["cat1"] + target["cat2"]
+        cat3 = target["cat3"]
+
+        # can't remove more from a category than exists in it categories
+        true_cat3_increase = np.maximum(
+            np.minimum(sam_and_mam, cat3_increase),
+            np.minimum(cat3, -cat3_increase)
         )
-        target.loc[apply_effect, STUNTING.CAT2] = (
-                target[STUNTING.CAT2] * (1 - cat3_increase / sam_and_mam)
-        )
-        target.loc[apply_effect, STUNTING.CAT1] = (
-                target[STUNTING.CAT1] * (1 - cat3_increase / sam_and_mam)
-        )
+
+        target["cat3"] = target["cat3"] + true_cat3_increase
+        target["cat2"] = target["cat2"] * (1 - true_cat3_increase / sam_and_mam)
+        target["cat1"] = target["cat1"] * (1 - true_cat3_increase / sam_and_mam)
         return target

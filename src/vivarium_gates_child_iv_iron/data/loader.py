@@ -59,7 +59,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.POPULATION.CRUDE_BIRTH_RATE: load_standard_data,
 
         data_keys.DIARRHEA.DURATION: load_duration,
-        data_keys.DIARRHEA.PREVALENCE: load_diarrhea_prevalence_from_incidence_and_duration,
+        data_keys.DIARRHEA.PREVALENCE: load_prevalence_from_incidence_and_duration,
         data_keys.DIARRHEA.INCIDENCE_RATE: load_standard_data,
         data_keys.DIARRHEA.REMISSION_RATE: load_remission_rate_from_duration,
         data_keys.DIARRHEA.DISABILITY_WEIGHT: load_standard_data,
@@ -75,7 +75,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.MEASLES.RESTRICTIONS: load_metadata,
 
         data_keys.POST_NEONATAL_LRI.DURATION: load_duration,
-        data_keys.POST_NEONATAL_LRI.PREVALENCE: load_post_neonatal_lri_prevalence_from_incidence_and_duration,
+        data_keys.POST_NEONATAL_LRI.PREVALENCE: load_prevalence_from_incidence_and_duration,
         data_keys.POST_NEONATAL_LRI.INCIDENCE_RATE: load_standard_data,
         data_keys.POST_NEONATAL_LRI.REMISSION_RATE: load_remission_rate_from_duration,
         data_keys.POST_NEONATAL_LRI.DISABILITY_WEIGHT: load_standard_data,
@@ -286,9 +286,10 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
     return duration.droplevel("location")
 
 
-def load_post_neonatal_lri_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.DataFrame:
+def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.DataFrame:
     try:
         cause = {
+            data_keys.DIARRHEA.PREVALENCE: data_keys.DIARRHEA,
             data_keys.POST_NEONATAL_LRI.PREVALENCE: data_keys.POST_NEONATAL_LRI,
         }[key]
     except KeyError:
@@ -298,19 +299,16 @@ def load_post_neonatal_lri_prevalence_from_incidence_and_duration(key: str, loca
     duration = get_data(cause.DURATION, location)
     prevalence = incidence_rate * duration
 
-    # Restrict LRI age groups
-    restricted_prevalence = prevalence.query('age_end <= 0.07671233')
-    restricted_prevalence = restricted_prevalence * 0
-    all_other_prevalence = prevalence.query('age_start >= 0.07671233')
+    # get enn prevalence
+    birth_prevalence = data_values.BIRTH_PREVALENCE_OF_ZERO
+    enn_prevalence = prevalence.query("age_start == 0")
+    enn_prevalence = (birth_prevalence + enn_prevalence) / 2
+    all_other_prevalence = prevalence.query("age_start != 0.0")
 
-    prevalence = pd.concat([restricted_prevalence, all_other_prevalence]).sort_index()
+    prevalence = pd.concat([enn_prevalence, all_other_prevalence]).sort_index()
 
     return prevalence
 
-
-def load_diarrhea_prevalence_from_incidence_and_duration(key: str, location: str):
-    # todo: Add Diarrheal prev back in
-    
 
 def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
     try:
@@ -827,4 +825,5 @@ def load_neonatal_lri_csmr(key, location):
 
     else:
         # todo: implement
+        pass
 

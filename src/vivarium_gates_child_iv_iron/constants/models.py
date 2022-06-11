@@ -29,7 +29,7 @@ class __SISModel:
 ###########################
 
 DIARRHEA = __SISModel(data_keys.DIARRHEA.name)
-LRI = __SISModel(data_keys.LRI.name)
+LRI = __SISModel(data_keys.POST_NEONATAL_LRI.name)
 MEASLES = __SISModel(data_keys.MEASLES.name)
 MODERATE_PEM = __SISModel(data_keys.MODERATE_PEM.name)
 SEVERE_PEM = __SISModel(data_keys.SEVERE_PEM.name)

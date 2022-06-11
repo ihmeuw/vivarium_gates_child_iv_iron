@@ -63,5 +63,7 @@ class __AgeGroup(NamedTuple):
         YEARS_1_TO_4,
     }
 
+    LRI_RESTRICTED_AGE_GROUPS = {EARLY_NEONATAL_ID, LATE_NEONATAL_ID}
+
 
 AGE_GROUP = __AgeGroup()

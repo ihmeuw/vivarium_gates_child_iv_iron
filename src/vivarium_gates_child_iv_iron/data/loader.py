@@ -294,7 +294,6 @@ def load_post_neonatal_lri_prevalence_from_incidence_and_duration(key: str, loca
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
 
-    # todo: Add Diarrheal prev back in
     incidence_rate = get_data(cause.INCIDENCE_RATE, location)
     duration = get_data(cause.DURATION, location)
     prevalence = incidence_rate * duration
@@ -308,6 +307,10 @@ def load_post_neonatal_lri_prevalence_from_incidence_and_duration(key: str, loca
 
     return prevalence
 
+
+def load_diarrhea_prevalence_from_incidence_and_duration(key: str, location: str):
+    # todo: Add Diarrheal prev back in
+    
 
 def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
     try:

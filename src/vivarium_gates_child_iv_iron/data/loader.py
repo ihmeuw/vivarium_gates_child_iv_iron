@@ -80,7 +80,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.POST_NEONATAL_LRI.REMISSION_RATE: load_remission_rate_from_duration,
         data_keys.POST_NEONATAL_LRI.DISABILITY_WEIGHT: load_standard_data,
         data_keys.POST_NEONATAL_LRI.EMR: load_emr_from_csmr_and_prevalence,
-        data_keys.POST_NEONATAL_LRI.CSMR: load_standard_data,
+        data_keys.POST_NEONATAL_LRI.CSMR: load_post_neonatal_lri_csmr,
         data_keys.POST_NEONATAL_LRI.RESTRICTIONS: load_metadata,
 
         data_keys.WASTING.DISTRIBUTION: load_metadata,
@@ -122,7 +122,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_JAUNDICE_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.OTHER_NEONATAL_DISORDERS_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.SIDS_CSMR: load_sids_csmr,
-        data_keys.AFFECTED_UNMODELED_CAUSES.LRI_RESTRICTED_AGES_CSMR: load_neonatal_lri_csmr,
+        data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_LRI_CSMR: load_neonatal_lri_csmr,
 
         data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
         data_keys.IFA_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,
@@ -332,7 +332,7 @@ def load_emr_from_csmr_and_prevalence(key: str, location: str) -> pd.DataFrame:
         }[key]
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
-    # todo: subset out ENN and LNN for LRI
+
     csmr = get_data(cause.CSMR, location)
     prevalence = get_data(cause.PREVALENCE, location)
     data = (csmr / prevalence).fillna(0)
@@ -819,11 +819,36 @@ def load_maternal_bmi_anemia_excess_shift(key: str, location: str) -> pd.DataFra
     return excess_shift
 
 
-def load_neonatal_lri_csmr(key, location):
+def load_neonatal_lri_csmr(key: str, location: str) -> pd.DataFrame:
     if key != data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_LRI_CSMR:
         raise ValueError(f"Unrecognized key {key}")
 
     else:
-        # todo: implement
-        pass
+        key = 'cause.lower_respiratory_infections.cause_specific_mortality_rate'
+        key = EntityKey(key)
+        entity: Cause = utilities.get_entity(key)
 
+        data = interface.get_measure(entity, key.measure, location).droplevel("location")
+        non_neonatal = data.query('age_start >= 0.076712')
+        non_neonatal = non_neonatal * 0
+        data = data.query('age_end <= 0.076712')
+        csmr = pd.concat([data, non_neonatal]).sort_index()
+
+        return csmr
+
+
+def load_post_neonatal_lri_csmr(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.POST_NEONATAL_LRI.CSMR:
+        raise ValueError(f"Unrecognized key {key}")
+
+    else:
+        key = EntityKey(key)
+        entity: Cause = utilities.get_entity(key)
+        data = interface.get_measure(entity, key.measure, location).droplevel("location")
+
+        neonatal = data.query('age_end <= 0.076712')
+        neonatal = neonatal * 0
+        post_neonatal = data.query('age_start >= 0.076712')
+        csmr = pd.concat([neonatal, post_neonatal]).sort_index()
+
+        return csmr

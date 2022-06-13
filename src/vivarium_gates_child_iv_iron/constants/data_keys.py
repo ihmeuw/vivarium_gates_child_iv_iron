@@ -90,14 +90,14 @@ MEASLES = __Measles()
 class __PostNeonatalLowerRespiratoryInfections(NamedTuple):
 
     # Keys that will be loaded into the artifact. must have a colon type declaration
-    DURATION: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.duration')
-    PREVALENCE: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.prevalence')
-    INCIDENCE_RATE: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.incidence_rate')
-    REMISSION_RATE: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.remission_rate')
-    DISABILITY_WEIGHT: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.disability_weight')
-    EMR: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.excess_mortality_rate')
-    CSMR: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.cause_specific_mortality_rate')
-    RESTRICTIONS: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.restrictions')
+    DURATION: TargetString = TargetString('cause.lower_respiratory_infections.duration')
+    PREVALENCE: TargetString = TargetString('cause.lower_respiratory_infections.prevalence')
+    INCIDENCE_RATE: TargetString = TargetString('cause.lower_respiratory_infections.incidence_rate')
+    REMISSION_RATE: TargetString = TargetString('cause.lower_respiratory_infections.remission_rate')
+    DISABILITY_WEIGHT: TargetString = TargetString('cause.lower_respiratory_infections.disability_weight')
+    EMR: TargetString = TargetString('cause.lower_respiratory_infections.excess_mortality_rate')
+    CSMR: TargetString = TargetString('cause.lower_respiratory_infections.cause_specific_mortality_rate')
+    RESTRICTIONS: TargetString = TargetString('cause.lower_respiratory_infections.restrictions')
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 

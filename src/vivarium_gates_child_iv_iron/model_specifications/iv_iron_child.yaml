@@ -6,7 +6,7 @@ components:
         disease:
             - SIS('diarrheal_diseases')
             - SIS_fixed_duration('measles', '10.0')
-            - SIS('lower_respiratory_infections')
+            - SIS('post_neonatal_lower_respiratory_infections')
             - RiskAttributableDisease('cause.moderate_protein_energy_malnutrition', 'risk_factor.child_wasting')
             - RiskAttributableDisease('cause.severe_protein_energy_malnutrition', 'risk_factor.child_wasting')
         risks:
@@ -92,6 +92,7 @@ configuration:
         - "hemolytic_disease_and_other_neonatal_jaundice"
         - "other_neonatal_disorders"
         - "sudden_infant_death_syndrome"
+        - "neonatal_lower_respiratory_infections"
 
     moderate_protein_energy_malnutrition:
         threshold: ['cat2']

@@ -108,11 +108,11 @@ class __LowerRespiratoryInfections(NamedTuple):
 
     @property
     def name(self):
-        return 'lower_respiratory_infections'
+        return 'post_neonatal_lower_respiratory_infections'
 
     @property
     def log_name(self):
-        return 'lower respiratory infections'
+        return 'post-neonatal lower respiratory infections'
 
 
 LRI = __LowerRespiratoryInfections()

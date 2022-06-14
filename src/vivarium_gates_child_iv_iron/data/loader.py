@@ -850,7 +850,7 @@ def load_post_neonatal_lri_csmr(key: str, location: str) -> pd.DataFrame:
 
     else:
         data = load_standard_data(data_keys.LRI.CSMR, location)
-        data.loc[data.index.get_level_values('age_end') <= 0.076712, :] = 0
+        data.loc[data.index.get_level_values('age_end') < 1.0, :] = 0
         return data
 
 

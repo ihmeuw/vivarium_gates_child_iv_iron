@@ -87,30 +87,35 @@ class __Measles(NamedTuple):
 MEASLES = __Measles()
 
 
-class __PostNeonatalLowerRespiratoryInfections(NamedTuple):
+class __LowerRespiratoryInfections(NamedTuple):
 
     # Keys that will be loaded into the artifact. must have a colon type declaration
-    DURATION: TargetString = TargetString('cause.lower_respiratory_infections.duration')
-    PREVALENCE: TargetString = TargetString('cause.lower_respiratory_infections.prevalence')
-    INCIDENCE_RATE: TargetString = TargetString('cause.lower_respiratory_infections.incidence_rate')
-    REMISSION_RATE: TargetString = TargetString('cause.lower_respiratory_infections.remission_rate')
-    DISABILITY_WEIGHT: TargetString = TargetString('cause.lower_respiratory_infections.disability_weight')
-    EMR: TargetString = TargetString('cause.lower_respiratory_infections.excess_mortality_rate')
-    CSMR: TargetString = TargetString('cause.lower_respiratory_infections.cause_specific_mortality_rate')
-    RESTRICTIONS: TargetString = TargetString('cause.lower_respiratory_infections.restrictions')
+    POST_NEONATAL_DURATION: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.duration')
+    POST_NEONATAL_PREVALENCE: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.prevalence')
+    POST_NEONATAL_INCIDENCE_RATE: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.incidence_rate')
+    POST_NEONATAL_REMISSION_RATE: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.remission_rate')
+    POST_NEONATAL_DISABILITY_WEIGHT: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.disability_weight')
+    POST_NEONATAL_EMR: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.excess_mortality_rate')
+    POST_NEONATAL_CSMR: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.cause_specific_mortality_rate')
+    POST_NEONATAL_RESTRICTIONS: TargetString = TargetString('cause.post_neonatal_lower_respiratory_infections.restrictions')
+    NEONATAL_CSMR: TargetString = TargetString('cause.neonatal_lower_respiratory_infections.cause_specific_mortality_rate')
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
+    CSMR = TargetString('cause.lower_respiratory_infections.cause_specific_mortality_rate')
+    DISABILITY_WEIGHT = TargetString('cause.lower_respiratory_infections.disability_weight')
+    RESTRICTIONS = TargetString('cause.lower_respiratory_infections.restrictions')
+    INCIDENCE_RATE = TargetString('cause.lower_respiratory_infections.incidence_rate')
 
     @property
     def name(self):
-        return 'post_neonatal_lower_respiratory_infections'
+        return 'lower_respiratory_infections'
 
     @property
     def log_name(self):
-        return 'post-neonatal lower respiratory infections'
+        return 'lower respiratory infections'
 
 
-POST_NEONATAL_LRI = __PostNeonatalLowerRespiratoryInfections()
+LRI = __LowerRespiratoryInfections()
 
 
 class __ProteinEnergyMalnutrition(NamedTuple):
@@ -266,7 +271,6 @@ class __AffectedUnmodeledCauses(NamedTuple):
     NEONATAL_JAUNDICE_CSMR: TargetString = TargetString('cause.hemolytic_disease_and_other_neonatal_jaundice.cause_specific_mortality_rate')
     OTHER_NEONATAL_DISORDERS_CSMR: TargetString = TargetString('cause.other_neonatal_disorders.cause_specific_mortality_rate')
     SIDS_CSMR: TargetString = TargetString('cause.sudden_infant_death_syndrome.cause_specific_mortality_rate')
-    NEONATAL_LRI_CSMR = TargetString('cause.neonatal_lower_respiratory_infections.cause_specific_mortality_rate')
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 
@@ -333,7 +337,7 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     POPULATION,
     DIARRHEA,
     MEASLES,
-    POST_NEONATAL_LRI,
+    LRI,
     STUNTING,
     WASTING,
     MODERATE_PEM,

@@ -74,14 +74,15 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.MEASLES.CSMR: load_standard_data,
         data_keys.MEASLES.RESTRICTIONS: load_metadata,
 
-        data_keys.POST_NEONATAL_LRI.DURATION: load_duration,
-        data_keys.POST_NEONATAL_LRI.PREVALENCE: load_prevalence_from_incidence_and_duration,
-        data_keys.POST_NEONATAL_LRI.INCIDENCE_RATE: load_standard_data,
-        data_keys.POST_NEONATAL_LRI.REMISSION_RATE: load_remission_rate_from_duration,
-        data_keys.POST_NEONATAL_LRI.DISABILITY_WEIGHT: load_standard_data,
-        data_keys.POST_NEONATAL_LRI.EMR: load_emr_from_csmr_and_prevalence,
-        data_keys.POST_NEONATAL_LRI.CSMR: load_post_neonatal_lri_csmr,
-        data_keys.POST_NEONATAL_LRI.RESTRICTIONS: load_metadata,
+        data_keys.LRI.POST_NEONATAL_DURATION: load_duration,
+        data_keys.LRI.POST_NEONATAL_PREVALENCE: load_prevalence_from_incidence_and_duration,
+        data_keys.LRI.POST_NEONATAL_INCIDENCE_RATE: load_post_neonatal_lri_incidence_rate,
+        data_keys.LRI.POST_NEONATAL_REMISSION_RATE: load_remission_rate_from_duration,
+        data_keys.LRI.POST_NEONATAL_DISABILITY_WEIGHT: load_post_neonatal_lri_disability_weight,
+        data_keys.LRI.POST_NEONATAL_EMR: load_emr_from_csmr_and_prevalence,
+        data_keys.LRI.POST_NEONATAL_CSMR: load_post_neonatal_lri_csmr,
+        data_keys.LRI.POST_NEONATAL_RESTRICTIONS: load_post_neonatal_lri_restrictions,
+        data_keys.LRI.NEONATAL_CSMR: load_neonatal_lri_csmr,
 
         data_keys.WASTING.DISTRIBUTION: load_metadata,
         data_keys.WASTING.ALT_DISTRIBUTION: load_metadata,
@@ -122,7 +123,6 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_JAUNDICE_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.OTHER_NEONATAL_DISORDERS_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.SIDS_CSMR: load_sids_csmr,
-        data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_LRI_CSMR: load_neonatal_lri_csmr,
 
         data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
         data_keys.IFA_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,
@@ -268,7 +268,7 @@ def load_duration(key: str, location: str) -> pd.DataFrame:
     try:
         distribution = {
             data_keys.DIARRHEA.DURATION: data_values.DIARRHEA_DURATION,
-            data_keys.POST_NEONATAL_LRI.DURATION: data_values.LRI_DURATION,
+            data_keys.LRI.POST_NEONATAL_DURATION: data_values.LRI_DURATION,
         }[key]
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
@@ -290,13 +290,18 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
     try:
         cause = {
             data_keys.DIARRHEA.PREVALENCE: data_keys.DIARRHEA,
-            data_keys.POST_NEONATAL_LRI.PREVALENCE: data_keys.POST_NEONATAL_LRI,
+            data_keys.LRI.POST_NEONATAL_PREVALENCE: data_keys.LRI,
         }[key]
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
 
-    incidence_rate = get_data(cause.INCIDENCE_RATE, location)
-    duration = get_data(cause.DURATION, location)
+    if cause == data_keys.LRI:
+        incidence_rate = get_data(data_keys.LRI.POST_NEONATAL_INCIDENCE_RATE, location)
+        duration = get_data(data_keys.LRI.POST_NEONATAL_DURATION, location)
+    else:
+        incidence_rate = get_data(cause.INCIDENCE_RATE, location)
+        duration = get_data(cause.DURATION, location)
+
     prevalence = incidence_rate * duration
 
     # get enn prevalence
@@ -314,12 +319,17 @@ def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
     try:
         cause = {
             data_keys.DIARRHEA.REMISSION_RATE: data_keys.DIARRHEA,
-            data_keys.POST_NEONATAL_LRI.REMISSION_RATE: data_keys.POST_NEONATAL_LRI,
+            data_keys.LRI.POST_NEONATAL_REMISSION_RATE: data_keys.LRI,
         }[key]
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
+
+    if cause == data_keys.LRI:
+        duration = get_data(data_keys.LRI.POST_NEONATAL_DURATION, location)
+    else:
+        duration = get_data(cause.DURATION, location)
+
     step_size = 0.5 / 365  # years
-    duration = get_data(cause.DURATION, location)
     remission_rate = (-1 / step_size) * np.log(1 - step_size / duration)
     return remission_rate
 
@@ -328,13 +338,18 @@ def load_emr_from_csmr_and_prevalence(key: str, location: str) -> pd.DataFrame:
     try:
         cause = {
             data_keys.DIARRHEA.EMR: data_keys.DIARRHEA,
-            data_keys.POST_NEONATAL_LRI.EMR: data_keys.POST_NEONATAL_LRI,
+            data_keys.LRI.POST_NEONATAL_EMR: data_keys.LRI,
         }[key]
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
 
-    csmr = get_data(cause.CSMR, location)
-    prevalence = get_data(cause.PREVALENCE, location)
+    if cause == data_keys.LRI:
+        csmr = get_data(data_keys.LRI.POST_NEONATAL_CSMR, location)
+        prevalence = get_data(data_keys.LRI.POST_NEONATAL_PREVALENCE, location)
+    else:
+        csmr = get_data(cause.CSMR, location)
+        prevalence = get_data(cause.PREVALENCE, location)
+
     data = (csmr / prevalence).fillna(0)
     data = data.replace([np.inf, -np.inf], 0)
     return data
@@ -820,35 +835,44 @@ def load_maternal_bmi_anemia_excess_shift(key: str, location: str) -> pd.DataFra
 
 
 def load_neonatal_lri_csmr(key: str, location: str) -> pd.DataFrame:
-    if key != data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_LRI_CSMR:
+    if key != data_keys.LRI.NEONATAL_CSMR:
         raise ValueError(f"Unrecognized key {key}")
 
     else:
-        key = 'cause.lower_respiratory_infections.cause_specific_mortality_rate'
-        key = EntityKey(key)
-        entity: Cause = utilities.get_entity(key)
-
-        data = interface.get_measure(entity, key.measure, location).droplevel("location")
-        non_neonatal = data.query('age_start >= 0.076712')
-        non_neonatal = non_neonatal * 0
-        data = data.query('age_end <= 0.076712')
-        csmr = pd.concat([data, non_neonatal]).sort_index()
-
-        return csmr
+        data = load_standard_data(data_keys.LRI.CSMR, location)
+        data.loc[data.index.get_level_values('age_start') >= 0.076712, :] = 0
+        return data
 
 
 def load_post_neonatal_lri_csmr(key: str, location: str) -> pd.DataFrame:
-    if key != data_keys.POST_NEONATAL_LRI.CSMR:
+    if key != data_keys.LRI.POST_NEONATAL_CSMR:
         raise ValueError(f"Unrecognized key {key}")
 
     else:
-        key = EntityKey(key)
-        entity: Cause = utilities.get_entity(key)
-        data = interface.get_measure(entity, key.measure, location).droplevel("location")
+        data = load_standard_data(data_keys.LRI.CSMR, location)
+        data.loc[data.index.get_level_values('age_end') <= 0.076712, :] = 0
+        return data
 
-        neonatal = data.query('age_end <= 0.076712')
-        neonatal = neonatal * 0
-        post_neonatal = data.query('age_start >= 0.076712')
-        csmr = pd.concat([neonatal, post_neonatal]).sort_index()
 
-        return csmr
+def load_post_neonatal_lri_incidence_rate(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.LRI.POST_NEONATAL_INCIDENCE_RATE:
+        raise ValueError(f"Unrecognized key {key}")
+
+    else:
+        return load_standard_data(data_keys.LRI.INCIDENCE_RATE, location)
+
+
+def load_post_neonatal_lri_disability_weight(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.LRI.POST_NEONATAL_DISABILITY_WEIGHT:
+        raise ValueError(f"Unrecognized key {key}")
+
+    else:
+        return load_standard_data(data_keys.LRI.DISABILITY_WEIGHT, location)
+
+
+def load_post_neonatal_lri_restrictions(key: str, location: str):
+    if key != data_keys.LRI.POST_NEONATAL_RESTRICTIONS:
+        raise ValueError(f"Unrecognized key {key}")
+
+    else:
+        return load_metadata(data_keys.LRI.RESTRICTIONS, location)

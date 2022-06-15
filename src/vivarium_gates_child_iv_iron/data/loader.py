@@ -882,6 +882,10 @@ def load_cgf_rr_and_paf(key: str, location: str) -> pd.DataFrame:
 
     df = load_standard_data(key, location).reset_index()
     df.loc[df['affected_entity'] == data_keys.LRI.name, 'affected_entity'] = f'post_neonatal_{data_keys.LRI.name}'
-    df = df.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure'])
+
+    if "relative_risk" in key:
+        df = df.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure', 'parameter'])
+    else:
+        df = df.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure']).drop(['version_id'])
 
     return df

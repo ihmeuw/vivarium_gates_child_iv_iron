@@ -886,6 +886,6 @@ def load_cgf_rr_and_paf(key: str, location: str) -> pd.DataFrame:
     if "relative_risk" in key:
         df = df.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure', 'parameter'])
     else:
-        df = df.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure']).drop(['version_id'])
+        df = df.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure'])
 
     return df

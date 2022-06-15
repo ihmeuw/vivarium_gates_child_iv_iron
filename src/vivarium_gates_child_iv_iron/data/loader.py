@@ -88,14 +88,14 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.WASTING.ALT_DISTRIBUTION: load_metadata,
         data_keys.WASTING.CATEGORIES: load_metadata,
         data_keys.WASTING.EXPOSURE: load_standard_data,
-        data_keys.WASTING.RELATIVE_RISK: load_standard_data,
-        data_keys.WASTING.PAF: load_categorical_paf,
+        data_keys.WASTING.RELATIVE_RISK: load_cgf_rr_and_paf,
+        data_keys.WASTING.PAF: load_cgf_rr_and_paf,
         data_keys.STUNTING.DISTRIBUTION: load_metadata,
         data_keys.STUNTING.ALT_DISTRIBUTION: load_metadata,
         data_keys.STUNTING.CATEGORIES: load_metadata,
         data_keys.STUNTING.EXPOSURE: load_standard_data,
-        data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
-        data_keys.STUNTING.PAF: load_categorical_paf,
+        data_keys.STUNTING.RELATIVE_RISK: load_cgf_rr_and_paf,
+        data_keys.STUNTING.PAF: load_cgf_rr_and_paf,
 
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,
@@ -876,3 +876,12 @@ def load_post_neonatal_lri_restrictions(key: str, location: str):
 
     else:
         return load_metadata(data_keys.LRI.RESTRICTIONS, location)
+
+
+def load_cgf_rr_and_paf(key: str, location: str) -> pd.DataFrame:
+
+    df = load_standard_data(key, location).reset_index()
+    df.loc[df['affected_entity'] == data_keys.LRI.name, 'affected_entity'] = f'post_neonatal_{data_keys.LRI.name}'
+    df = df.set_index(metadata.ARTIFACT_INDEX_COLUMNS + ['affected_entity', 'affected_measure'])
+
+    return df

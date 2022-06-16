@@ -80,7 +80,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.LRI.REMISSION_RATE: load_remission_rate_from_duration,
         data_keys.LRI.DISABILITY_WEIGHT: load_standard_data,
         data_keys.LRI.EMR: load_emr_from_csmr_and_prevalence,
-        data_keys.LRI.CSMR: load_standard_data,
+        data_keys.LRI.CSMR: load_lri_csmr,
         data_keys.LRI.RESTRICTIONS: load_metadata,
 
         data_keys.WASTING.DISTRIBUTION: load_metadata,
@@ -89,6 +89,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.WASTING.EXPOSURE: load_standard_data,
         data_keys.WASTING.RELATIVE_RISK: load_standard_data,
         data_keys.WASTING.PAF: load_categorical_paf,
+
         data_keys.STUNTING.DISTRIBUTION: load_metadata,
         data_keys.STUNTING.ALT_DISTRIBUTION: load_metadata,
         data_keys.STUNTING.CATEGORIES: load_metadata,
@@ -122,6 +123,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_JAUNDICE_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.OTHER_NEONATAL_DISORDERS_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.SIDS_CSMR: load_sids_csmr,
+        data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_LRI_CSMR: load_neonatal_lri_csmr,
 
         data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
         data_keys.IFA_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,
@@ -302,7 +304,6 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
     birth_prevalence = data_values.BIRTH_PREVALENCE_OF_ZERO
     enn_prevalence = prevalence.query("age_start == 0")
     enn_prevalence = (birth_prevalence + enn_prevalence) / 2
-
     all_other_prevalence = prevalence.query("age_start != 0.0")
 
     prevalence = pd.concat([enn_prevalence, all_other_prevalence]).sort_index()
@@ -817,3 +818,21 @@ def load_maternal_bmi_anemia_excess_shift(key: str, location: str) -> pd.DataFra
         .sort_index()
     )
     return excess_shift
+
+
+def load_neonatal_lri_csmr(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_LRI_CSMR:
+        raise ValueError(f"Unrecognized key {key}")
+
+    data = load_standard_data(data_keys.LRI.CSMR, location)
+    data.loc[data.index.get_level_values('age_start') >= 0.076712, :] = 0
+    return data
+
+
+def load_lri_csmr(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.LRI.CSMR:
+        raise ValueError(f"Unrecognized key {key}")
+
+    data = load_standard_data(data_keys.LRI.CSMR, location)
+    data.loc[data.index.get_level_values('age_start') < 0.076712, :] = 0
+    return data

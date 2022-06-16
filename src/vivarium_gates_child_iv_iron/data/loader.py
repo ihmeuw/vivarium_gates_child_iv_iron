@@ -825,7 +825,7 @@ def load_neonatal_lri_csmr(key: str, location: str) -> pd.DataFrame:
         raise ValueError(f"Unrecognized key {key}")
 
     data = load_standard_data(data_keys.LRI.CSMR, location)
-    data.loc[data.index.get_level_values('age_start') >= 0.076712, :] = 0
+    data.loc[data.index.get_level_values('age_start') >= metadata.NEONATAL_END_AGE, :] = 0
     return data
 
 
@@ -834,5 +834,5 @@ def load_lri_csmr(key: str, location: str) -> pd.DataFrame:
         raise ValueError(f"Unrecognized key {key}")
 
     data = load_standard_data(data_keys.LRI.CSMR, location)
-    data.loc[data.index.get_level_values('age_start') < 0.076712, :] = 0
+    data.loc[data.index.get_level_values('age_start') < metadata.NEONATAL_END_AGE, :] = 0
     return data

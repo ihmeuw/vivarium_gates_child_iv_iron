@@ -164,6 +164,7 @@ class __SevereProteinEnergyMalnutrition(NamedTuple):
     def log_name(self):
         return 'severe protein energy malnutrition'
 
+
 SEVERE_PEM = __SevereProteinEnergyMalnutrition()
 
 
@@ -265,6 +266,7 @@ class __AffectedUnmodeledCauses(NamedTuple):
     NEONATAL_JAUNDICE_CSMR: TargetString = TargetString('cause.hemolytic_disease_and_other_neonatal_jaundice.cause_specific_mortality_rate')
     OTHER_NEONATAL_DISORDERS_CSMR: TargetString = TargetString('cause.other_neonatal_disorders.cause_specific_mortality_rate')
     SIDS_CSMR: TargetString = TargetString('cause.sudden_infant_death_syndrome.cause_specific_mortality_rate')
+    NEONATAL_LRI_CSMR: TargetString = TargetString('cause.neonatal_lower_respiratory_infections.cause_specific_mortality_rate')
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 

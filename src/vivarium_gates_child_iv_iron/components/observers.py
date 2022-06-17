@@ -8,8 +8,8 @@ from vivarium.framework.event import Event
 from vivarium.framework.population import PopulationView
 from vivarium_public_health.metrics.stratification import (
     ResultsStratifier as ResultsStratifier_,
-    Source,
-    SourceType,
+    # Source,
+    # SourceType,
 )
 
 from vivarium_gates_child_iv_iron.constants import data_keys

@@ -106,12 +106,12 @@ NON_COUNT_TEMPLATES = [
 
 POP_STATES = ('living', 'dead', 'tracked', 'untracked')
 SEXES = ('male', 'female')
-YEARS = tuple(range(2022, 2028))
+YEARS = tuple(range(2020, 2041))
 AGE_GROUPS = (
     'early_neonatal',
     'late_neonatal',
-    'post_neonatal',
-    '1_to_4'
+    # 'post_neonatal',
+    # '1_to_4'
 )
 DICHOTOMOUS_RISK_STATES = ('cat2', 'cat1')
 CAUSES_OF_DEATH = (
@@ -130,7 +130,7 @@ CAUSES_OF_DISABILITY = (
     models.SEVERE_PEM.STATE_NAME,
 )
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
-TETRACHOTOMTOUS_RISK_STATES = ("cat1", "cat2", "cat3", "cat4")
+TETRACHOTOMOUS_RISK_STATES = ("cat1", "cat2", "cat3", "cat4")
 LBWSG_SUB_RISKS = ("birth_weight", "gestational_age")
 MATERNAL_SUPPLEMENTATION_TYPES = ("uncovered", "ifa", "mms", "bep")
 DICHOTOMOUS_COVERAGE_STATES = ("uncovered", "covered")
@@ -153,11 +153,11 @@ TEMPLATE_FIELD_MAP = {
     'MODERATE_PEM_TRANSITION': models.MODERATE_PEM.TRANSITIONS,
     'SEVERE_PEM_TRANSITION': models.SEVERE_PEM.TRANSITIONS,
     'CGF_RISK_STATE': CGF_RISK_STATES,
-    "CGF_RISK_STATE_NUMERIC": TETRACHOTOMTOUS_RISK_STATES,
+    "CGF_RISK_STATE_NUMERIC": TETRACHOTOMOUS_RISK_STATES,
     "LBWSG_SUB_RISK": LBWSG_SUB_RISKS,
     "SUPPLEMENTATION": MATERNAL_SUPPLEMENTATION_TYPES,
     "IV_IRON": DICHOTOMOUS_COVERAGE_STATES,
-    "BMI_ANEMIA": TETRACHOTOMTOUS_RISK_STATES,
+    "BMI_ANEMIA": TETRACHOTOMOUS_RISK_STATES,
 }
 
 

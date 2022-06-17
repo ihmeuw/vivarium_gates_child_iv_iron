@@ -52,8 +52,8 @@ class FertilityLineList:
         """
         Method to load existing fertility data to use as birth records.
         """
-        fertility_data_dir = self.fertility_data_directory
-        file_path = fertility_data_dir + f'scenario_{self.scenario}_draw_{self.draw}_seed_{self.seed}.hdf'
+        fertility_data_dir = Path(self.fertility_data_directory)
+        file_path = fertility_data_dir / f'scenario_{self.scenario}_draw_{self.draw}_seed_{self.seed}.hdf'
         birth_records = pd.read_hdf(file_path)
 
         return birth_records

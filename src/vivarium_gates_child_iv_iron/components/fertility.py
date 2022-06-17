@@ -69,8 +69,8 @@ class FertilityLineList:
         birth_records = self.birth_records[event.time.year]
         born_previous_step_mask = (birth_records['birth_date'] < self.clock()) & (
             birth_records['birth_date'] > self.clock() - event.step_size)
-        born_previous_step = birth_records[born_previous_step_mask]
-        # born_previous_step = birth_records.head(2)
+        # born_previous_step = birth_records[born_previous_step_mask]
+        born_previous_step = birth_records.head(2)
         simulants_to_add = len(born_previous_step)
 
         if simulants_to_add > 0:

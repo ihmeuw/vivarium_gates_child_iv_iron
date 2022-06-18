@@ -106,7 +106,7 @@ NON_COUNT_TEMPLATES = [
 
 POP_STATES = ('living', 'dead', 'tracked', 'untracked')
 SEXES = ('male', 'female')
-YEARS = tuple(range(2020, 2041))
+YEARS = tuple(range(2024, 2041))
 AGE_GROUPS = (
     'early_neonatal',
     'late_neonatal',
@@ -117,17 +117,17 @@ DICHOTOMOUS_RISK_STATES = ('cat2', 'cat1')
 CAUSES_OF_DEATH = (
     'other_causes',
     models.DIARRHEA.STATE_NAME,
-    models.MEASLES.STATE_NAME,
-    models.LRI.STATE_NAME,
-    models.MODERATE_PEM.STATE_NAME,
-    models.SEVERE_PEM.STATE_NAME,
+    # models.MEASLES.STATE_NAME,
+    # models.LRI.STATE_NAME,
+    # models.MODERATE_PEM.STATE_NAME,
+    # models.SEVERE_PEM.STATE_NAME,
 )
 CAUSES_OF_DISABILITY = (
     models.DIARRHEA.STATE_NAME,
-    models.MEASLES.STATE_NAME,
-    models.LRI.STATE_NAME,
-    models.MODERATE_PEM.STATE_NAME,
-    models.SEVERE_PEM.STATE_NAME,
+    # models.MEASLES.STATE_NAME,
+    # models.LRI.STATE_NAME,
+    # models.MODERATE_PEM.STATE_NAME,
+    # models.SEVERE_PEM.STATE_NAME,
 )
 CGF_RISK_STATES = tuple([category.value for category in data_keys.CGFCategories])
 TETRACHOTOMOUS_RISK_STATES = ("cat1", "cat2", "cat3", "cat4")

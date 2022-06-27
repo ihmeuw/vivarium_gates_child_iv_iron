@@ -41,7 +41,7 @@ def make_artifacts(location: str, output_dir: str, append: bool, replace_keys: T
 
 @click.command()
 @click.argument('output_file', type=click.Path(exists=True))
-@click.option('-is', '--include-seeds',
+@click.option('--include-seeds',
               default=False,
               is_flag=True,
               help= 'Do not aggregate by seeds and include them in count data.')

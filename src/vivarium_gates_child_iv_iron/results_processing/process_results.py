@@ -136,7 +136,7 @@ def aggregate_over_seed(data: pd.DataFrame, include_seeds: bool) -> pd.DataFrame
 
     # non_count_data = data[non_count_columns + GROUPBY_COLUMNS].groupby(GROUPBY_COLUMNS).mean()
     if include_seeds:
-        GROUPBY_COLUMNS.append(results.OUTPUT_RANDOM_SEED_COLUMN)
+        GROUPBY_COLUMNS.append(results.RANDOM_SEED_COLUMN)
     count_data = data[count_columns + GROUPBY_COLUMNS].groupby(GROUPBY_COLUMNS).sum()
     return pd.concat([
         count_data,

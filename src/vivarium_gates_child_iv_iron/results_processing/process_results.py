@@ -128,18 +128,14 @@ def filter_out_incomplete(data: pd.DataFrame, keyspace: Dict[str, Union[str, int
     return pd.concat(output, ignore_index=True).reset_index(drop=True)
 
 
-def aggregate_over_seed(data: pd.DataFrame, include_seeds: bool) -> pd.DataFrame:
+def aggregate_over_seed(data: pd.DataFrame) -> pd.DataFrame:
     non_count_columns = []
     for non_count_template in results.NON_COUNT_TEMPLATES:
         non_count_columns += results.RESULT_COLUMNS(non_count_template)
     count_columns = [c for c in data.columns if c not in non_count_columns + GROUPBY_COLUMNS]
 
     # non_count_data = data[non_count_columns + GROUPBY_COLUMNS].groupby(GROUPBY_COLUMNS).mean()
-    if include_seeds:
-        GROUPBY_COLUMNS.append(results.RANDOM_SEED_COLUMN)
-        count_columns.remove(results.RANDOM_SEED_COLUMN)
     count_data = data[count_columns + GROUPBY_COLUMNS].groupby(GROUPBY_COLUMNS).sum()
-
     return pd.concat([
         count_data,
         # non_count_data

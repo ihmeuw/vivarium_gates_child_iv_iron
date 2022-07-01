@@ -28,7 +28,7 @@ RENAME_COLUMNS = {
 }
 
 
-def make_measure_data(data, disaggregate_seeds):
+def make_measure_data(data: pd.DataFrame, disaggregate_seeds: bool):
     measure_data = MeasureData(
         population=get_population_data(data, disaggregate_seeds),
         ylls=get_by_cause_measure_data(data, 'ylls', disaggregate_seeds),
@@ -169,26 +169,24 @@ def aggregate_over_seed(data: pd.DataFrame) -> pd.DataFrame:
 
 def pivot_data(data: pd.DataFrame, disaggregate_seeds: bool) -> pd.DataFrame:
     if disaggregate_seeds:
-        nonstandard_groupby_cols = GROUPBY_COLUMNS + [results.RANDOM_SEED_COLUMN]
-        return (
-            data
-            .set_index(nonstandard_groupby_cols)
-            .stack()
-            .reset_index()
-            .rename(columns={f'level_{len(nonstandard_groupby_cols)}': 'key', 0: 'value'})
-        )
+        groupby_cols = GROUPBY_COLUMNS + [results.RANDOM_SEED_COLUMN]
     else:
-        return (
-            data
-            .set_index(GROUPBY_COLUMNS)
-            .stack()
-            .reset_index()
-            .rename(columns={f'level_{len(GROUPBY_COLUMNS)}': 'key', 0: 'value'})
-        )
+        groupby_cols = GROUPBY_COLUMNS
+    return (
+        data
+        .set_index(groupby_cols)
+        .stack()
+        .reset_index()
+        .rename(columns={f'level_{len(groupby_cols)}': 'key', 0: 'value'})
+    )
 
 
-def sort_data(data: pd.DataFrame) -> pd.DataFrame:
-    sort_order = [c for c in OUTPUT_COLUMN_SORT_ORDER if c in data.columns]
+def sort_data(data: pd.DataFrame, disaggregate_seeds: bool) -> pd.DataFrame:
+    if disaggregate_seeds:
+        output_cols_sort_order = OUTPUT_COLUMN_SORT_ORDER + [results.RANDOM_SEED_COLUMN]
+    else:
+        output_cols_sort_order = OUTPUT_COLUMN_SORT_ORDER
+    sort_order = [c for c in output_cols_sort_order if c in data.columns]
     other_cols = [c for c in data.columns if c not in sort_order and c != 'value']
     data = data[sort_order + other_cols + ['value']].sort_values(sort_order)
     return data.reset_index(drop=True)
@@ -206,15 +204,15 @@ def apply_results_map(data: pd.DataFrame, kind: str) -> pd.DataFrame:
 
 def get_population_data(data: pd.DataFrame, disaggregate_seeds: bool) -> pd.DataFrame:
     if disaggregate_seeds:
-        total_pop = pivot_data(data[[results.TOTAL_POPULATION_COLUMN]
-                                    + results.RESULT_COLUMNS('population')
-                                    + GROUPBY_COLUMNS + [results.RANDOM_SEED_COLUMN]], disaggregate_seeds)
+        groupby_cols = GROUPBY_COLUMNS + [results.RANDOM_SEED_COLUMN]
     else:
-        total_pop = pivot_data(data[[results.TOTAL_POPULATION_COLUMN]
-                                    + results.RESULT_COLUMNS('population')
-                                    + GROUPBY_COLUMNS], disaggregate_seeds)
+        groupby_cols = GROUPBY_COLUMNS
+
+    total_pop = pivot_data(data[[results.TOTAL_POPULATION_COLUMN]
+                                + results.RESULT_COLUMNS('population')
+                                + groupby_cols], disaggregate_seeds)
     total_pop = total_pop.rename(columns={'key': 'measure'})
-    return sort_data(total_pop)
+    return sort_data(total_pop, disaggregate_seeds)
 
 
 def get_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool) -> pd.DataFrame:
@@ -226,21 +224,21 @@ def get_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool)
     else:
         data = pivot_data(data[results.RESULT_COLUMNS(measure) + GROUPBY_COLUMNS], disaggregate_seeds)
     data = apply_results_map(data, measure)
-    return sort_data(data)
+    return sort_data(data, disaggregate_seeds)
 
 
 def get_by_cause_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool) -> pd.DataFrame:
     data = get_measure_data(data, measure, disaggregate_seeds)
-    return sort_data(data)
+    return sort_data(data, disaggregate_seeds)
 
 
 def get_state_person_time_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool) -> pd.DataFrame:
     data = get_measure_data(data, measure, disaggregate_seeds)
-    return sort_data(data)
+    return sort_data(data, disaggregate_seeds)
 
 
 def get_transition_count_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool) -> pd.DataFrame:
     # Oops, edge case.
     data = data.drop(columns=[c for c in data.columns if 'event_count' in c and str(results.YEARS[-1]+1) in c])
     data = get_measure_data(data, measure, disaggregate_seeds)
-    return sort_data(data)
+    return sort_data(data, disaggregate_seeds)

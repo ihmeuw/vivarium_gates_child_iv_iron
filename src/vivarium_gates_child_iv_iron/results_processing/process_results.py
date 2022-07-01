@@ -28,27 +28,52 @@ RENAME_COLUMNS = {
 }
 
 
-def make_measure_data(data):
+def make_measure_data(data, disaggregate_seeds):
     measure_data = MeasureData(
-        population=get_population_data(data),
-        ylls=get_by_cause_measure_data(data, 'ylls'),
-        ylds=get_by_cause_measure_data(data, 'ylds'),
-        deaths=get_by_cause_measure_data(data, 'deaths'),
-        diarrhea_state_person_time=get_state_person_time_measure_data(data, 'diarrhea_state_person_time'),
-        lri_state_person_time=get_state_person_time_measure_data(data, 'lri_state_person_time'),
-        measles_state_person_time=get_state_person_time_measure_data(data, 'measles_state_person_time'),
-        moderate_pem_state_person_time=get_state_person_time_measure_data(data, 'moderate_pem_state_person_time'),
-        severe_pem_state_person_time=get_state_person_time_measure_data(data, 'severe_pem_state_person_time'),
-        diarrhea_transition_count=get_transition_count_measure_data(data, 'diarrhea_transition_count'),
-        lri_transition_count=get_transition_count_measure_data(data, 'lri_transition_count'),
-        measles_transition_count=get_transition_count_measure_data(data, 'measles_transition_count'),
-        moderate_pem_transition_count=get_transition_count_measure_data(data, 'moderate_pem_transition_count'),
-        severe_pem_transition_count=get_transition_count_measure_data(data, 'severe_pem_transition_count'),
-        stunting_state_person_time=get_state_person_time_measure_data(data, 'stunting_state_person_time'),
-        wasting_state_person_time=get_state_person_time_measure_data(data, 'wasting_state_person_time'),
-        low_birth_weight_and_short_gestation_sum=get_measure_data(data, 'low_birth_weight_and_short_gestation_sum'),
-        live_births_count=get_measure_data(data, 'live_births_count'),
-        low_weight_births_count=get_measure_data(data, 'low_weight_births_count'),
+        population=get_population_data(data, disaggregate_seeds),
+        ylls=get_by_cause_measure_data(data, 'ylls', disaggregate_seeds),
+        ylds=get_by_cause_measure_data(data, 'ylds', disaggregate_seeds),
+        deaths=get_by_cause_measure_data(data, 'deaths', disaggregate_seeds),
+        diarrhea_state_person_time=get_state_person_time_measure_data(
+            data, 'diarrhea_state_person_time', disaggregate_seeds
+        ),
+        lri_state_person_time=get_state_person_time_measure_data(
+            data, 'lri_state_person_time', disaggregate_seeds
+        ),
+        measles_state_person_time=get_state_person_time_measure_data(
+            data, 'measles_state_person_time', disaggregate_seeds
+        ),
+        moderate_pem_state_person_time=get_state_person_time_measure_data(
+            data, 'moderate_pem_state_person_time', disaggregate_seeds
+        ),
+        severe_pem_state_person_time=get_state_person_time_measure_data(
+            data, 'severe_pem_state_person_time', disaggregate_seeds
+        ),
+        diarrhea_transition_count=get_transition_count_measure_data(
+            data, 'diarrhea_transition_count', disaggregate_seeds
+        ),
+        lri_transition_count=get_transition_count_measure_data(
+            data, 'lri_transition_count', disaggregate_seeds
+        ),
+        measles_transition_count=get_transition_count_measure_data(
+            data, 'measles_transition_count', disaggregate_seeds
+        ),
+        moderate_pem_transition_count=get_transition_count_measure_data(
+            data, 'moderate_pem_transition_count', disaggregate_seeds
+        ),
+        severe_pem_transition_count=get_transition_count_measure_data(
+            data, 'severe_pem_transition_count', disaggregate_seeds
+        ),
+        stunting_state_person_time=get_state_person_time_measure_data(
+            data, 'stunting_state_person_time', disaggregate_seeds),
+        wasting_state_person_time=get_state_person_time_measure_data(
+            data, 'wasting_state_person_time', disaggregate_seeds
+        ),
+        low_birth_weight_and_short_gestation_sum=get_measure_data(
+            data, 'low_birth_weight_and_short_gestation_sum', disaggregate_seeds
+        ),
+        live_births_count=get_measure_data(data, 'live_births_count', disaggregate_seeds),
+        low_weight_births_count=get_measure_data(data, 'low_weight_births_count', disaggregate_seeds),
     )
     return measure_data
 
@@ -142,14 +167,24 @@ def aggregate_over_seed(data: pd.DataFrame) -> pd.DataFrame:
     ], axis=1).reset_index()
 
 
-def pivot_data(data: pd.DataFrame) -> pd.DataFrame:
-    return (
-        data
-        .set_index(GROUPBY_COLUMNS)
-        .stack()
-        .reset_index()
-        .rename(columns={f'level_{len(GROUPBY_COLUMNS)}': 'key', 0: 'value'})
-    )
+def pivot_data(data: pd.DataFrame, disaggregate_seeds: bool) -> pd.DataFrame:
+    if disaggregate_seeds:
+        nonstandard_groupby_cols = GROUPBY_COLUMNS + [results.RANDOM_SEED_COLUMN]
+        return (
+            data
+            .set_index(nonstandard_groupby_cols)
+            .stack()
+            .reset_index()
+            .rename(columns={f'level_{len(nonstandard_groupby_cols)}': 'key', 0: 'value'})
+        )
+    else:
+        return (
+            data
+            .set_index(GROUPBY_COLUMNS)
+            .stack()
+            .reset_index()
+            .rename(columns={f'level_{len(GROUPBY_COLUMNS)}': 'key', 0: 'value'})
+        )
 
 
 def sort_data(data: pd.DataFrame) -> pd.DataFrame:
@@ -169,32 +204,43 @@ def apply_results_map(data: pd.DataFrame, kind: str) -> pd.DataFrame:
     return data
 
 
-def get_population_data(data: pd.DataFrame) -> pd.DataFrame:
-    total_pop = pivot_data(data[[results.TOTAL_POPULATION_COLUMN]
-                                + results.RESULT_COLUMNS('population')
-                                + GROUPBY_COLUMNS])
+def get_population_data(data: pd.DataFrame, disaggregate_seeds: bool) -> pd.DataFrame:
+    if disaggregate_seeds:
+        total_pop = pivot_data(data[[results.TOTAL_POPULATION_COLUMN]
+                                    + results.RESULT_COLUMNS('population')
+                                    + GROUPBY_COLUMNS + [results.RANDOM_SEED_COLUMN]], disaggregate_seeds)
+    else:
+        total_pop = pivot_data(data[[results.TOTAL_POPULATION_COLUMN]
+                                    + results.RESULT_COLUMNS('population')
+                                    + GROUPBY_COLUMNS], disaggregate_seeds)
     total_pop = total_pop.rename(columns={'key': 'measure'})
     return sort_data(total_pop)
 
 
-def get_measure_data(data: pd.DataFrame, measure: str) -> pd.DataFrame:
-    data = pivot_data(data[results.RESULT_COLUMNS(measure) + GROUPBY_COLUMNS])
+def get_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool) -> pd.DataFrame:
+    if disaggregate_seeds:
+        data = pivot_data(
+            data[results.RESULT_COLUMNS(measure) + GROUPBY_COLUMNS + [results.RANDOM_SEED_COLUMN]],
+            disaggregate_seeds
+        )
+    else:
+        data = pivot_data(data[results.RESULT_COLUMNS(measure) + GROUPBY_COLUMNS], disaggregate_seeds)
     data = apply_results_map(data, measure)
     return sort_data(data)
 
 
-def get_by_cause_measure_data(data: pd.DataFrame, measure: str) -> pd.DataFrame:
-    data = get_measure_data(data, measure)
+def get_by_cause_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool) -> pd.DataFrame:
+    data = get_measure_data(data, measure, disaggregate_seeds)
     return sort_data(data)
 
 
-def get_state_person_time_measure_data(data: pd.DataFrame, measure: str) -> pd.DataFrame:
-    data = get_measure_data(data, measure)
+def get_state_person_time_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool) -> pd.DataFrame:
+    data = get_measure_data(data, measure, disaggregate_seeds)
     return sort_data(data)
 
 
-def get_transition_count_measure_data(data: pd.DataFrame, measure: str) -> pd.DataFrame:
+def get_transition_count_measure_data(data: pd.DataFrame, measure: str, disaggregate_seeds: bool) -> pd.DataFrame:
     # Oops, edge case.
     data = data.drop(columns=[c for c in data.columns if 'event_count' in c and str(results.YEARS[-1]+1) in c])
-    data = get_measure_data(data, measure)
+    data = get_measure_data(data, measure, disaggregate_seeds)
     return sort_data(data)

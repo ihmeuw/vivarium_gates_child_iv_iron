@@ -2,6 +2,10 @@ from collections import Counter
 import pandas as pd
 from typing import Dict
 
+# for runtime testing
+import time
+import functools
+
 from vivarium import ConfigTree
 from vivarium.framework.engine import Builder
 from vivarium.framework.event import Event
@@ -15,6 +19,27 @@ from vivarium_public_health.metrics.stratification import (
 from vivarium_gates_child_iv_iron.constants import data_keys
 
 
+# Decorator to time observer's bottlenecks
+def timeit(name):
+
+    def _wrapper(func):
+
+        @functools.wraps(func)
+        def _wrapped(*args, **kwargs):
+            start = time.time()
+            result = func(*args, **kwargs)
+            print(name, time.time() - start, ' s')
+            return result
+
+        @functools.wraps(func)
+        def _wrapped_passthrough(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return _wrapped_passthrough
+
+    return _wrapper
+
+
 class ResultsStratifier(ResultsStratifier_):
     """Centralized component for handling results stratification.
     This should be used as a sub-component for observers.  The observers
@@ -23,46 +48,47 @@ class ResultsStratifier(ResultsStratifier_):
     final column labels for the subgroups.
     """
 
+    @timeit('stratify')
     def register_stratifications(self, builder: Builder) -> None:
         """Register each desired stratification with calls to _setup_stratification"""
         super().register_stratifications(builder)
 
-        # self.setup_stratification(
-        #     builder,
-        #     name="wasting_state",
-        #     sources=[Source(f'{data_keys.WASTING.name}.exposure', SourceType.PIPELINE)],
-        #     categories={category.value for category in data_keys.CGFCategories},
-        #     mapper=self.child_growth_risk_factor_stratification_mapper,
-        # )
-        #
-        # self.setup_stratification(
-        #     builder,
-        #     name="stunting_state",
-        #     sources=[Source(f'{data_keys.STUNTING.name}.exposure', SourceType.PIPELINE)],
-        #     categories={category.value for category in data_keys.CGFCategories},
-        #     mapper=self.child_growth_risk_factor_stratification_mapper,
-        # )
-        #
-        # self.setup_stratification(
-        #     builder,
-        #     name="maternal_supplementation",
-        #     sources=[Source("maternal_supplementation_exposure", SourceType.COLUMN)],
-        #     categories={"uncovered", "ifa", "mms", "bep"},
-        # )
-        #
-        # self.setup_stratification(
-        #     builder,
-        #     name="iv_iron",
-        #     sources=[Source("iv_iron_exposure", SourceType.COLUMN)],
-        #     categories={"uncovered", "covered"},
-        # )
-        #
-        # self.setup_stratification(
-        #     builder,
-        #     name="bmi_anemia",
-        #     sources=[Source("maternal_bmi_anemia_exposure", SourceType.COLUMN)],
-        #     categories={"cat4", "cat3", "cat2", "cat1"},
-        # )
+        self.setup_stratification(
+            builder,
+            name="wasting_state",
+            sources=[Source(f'{data_keys.WASTING.name}.exposure', SourceType.PIPELINE)],
+            categories={category.value for category in data_keys.CGFCategories},
+            mapper=self.child_growth_risk_factor_stratification_mapper,
+        )
+
+        self.setup_stratification(
+            builder,
+            name="stunting_state",
+            sources=[Source(f'{data_keys.STUNTING.name}.exposure', SourceType.PIPELINE)],
+            categories={category.value for category in data_keys.CGFCategories},
+            mapper=self.child_growth_risk_factor_stratification_mapper,
+        )
+
+        self.setup_stratification(
+            builder,
+            name="maternal_supplementation",
+            sources=[Source("maternal_supplementation_exposure", SourceType.COLUMN)],
+            categories={"uncovered", "ifa", "mms", "bep"},
+        )
+
+        self.setup_stratification(
+            builder,
+            name="iv_iron",
+            sources=[Source("iv_iron_exposure", SourceType.COLUMN)],
+            categories={"uncovered", "covered"},
+        )
+
+        self.setup_stratification(
+            builder,
+            name="bmi_anemia",
+            sources=[Source("maternal_bmi_anemia_exposure", SourceType.COLUMN)],
+            categories={"cat4", "cat3", "cat2", "cat1"},
+        )
 
     ###########################
     # Stratifications Details #
@@ -149,6 +175,7 @@ class BirthObserver:
     # Event-driven methods #
     ########################
 
+    @timeit('births')
     def on_collect_metrics(self, event: Event) -> None:
         pop = self.population_view.get(event.index)
         pop_born = pop[pop['entrance_time'] == event.time - event.step_size]

@@ -52,7 +52,7 @@ components:
 
 configuration:
     input_data:
-        input_draw_number: 0
+        input_draw_number: 990
         artifact_path: '/ihme/costeffectiveness/artifacts/vivarium_gates_child_iv_iron/south_asia.hdf'
         fertility_input_data_path: "/mnt/share/costeffectiveness/results/vivarium_gates_iv_iron/v8.0_intervention_scenarios/south_asia/2022_06_07_11_48_50/child_data/"
     interpolation:
@@ -61,7 +61,7 @@ configuration:
     randomness:
         map_size: 1_000_000
         key_columns: ['entrance_time', 'age']
-        random_seed: 0
+        random_seed: 5
     time:
         start:
             year: 2022

@@ -14,6 +14,29 @@ from vivarium_public_health.metrics.stratification import (
 
 from vivarium_gates_child_iv_iron.constants import data_keys
 
+import time
+import functools
+
+
+def timeit(name):
+
+    def _wrapper(func):
+
+        @functools.wraps(func)
+        def _wrapped(*args, **kwargs):
+            start = time.time()
+            result = func(*args, **kwargs)
+            print(name, time.time() - start, ' s')
+            return result
+
+        @functools.wraps(func)
+        def _wrapped_passthrough(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return _wrapped_passthrough
+
+    return _wrapper
+
 
 class ResultsStratifier(ResultsStratifier_):
     """Centralized component for handling results stratification.
@@ -23,26 +46,27 @@ class ResultsStratifier(ResultsStratifier_):
     final column labels for the subgroups.
     """
 
+    @timeit('stratify')
     def register_stratifications(self, builder: Builder) -> None:
         """Register each desired stratification with calls to _setup_stratification"""
         super().register_stratifications(builder)
 
-        # self.setup_stratification(
-        #     builder,
-        #     name="wasting_state",
-        #     sources=[Source(f'{data_keys.WASTING.name}.exposure', SourceType.PIPELINE)],
-        #     categories={category.value for category in data_keys.CGFCategories},
-        #     mapper=self.child_growth_risk_factor_stratification_mapper,
-        # )
-        #
-        # self.setup_stratification(
-        #     builder,
-        #     name="stunting_state",
-        #     sources=[Source(f'{data_keys.STUNTING.name}.exposure', SourceType.PIPELINE)],
-        #     categories={category.value for category in data_keys.CGFCategories},
-        #     mapper=self.child_growth_risk_factor_stratification_mapper,
-        # )
-        #
+        self.setup_stratification(
+            builder,
+            name="wasting_state",
+            sources=[Source(f'{data_keys.WASTING.name}.exposure', SourceType.PIPELINE)],
+            categories={category.value for category in data_keys.CGFCategories},
+            mapper=self.child_growth_risk_factor_stratification_mapper,
+        )
+
+        self.setup_stratification(
+            builder,
+            name="stunting_state",
+            sources=[Source(f'{data_keys.STUNTING.name}.exposure', SourceType.PIPELINE)],
+            categories={category.value for category in data_keys.CGFCategories},
+            mapper=self.child_growth_risk_factor_stratification_mapper,
+        )
+
         # self.setup_stratification(
         #     builder,
         #     name="maternal_supplementation",

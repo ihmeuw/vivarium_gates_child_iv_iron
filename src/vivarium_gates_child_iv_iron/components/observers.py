@@ -67,26 +67,26 @@ class ResultsStratifier(ResultsStratifier_):
             mapper=self.child_growth_risk_factor_stratification_mapper,
         )
 
-        # self.setup_stratification(
-        #     builder,
-        #     name="maternal_supplementation",
-        #     sources=[Source("maternal_supplementation_exposure", SourceType.COLUMN)],
-        #     categories={"uncovered", "ifa", "mms", "bep"},
-        # )
-        #
-        # self.setup_stratification(
-        #     builder,
-        #     name="iv_iron",
-        #     sources=[Source("iv_iron_exposure", SourceType.COLUMN)],
-        #     categories={"uncovered", "covered"},
-        # )
-        #
-        # self.setup_stratification(
-        #     builder,
-        #     name="bmi_anemia",
-        #     sources=[Source("maternal_bmi_anemia_exposure", SourceType.COLUMN)],
-        #     categories={"cat4", "cat3", "cat2", "cat1"},
-        # )
+        self.setup_stratification(
+            builder,
+            name="maternal_supplementation",
+            sources=[Source("maternal_supplementation_exposure", SourceType.COLUMN)],
+            categories={"uncovered", "ifa", "mms", "bep"},
+        )
+
+        self.setup_stratification(
+            builder,
+            name="iv_iron",
+            sources=[Source("iv_iron_exposure", SourceType.COLUMN)],
+            categories={"uncovered", "covered"},
+        )
+
+        self.setup_stratification(
+            builder,
+            name="bmi_anemia",
+            sources=[Source("maternal_bmi_anemia_exposure", SourceType.COLUMN)],
+            categories={"cat4", "cat3", "cat2", "cat1"},
+        )
 
     ###########################
     # Stratifications Details #

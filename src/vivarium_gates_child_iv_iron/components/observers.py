@@ -35,7 +35,7 @@ def timeit(name):
         def _wrapped_passthrough(*args, **kwargs):
             return func(*args, **kwargs)
 
-        return _wrapped_passthrough
+        return _wrapped
 
     return _wrapper
 

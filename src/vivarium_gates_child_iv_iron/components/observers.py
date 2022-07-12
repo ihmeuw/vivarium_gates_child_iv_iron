@@ -48,7 +48,6 @@ class ResultsStratifier(ResultsStratifier_):
     final column labels for the subgroups.
     """
 
-    @timeit('stratify')
     def register_stratifications(self, builder: Builder) -> None:
         """Register each desired stratification with calls to _setup_stratification"""
         super().register_stratifications(builder)
@@ -95,6 +94,10 @@ class ResultsStratifier(ResultsStratifier_):
     ###########################
 
     # noinspection PyMethodMayBeStatic
+    @timeit('stratify')
+    def _set_stratification_groups(self, index: pd.Index) -> pd.DataFrame:
+        return super()._set_stratification_groups(index)
+
     def child_growth_risk_factor_stratification_mapper(self, row: pd.Series) -> str:
         # applicable to stunting and wasting
         return {
@@ -175,7 +178,7 @@ class BirthObserver:
     # Event-driven methods #
     ########################
 
-    @timeit('births')
+    @timeit('births_cm')
     def on_collect_metrics(self, event: Event) -> None:
         pop = self.population_view.get(event.index)
         pop_born = pop[pop['entrance_time'] == event.time - event.step_size]

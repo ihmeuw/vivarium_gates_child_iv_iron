@@ -16,7 +16,7 @@ from vivarium_gates_child_iv_iron.constants import data_keys
 
 import time
 import functools
-
+import itertools
 
 def timeit(name):
 
@@ -26,14 +26,14 @@ def timeit(name):
         def _wrapped(*args, **kwargs):
             start = time.time()
             result = func(*args, **kwargs)
-            print(name, time.time() - start, ' s')
+            print('>>> ', name, time.time() - start, ' s')
             return result
 
         @functools.wraps(func)
         def _wrapped_passthrough(*args, **kwargs):
             return func(*args, **kwargs)
 
-        return _wrapped_passthrough
+        return _wrapped
 
     return _wrapper
 
@@ -46,7 +46,6 @@ class ResultsStratifier(ResultsStratifier_):
     final column labels for the subgroups.
     """
 
-    @timeit('stratify')
     def register_stratifications(self, builder: Builder) -> None:
         """Register each desired stratification with calls to _setup_stratification"""
         super().register_stratifications(builder)
@@ -93,6 +92,10 @@ class ResultsStratifier(ResultsStratifier_):
     ###########################
 
     # noinspection PyMethodMayBeStatic
+    @timeit('stratify')
+    def _set_stratification_groups(self, index: pd.Index) -> pd.DataFrame:
+        return super()._set_stratification_groups(index)
+
     def child_growth_risk_factor_stratification_mapper(self, row: pd.Series) -> str:
         # applicable to stunting and wasting
         return {
@@ -172,7 +175,7 @@ class BirthObserver:
     ########################
     # Event-driven methods #
     ########################
-    @timeit('births')
+    @timeit('births_cm')
     def on_collect_metrics(self, event: Event) -> None:
         pop = self.population_view.get(event.index)
         pop_born = pop[pop['entrance_time'] == event.time - event.step_size]

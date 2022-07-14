@@ -15,6 +15,8 @@ from vivarium_public_health import utilities
 from vivarium_public_health.population.data_transformations import (
     get_live_births_per_year,
 )
+from vivarium_gates_child_iv_iron.components.observers import timeit
+
 
 PREGNANCY_DURATION = pd.Timedelta(days=9 * utilities.DAYS_PER_MONTH)
 
@@ -58,6 +60,7 @@ class FertilityLineList:
 
         return birth_records
 
+    @timeit('fertility_time_step')
     def on_time_step(self, event: Event) -> None:
         """Adds new simulants every time step determined by a simulant's birth date in the line list data.
         Parameters

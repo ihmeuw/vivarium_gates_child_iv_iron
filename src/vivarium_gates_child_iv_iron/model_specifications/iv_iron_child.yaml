@@ -31,8 +31,8 @@ components:
             - DiseaseObserver('lower_respiratory_infections')
             - DiseaseObserver('moderate_protein_energy_malnutrition')
             - DiseaseObserver('severe_protein_energy_malnutrition')
-            - CategoricalRiskObserver('child_stunting')
-            - CategoricalRiskObserver('child_wasting')
+#            - CategoricalRiskObserver('child_stunting')
+#            - CategoricalRiskObserver('child_wasting')
 
     vivarium_gates_child_iv_iron:
         components:

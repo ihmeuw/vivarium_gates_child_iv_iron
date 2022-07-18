@@ -108,18 +108,18 @@ configuration:
             - "year"
             - "sex"
             - "age"
-#        child_stunting:
-#            include:
-#                - "maternal_supplementation"
-#                - "iv_iron"
-#        child_wasting:
-#            include:
-#                - "maternal_supplementation"
-#                - "iv_iron"
+        child_stunting:
+            include:
+                - "maternal_supplementation"
+                - "iv_iron"
+        child_wasting:
+            include:
+                - "maternal_supplementation"
+                - "iv_iron"
         birth:
             exclude:
                 - "age"
-#            include:
-#                - "maternal_supplementation"
-#                - "iv_iron"
-#                - "bmi_anemia"
+            include:
+                - "maternal_supplementation"
+                - "iv_iron"
+                - "bmi_anemia"

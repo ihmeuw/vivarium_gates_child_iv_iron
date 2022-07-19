@@ -64,7 +64,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.DIARRHEA.REMISSION_RATE: load_remission_rate_from_duration,
         data_keys.DIARRHEA.DISABILITY_WEIGHT: load_standard_data,
         data_keys.DIARRHEA.EMR: load_emr_from_csmr_and_prevalence,
-        data_keys.DIARRHEA.CSMR: load_standard_data,
+        data_keys.DIARRHEA.CSMR: load_diarrhea_csmr,
         data_keys.DIARRHEA.RESTRICTIONS: load_metadata,
 
         data_keys.MEASLES.PREVALENCE: load_standard_data,
@@ -307,6 +307,8 @@ def load_prevalence_from_incidence_and_duration(key: str, location: str) -> pd.D
     all_other_prevalence = prevalence.query("age_start != 0.0")
 
     prevalence = pd.concat([enn_prevalence, all_other_prevalence]).sort_index()
+
+    #todo: adjust prevalence for neonatal age groups to match post-neonatal group
 
     return prevalence
 
@@ -834,5 +836,14 @@ def load_lri_csmr(key: str, location: str) -> pd.DataFrame:
         raise ValueError(f"Unrecognized key {key}")
 
     data = load_standard_data(data_keys.LRI.CSMR, location)
+    data.loc[data.index.get_level_values('age_start') < metadata.NEONATAL_END_AGE, :] = 0
+    return data
+
+
+def load_diarrhea_csmr(key: str, location: str) -> pd.DataFrame:
+    if key != data_keys.DIARRHEA.CSMR:
+        raise ValueError(f"Unrecognized key {key}")
+
+    data = load_standard_data(data_keys.DIARRHEA.CSMR, location)
     data.loc[data.index.get_level_values('age_start') < metadata.NEONATAL_END_AGE, :] = 0
     return data

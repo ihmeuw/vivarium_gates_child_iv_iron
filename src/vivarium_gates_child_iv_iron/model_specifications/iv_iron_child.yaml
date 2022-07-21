@@ -4,7 +4,6 @@ components:
         population:
             - Mortality()
         disease:
-            - SIS('diarrheal_diseases')
             - SIS_fixed_duration('measles', '10.0')
             - SIS('lower_respiratory_infections')
             - RiskAttributableDisease('cause.moderate_protein_energy_malnutrition', 'risk_factor.child_wasting')
@@ -49,6 +48,7 @@ components:
             - AdditiveRiskEffect('risk_factor.iv_iron', 'risk_factor.birth_weight.birth_exposure')
             - AdditiveRiskEffect('risk_factor.maternal_bmi_anemia', 'risk_factor.birth_weight.birth_exposure')
             - BirthWeightShiftEffect()
+            - SIS_with_birth_prevalence('diarrheal_diseases')
 
 configuration:
     input_data:

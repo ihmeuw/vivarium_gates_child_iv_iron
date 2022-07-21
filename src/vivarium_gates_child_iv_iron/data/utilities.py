@@ -26,7 +26,7 @@ from vivarium_inputs.mapping_extension import (
 )
 from vivarium_inputs.validation.raw import check_metadata
 
-from vivarium_gates_child_iv_iron.constants.metadata import AGE_GROUP, GBD_2019_ROUND_ID
+from vivarium_gates_child_iv_iron.constants.metadata import AGE_GROUP, GBD_2019_ROUND_ID, NEONATAL_END_AGE
 
 
 def get_data(key: EntityKey, entity: ModelableEntity, location: str, source: str, gbd_id_type: str,
@@ -339,3 +339,22 @@ def parse_short_gestation_description(description: str) -> pd.Interval:
         # descriptions look like this: 'Birth prevalence - [34, 36) wks, [2000, 2500) g'
         endpoints = pd.Interval(*[float(val) for val in description.split('- [')[1].split(')')[0].split(', ')])
         return endpoints
+
+
+def scrub_neonatal_age_groups(data: pd.DataFrame) -> pd.DataFrame:
+    # set early and late neonatal age groups to post-neonatal age group
+    # split df to have age specific indices
+    non_neonatal = data.query('age_start >= 1')
+    post_neonatal = data.loc[
+        (data.index.get_level_values("age_start") >= NEONATAL_END_AGE)
+        & (data.index.get_level_values("age_start") < 1)
+        ]
+    early_neonatal = data.loc[data.index.get_level_values('age_start') == 0]
+    late_neonatal = data.loc[
+        (data.index.get_level_values('age_start') > 0)
+        & (data.index.get_level_values('age_start') < NEONATAL_END_AGE)
+        ]
+
+    new_early_neonatal = post_neonatal.set_index(early_neonatal.index)
+    new_late_neonatal = post_neonatal.set_index(late_neonatal.index)
+    return pd.concat([new_early_neonatal, new_late_neonatal, post_neonatal, non_neonatal]).sort_index()

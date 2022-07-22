@@ -871,7 +871,7 @@ def load_diarrhea_birth_prevalence(key: str, location: str) -> pd.DataFrame:
     if key != data_keys.DIARRHEA.BIRTH_PREVALENCE:
         raise ValueError(f"Unrecognized key {key}")
 
-    prevalence = get_data(data_keys.DIARRHEA.BIRTH_PREVALENCE, location)
+    prevalence = get_data(data_keys.DIARRHEA.PREVALENCE, location)
     post_neonatal = prevalence.loc[
         (prevalence.index.get_level_values("age_start") >= metadata.NEONATAL_END_AGE)
         & (prevalence.index.get_level_values("age_start") < 1)

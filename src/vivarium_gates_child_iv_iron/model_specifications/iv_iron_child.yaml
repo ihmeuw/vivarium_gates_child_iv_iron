@@ -93,6 +93,7 @@ configuration:
         - "other_neonatal_disorders"
         - "sudden_infant_death_syndrome"
         - "neonatal_lower_respiratory_infections"
+        - "neonatal_diarrheal_diseases"
 
     moderate_protein_energy_malnutrition:
         threshold: ['cat2']

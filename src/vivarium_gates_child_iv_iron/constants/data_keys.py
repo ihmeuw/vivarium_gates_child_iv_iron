@@ -48,6 +48,7 @@ class __DiarrhealDiseases(NamedTuple):
     EMR: TargetString = TargetString('cause.diarrheal_diseases.excess_mortality_rate')
     CSMR: TargetString = TargetString('cause.diarrheal_diseases.cause_specific_mortality_rate')
     RESTRICTIONS: TargetString = TargetString('cause.diarrheal_diseases.restrictions')
+    BIRTH_PREVALENCE: TargetString = TargetString('cause.diarrheal_diseases.birth_prevalence')
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 
@@ -267,6 +268,7 @@ class __AffectedUnmodeledCauses(NamedTuple):
     OTHER_NEONATAL_DISORDERS_CSMR: TargetString = TargetString('cause.other_neonatal_disorders.cause_specific_mortality_rate')
     SIDS_CSMR: TargetString = TargetString('cause.sudden_infant_death_syndrome.cause_specific_mortality_rate')
     NEONATAL_LRI_CSMR: TargetString = TargetString('cause.neonatal_lower_respiratory_infections.cause_specific_mortality_rate')
+    NEONATAL_DIARRHEAL_DISEASES_CSMR: TargetString = TargetString('cause.neonatal_diarrheal_diseases.cause_specific_mortality_rate')
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 

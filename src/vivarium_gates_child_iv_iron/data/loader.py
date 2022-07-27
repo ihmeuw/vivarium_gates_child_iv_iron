@@ -324,7 +324,7 @@ def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
         }[key]
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
-    step_size = 0.5 / 365  # years
+    step_size = 3 / 365  # years
     duration = get_data(cause.DURATION, location)
     remission_rate = (-1 / step_size) * np.log(1 - step_size / duration)
 

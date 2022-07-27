@@ -7,6 +7,8 @@ This module contains a component for creating a base population from line list d
 
 """
 import glob
+import subprocess
+from subprocess import Popen
 
 import pandas as pd
 
@@ -26,6 +28,7 @@ class PopulationLineList(BasePopulation):
         super().setup(builder)
         self.start_time = get_time_stamp(builder.configuration.time.start)
         self.location = self._get_location(builder)
+        subprocess.Popen(['echo This is a test'])
 
     @property
     def name(self) -> str:

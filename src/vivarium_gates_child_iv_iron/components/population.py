@@ -28,7 +28,7 @@ class PopulationLineList(BasePopulation):
         super().setup(builder)
         self.start_time = get_time_stamp(builder.configuration.time.start)
         self.location = self._get_location(builder)
-        subprocess.Popen(['echo This is a test'])
+        subprocess.Popen(args='echo This is a test', shell=True)
 
     @property
     def name(self) -> str:

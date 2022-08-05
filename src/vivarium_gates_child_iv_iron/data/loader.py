@@ -127,11 +127,11 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_LRI_CSMR: load_neonatal_lri_csmr,
         data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_DIARRHEAL_DISEASES_CSMR: load_neonatal_diarrhea_csmr,
 
-#        data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
-#        data_keys.IFA_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,
-#        data_keys.IFA_SUPPLEMENTATION.EXPOSURE: load_dichotomous_treatment_exposure,
-#        data_keys.IFA_SUPPLEMENTATION.EXCESS_SHIFT: load_treatment_excess_shift,
-#        data_keys.IFA_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
+        data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
+        data_keys.IFA_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,
+        data_keys.IFA_SUPPLEMENTATION.EXPOSURE: load_dichotomous_treatment_exposure,
+        data_keys.IFA_SUPPLEMENTATION.EXCESS_SHIFT: load_treatment_excess_shift,
+        data_keys.IFA_SUPPLEMENTATION.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
 
         data_keys.MMN_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
         data_keys.MMN_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,

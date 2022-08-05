@@ -112,7 +112,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.LBWSG.EXPOSURE: load_lbwsg_exposure,
         data_keys.LBWSG.RELATIVE_RISK: load_lbwsg_rr,
         data_keys.LBWSG.RELATIVE_RISK_INTERPOLATOR: load_lbwsg_interpolated_rr,
-        data_keys.LBWSG.PAF: load_lbwsg_paf,
+        #data_keys.LBWSG.PAF: load_lbwsg_paf,
 
         data_keys.AFFECTED_UNMODELED_CAUSES.URI_CSMR: load_standard_data,
         data_keys.AFFECTED_UNMODELED_CAUSES.OTITIS_MEDIA_CSMR: load_standard_data,
@@ -324,7 +324,7 @@ def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
         }[key]
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
-    step_size = 0.5 / 365  # years
+    step_size = 4 / 365  # years
     duration = get_data(cause.DURATION, location)
     remission_rate = (-1 / step_size) * np.log(1 - step_size / duration)
 

@@ -238,7 +238,7 @@ class __LowBirthWeightShortGestation(NamedTuple):
     RELATIVE_RISK: TargetString = 'risk_factor.low_birth_weight_and_short_gestation.relative_risk'
     RELATIVE_RISK_INTERPOLATOR: TargetString = 'risk_factor.low_birth_weight_and_short_gestation.relative_risk_interpolator'
 
-    PAF: TargetString = 'risk_factor.low_birth_weight_and_short_gestation.population_attributable_fraction'
+#    PAF: TargetString = 'risk_factor.low_birth_weight_and_short_gestation.population_attributable_fraction'
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
     BIRTH_WEIGHT_EXPOSURE = TargetString('risk_factor.birth_weight.birth_exposure')

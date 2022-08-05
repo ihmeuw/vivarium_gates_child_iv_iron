@@ -22,6 +22,8 @@ LOCATIONS = [
     "South Asia",
     "LMICs",
     "Ethiopia",
+    "India",
+    "Nigeria",
 ]
 
 ARTIFACT_INDEX_COLUMNS = [

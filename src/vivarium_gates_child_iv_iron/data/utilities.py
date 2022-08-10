@@ -376,5 +376,5 @@ def load_lbwsg_exposure(location: str):
         decomp_step=gbd_constants.DECOMP_STEP.STEP_4,
     )
     # This data set is big, so let's reduce it by a factor of ~40
-    data = data[data['year_id'] == 2019].drop(columns='year_id')
+    data = data[data['year_id'] == 2019]
     return data

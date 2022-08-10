@@ -371,7 +371,7 @@ def load_lbwsg_exposure(location: str):
         source=gbd_constants.SOURCES.EXPOSURE,
         location_id=location_id,
         sex_id=gbd_constants.SEX.MALE + gbd_constants.SEX.FEMALE,
-        age_group_id=[164, 2, 3],
+        age_group_id=[2, 3],
         gbd_round_id=gbd_constants.ROUND_IDS.GBD_2019,
         decomp_step=gbd_constants.DECOMP_STEP.STEP_4,
     )

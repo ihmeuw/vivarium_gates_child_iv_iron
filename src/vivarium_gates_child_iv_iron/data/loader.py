@@ -408,7 +408,7 @@ def load_lbwsg_exposure(key: str, location: str) -> pd.DataFrame:
     # This category was a mistake in GBD 2019, so drop.
     extra_residual_category = vi_globals.EXTRA_RESIDUAL_CATEGORY[entity.name]
     data = data.loc[data['parameter'] != extra_residual_category]
-    idx_cols = ['location_id', 'age_group_id', 'sex_id', 'parameter']
+    idx_cols = ['location_id', 'age_group_id', 'year_id', 'sex_id', 'parameter']
     data = data.set_index(idx_cols)[vi_globals.DRAW_COLUMNS]
 
     # Sometimes there are data values on the order of 10e-300 that cause

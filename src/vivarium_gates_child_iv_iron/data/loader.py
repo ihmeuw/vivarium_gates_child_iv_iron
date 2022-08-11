@@ -416,7 +416,7 @@ def load_lbwsg_exposure(key: str, location: str) -> pd.DataFrame:
     data = data.clip(lower=vi_globals.MINIMUM_EXPOSURE_VALUE)
 
     # normalize so all categories sum to 1
-    total_exposure = data.groupby(['location_id', 'sex_id']).transform('sum')
+    total_exposure = data.groupby(['location_id', 'age_group_id', 'sex_id']).transform('sum')
     data = (data / total_exposure).reset_index()
     data = reshape_to_vivarium_format(data, location)
     return data

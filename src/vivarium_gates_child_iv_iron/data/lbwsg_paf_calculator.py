@@ -13,9 +13,11 @@ from vivarium_gbd_access import gbd
 from vivarium_gates_child_iv_iron.constants import data_keys, metadata
 
 
-def get_relative_risks(config: Path, artifact: Artifact, input_draw: int, random_seed: int, age_group_id: int) -> pd.DataFrame:
+def get_relative_risks(config: Path, artifact_path: str, input_draw: int, random_seed: int, age_group_id: int) -> pd.DataFrame:
     logger.remove()
     sim = InteractiveContext(config, setup=False)
+    sim.configuration.input_data.artifact_path = artifact_path
+    artifact = Artifact(artifact_path)
 
     # Make mapper for age_group_ids
     gbd_age_bins = gbd.get_age_bins()
@@ -71,8 +73,10 @@ def get_relative_risks(config: Path, artifact: Artifact, input_draw: int, random
     return lbwsg_rrs
 
 
-def get_age_bin(config: Path, artifact: Artifact, age_group_id: int) -> pd.Interval:
+def get_age_bin(config: Path, artifact_path: str, age_group_id: int) -> pd.Interval:
     sim = InteractiveContext(config, setup=False)
+    sim.configuration.input_data.artifact_path = artifact_path
+    artifact = Artifact(artifact_path)
 
     # Make mapper for age_group_ids
     gbd_age_bins = gbd.get_age_bins()
@@ -89,9 +93,9 @@ def get_age_bin(config: Path, artifact: Artifact, age_group_id: int) -> pd.Inter
     return age_bin
 
 
-def get_paf_for_age_group(config: Path, artifact: Artifact, input_draw: int, random_seed: int, age_group_id: int) -> pd.DataFrame:
-    age_bin = get_age_bin(config, artifact, age_group_id)
-    relative_risks = pd.concat([get_relative_risks(config, artifact, input_draw, seed, age_group_id)
+def get_paf_for_age_group(config: Path, artifact_path: str, input_draw: int, random_seed: int, age_group_id: int) -> pd.DataFrame:
+    age_bin = get_age_bin(config, artifact_path, age_group_id)
+    relative_risks = pd.concat([get_relative_risks(config, artifact_path, input_draw, seed, age_group_id)
                                 for seed in range(random_seed, random_seed + 10)])
 
     def calculate_paf_by_sex(sex: str) -> float:
@@ -112,14 +116,13 @@ def get_paf_for_age_group(config: Path, artifact: Artifact, input_draw: int, ran
 
 def write_pafs_to_hdf(config: str, artifact_path: str, output_dir: str, input_draw: str, random_seed: str):
     config = Path(config)
-    artifact = Artifact(artifact_path)
     output_dir = Path(output_dir)
     input_draw = int(input_draw)
     random_seed = int(random_seed)
 
     mkdir(output_dir, exists_ok=True)
 
-    pafs = pd.concat([get_paf_for_age_group(config, artifact, input_draw, random_seed, age_group_id)
+    pafs = pd.concat([get_paf_for_age_group(config, artifact_path, input_draw, random_seed, age_group_id)
                       for age_group_id in metadata.AGE_GROUP.GBD_2019_LBWSG_RELATIVE_RISK])
 
     pafs.to_hdf(str(output_dir / f'draw_{input_draw}.hdf'), 'paf')

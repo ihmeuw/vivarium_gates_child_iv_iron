@@ -514,7 +514,10 @@ def load_lbwsg_paf(key: str, location: str) -> pd.DataFrame:
 
     location_mapper = {"Sub-Saharan Africa": "sub-saharan_africa",
                         "South Asia": "south_asia",
-                       "LMICs": "lmics"}
+                       "LMICs": "lmics",
+                       "Ethiopia": "ethiopia",
+                       "Nigeria": "nigeria",
+                       "India": "india"}
 
     output_dir = paths.TEMPORARY_PAF_DIR / location_mapper[location]
     paf_files = output_dir.glob("*.hdf")

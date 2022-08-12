@@ -324,7 +324,7 @@ def load_remission_rate_from_duration(key: str, location: str) -> pd.DataFrame:
         }[key]
     except KeyError:
         raise ValueError(f"Unrecognized key {key}")
-    step_size = 0.5 / 365  # years
+    step_size = 4 / 365  # years
     duration = get_data(cause.DURATION, location)
     remission_rate = (-1 / step_size) * np.log(1 - step_size / duration)
 
@@ -403,28 +403,22 @@ def load_lbwsg_exposure(key: str, location: str) -> pd.DataFrame:
     if key != data_keys.LBWSG.EXPOSURE:
         raise ValueError(f"Unrecognized key {key}")
 
-    key = EntityKey(key)
-    entity = utilities.get_entity(key)
-    data = utilities.get_data(
-        key,
-        entity,
-        location,
-        gbd_constants.SOURCES.EXPOSURE,
-        "rei_id",
-        metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE,
-        metadata.GBD_2019_ROUND_ID,
-        "step4",
-    )
-    data = data[data["year_id"] == 2019].drop(columns="year_id")
-    data = utilities.process_exposure(
-        data,
-        key,
-        entity,
-        location,
-        metadata.GBD_2019_ROUND_ID,
-        metadata.AGE_GROUP.GBD_2019_LBWSG_EXPOSURE | metadata.AGE_GROUP.GBD_2019,
-    )
-    data = data[data.index.get_level_values("year_start") == 2019]
+    entity = utilities.get_entity(data_keys.LBWSG.EXPOSURE)
+    data = utilities.load_lbwsg_exposure(location)
+    # This category was a mistake in GBD 2019, so drop.
+    extra_residual_category = vi_globals.EXTRA_RESIDUAL_CATEGORY[entity.name]
+    data = data.loc[data['parameter'] != extra_residual_category]
+    idx_cols = ['location_id', 'age_group_id', 'year_id', 'sex_id', 'parameter']
+    data = data.set_index(idx_cols)[vi_globals.DRAW_COLUMNS]
+
+    # Sometimes there are data values on the order of 10e-300 that cause
+    # floating point headaches, so clip everything to reasonable values
+    data = data.clip(lower=vi_globals.MINIMUM_EXPOSURE_VALUE)
+
+    # normalize so all categories sum to 1
+    total_exposure = data.groupby(['location_id', 'age_group_id', 'sex_id']).transform('sum')
+    data = (data / total_exposure).reset_index()
+    data = reshape_to_vivarium_format(data, location)
     return data
 
 
@@ -520,7 +514,10 @@ def load_lbwsg_paf(key: str, location: str) -> pd.DataFrame:
 
     location_mapper = {"Sub-Saharan Africa": "sub-saharan_africa",
                         "South Asia": "south_asia",
-                       "LMICs": "lmics"}
+                       "LMICs": "lmics",
+                       "Ethiopia": "ethiopia",
+                       "Nigeria": "nigeria",
+                       "India": "india"}
 
     output_dir = paths.TEMPORARY_PAF_DIR / location_mapper[location]
     paf_files = output_dir.glob("*.hdf")
@@ -879,3 +876,13 @@ def load_diarrhea_birth_prevalence(key: str, location: str) -> pd.DataFrame:
     data = post_neonatal.droplevel(['age_start', 'age_end'])
 
     return data
+
+
+def reshape_to_vivarium_format(df, location):
+    df = vi_utils.reshape(df, value_cols=vi_globals.DRAW_COLUMNS)
+    df = vi_utils.scrub_gbd_conventions(df, location)
+    df = vi_utils.split_interval(df, interval_column='age', split_column_prefix='age')
+    df = vi_utils.split_interval(df, interval_column='year', split_column_prefix='year')
+    df = vi_utils.sort_hierarchical_data(df)
+    df.index = df.index.droplevel("location")
+    return df

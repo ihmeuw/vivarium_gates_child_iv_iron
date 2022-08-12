@@ -26,6 +26,7 @@ from vivarium_inputs.mapping_extension import (
 )
 from vivarium_inputs.validation.raw import check_metadata
 
+from vivarium_gates_child_iv_iron.constants import data_keys
 from vivarium_gates_child_iv_iron.constants.metadata import AGE_GROUP, GBD_2019_ROUND_ID, NEONATAL_END_AGE
 
 
@@ -358,3 +359,22 @@ def scrub_neonatal_age_groups(data: pd.DataFrame) -> pd.DataFrame:
     new_early_neonatal = post_neonatal.set_index(early_neonatal.index)
     new_late_neonatal = post_neonatal.set_index(late_neonatal.index)
     return pd.concat([new_early_neonatal, new_late_neonatal, post_neonatal, non_neonatal]).sort_index()
+
+
+@gbd.memory.cache
+def load_lbwsg_exposure(location: str):
+    entity = get_entity(data_keys.LBWSG.EXPOSURE)
+    location_id = utility_data.get_location_id(location)
+    data = get_draws(
+        gbd_id_type='rei_id',
+        gbd_id=entity.gbd_id,
+        source=gbd_constants.SOURCES.EXPOSURE,
+        location_id=location_id,
+        sex_id=gbd_constants.SEX.MALE + gbd_constants.SEX.FEMALE,
+        age_group_id=[2, 3],
+        gbd_round_id=gbd_constants.ROUND_IDS.GBD_2019,
+        decomp_step=gbd_constants.DECOMP_STEP.STEP_4,
+    )
+    # This data set is big, so let's reduce it by a factor of ~40
+    data = data[data['year_id'] == 2019]
+    return data

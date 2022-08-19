@@ -96,7 +96,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.STUNTING.CATEGORIES: load_metadata,
         data_keys.STUNTING.EXPOSURE: load_standard_data,
         data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
-        data_keys.STUNTING.PAF: load_categorical_paf,
+#        data_keys.STUNTING.PAF: load_categorical_paf,
 
         # data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         # data_keys.MODERATE_PEM.EMR: load_pem_emr,
@@ -150,7 +150,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         # data_keys.IV_IRON.EXPOSURE: load_dichotomous_treatment_exposure,
         # data_keys.IV_IRON.EXCESS_SHIFT: load_treatment_excess_shift,
         # data_keys.IV_IRON.RISK_SPECIFIC_SHIFT: load_risk_specific_shift,
-        # 
+        #
         # data_keys.MATERNAL_BMI_ANEMIA.DISTRIBUTION: load_maternal_bmi_anemia_distribution,
         # data_keys.MATERNAL_BMI_ANEMIA.CATEGORIES: load_maternal_bmi_anemia_categories,
         # data_keys.MATERNAL_BMI_ANEMIA.EXPOSURE: load_maternal_bmi_anemia_exposure,

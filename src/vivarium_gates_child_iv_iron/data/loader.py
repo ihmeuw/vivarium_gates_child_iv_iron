@@ -95,7 +95,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.STUNTING.ALT_DISTRIBUTION: load_metadata,
         data_keys.STUNTING.CATEGORIES: load_metadata,
         data_keys.STUNTING.EXPOSURE: load_standard_data,
-        data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
+        data_keys.STUNTING.RELATIVE_RISK: load_stunting_rr,
         data_keys.STUNTING.PAF: load_categorical_paf,
 
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
@@ -886,3 +886,9 @@ def reshape_to_vivarium_format(df, location):
     df = vi_utils.sort_hierarchical_data(df)
     df.index = df.index.droplevel("location")
     return df
+
+
+def load_stunting_rr(key, location):
+    data = load_standard_data(key, location)
+    for col in data.columns:
+        data[col].values[:] = 0.4 # any number < 1 for RR logging test

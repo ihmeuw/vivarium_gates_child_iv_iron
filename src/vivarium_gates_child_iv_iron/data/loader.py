@@ -892,3 +892,5 @@ def load_stunting_rr(key, location):
     data = load_standard_data(key, location)
     for col in data.columns:
         data[col].values[:] = 0.4 # any number < 1 for RR logging test
+
+    return data

@@ -42,5 +42,5 @@ class __SISModel:
 #     SEVERE_PEM
 # ]
 
-STATES = tuple(state for model in CAUSE_MODELS for state in model.STATES)
-TRANSITIONS = tuple(state for model in CAUSE_MODELS for state in model.TRANSITIONS)
+# STATES = tuple(state for model in CAUSE_MODELS for state in model.STATES)
+# TRANSITIONS = tuple(state for model in CAUSE_MODELS for state in model.TRANSITIONS)

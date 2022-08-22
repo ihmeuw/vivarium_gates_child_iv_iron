@@ -210,7 +210,7 @@ class __Stunting(NamedTuple):
     CATEGORIES: TargetString = 'risk_factor.child_stunting.categories'
     EXPOSURE: TargetString = 'risk_factor.child_stunting.exposure'
     RELATIVE_RISK: TargetString = 'risk_factor.child_stunting.relative_risk'
-#    PAF: TargetString = 'risk_factor.child_stunting.population_attributable_fraction'
+    PAF: TargetString = 'risk_factor.child_stunting.population_attributable_fraction'
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
     CAT4 = 'cat4'

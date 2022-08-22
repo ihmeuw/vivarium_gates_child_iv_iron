@@ -64,7 +64,7 @@ configuration:
         random_seed: 0
     time:
         start:
-            year: 2024
+            year: 2019
             month: 1
             day: 1
         end:
@@ -109,18 +109,18 @@ configuration:
             - "year"
             - "sex"
             - "age"
-#        child_stunting:
-#            include:
-#                - "maternal_supplementation"
-#                - "iv_iron"
-#        child_wasting:
-#            include:
-#                - "maternal_supplementation"
-#                - "iv_iron"
+        child_stunting:
+            include:
+                - "maternal_supplementation"
+                - "iv_iron"
+        child_wasting:
+            include:
+                - "maternal_supplementation"
+                - "iv_iron"
         birth:
             exclude:
                 - "age"
-#            include:
-#                - "maternal_supplementation"
-#                - "iv_iron"
-#                - "bmi_anemia"
+            include:
+                - "maternal_supplementation"
+                - "iv_iron"
+                - "bmi_anemia"

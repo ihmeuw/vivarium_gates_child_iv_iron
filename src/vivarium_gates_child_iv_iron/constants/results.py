@@ -63,19 +63,19 @@ SEVERE_PEM_TRANSITION_COUNT_COLUMN_TEMPLATE = (
     'severe_protein_energy_malnutrition_{SEVERE_PEM_TRANSITION}_event_count_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
 )
 STUNTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'child_stunting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'child_stunting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}'
 )
 WASTING_STATE_PERSON_TIME_COLUMN_TEMPLATE = (
-    'child_wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}'
+    'child_wasting_{CGF_RISK_STATE_NUMERIC}_person_time_year_{YEAR}_sex_{SEX}_age_{AGE_GROUP}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}'
 )
 LOW_BIRTH_WEIGHT_SHORT_GESTATION_SUB_RISK_SUM_COLUM_TEMPLATE = (
-    '{LBWSG_SUB_RISK}_sum_year_{YEAR}_sex_{SEX}'
+    '{LBWSG_SUB_RISK}_sum_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}_bmi_anemia_{BMI_ANEMIA}'
 )
 LIVE_BIRTHS_COLUMN_TEMPLATE = (
-    'live_births_year_{YEAR}_sex_{SEX}'
+    'live_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}_bmi_anemia_{BMI_ANEMIA}'
 )
 LOW_WEIGHT_BIRTHS_COLUMN_TEMPLATE = (
-    'low_weight_births_year_{YEAR}_sex_{SEX}'
+    'low_weight_births_year_{YEAR}_sex_{SEX}_maternal_supplementation_{SUPPLEMENTATION}_iv_iron_{IV_IRON}_bmi_anemia_{BMI_ANEMIA}'
 )
 
 

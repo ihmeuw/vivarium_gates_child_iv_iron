@@ -19,6 +19,11 @@ components:
             - RiskEffect('risk_factor.child_stunting', 'cause.measles.incidence_rate')
             - RiskEffect('risk_factor.child_stunting', 'cause.lower_respiratory_infections.incidence_rate')
 
+            - RiskEffect('risk_factor.iron_deficiency')
+            - RiskEffect('risk_factor.iron_deficiency', 'cause.diarrheal_diseases.incidence_rate')
+            - RiskEffect('risk_factor.iron_deficiency', 'cause.measles.incidence_rate')
+            - RiskEffect('risk_factor.iron_deficiency', 'cause.lower_respiratory_infections.incidence_rate')
+
             - LBWSGRiskEffect('cause.diarrheal_diseases.excess_mortality_rate')
             - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality_rate')
             - LBWSGRiskEffect('cause.affected_unmodeled.cause_specific_mortality_rate')

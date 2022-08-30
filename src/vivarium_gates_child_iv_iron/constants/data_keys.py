@@ -230,6 +230,22 @@ class __Stunting(NamedTuple):
 STUNTING = __Stunting()
 
 
+class __IronDeficiency(NamedTuple):
+    # Keys that will be loaded into artifact
+    RELATIVE_RISK: TargetString = 'risk_factor.iron_deficiency.relative_risk'
+
+    @property
+    def name(self):
+        return 'iron_deficiency'
+
+    @property
+    def log_name(self):
+        return 'iron_deficiency'
+
+
+IRON_DEFICIENCY = __IronDeficiency()
+
+
 class __LowBirthWeightShortGestation(NamedTuple):
     # Keys that will be loaded into the artifact. must have a colon type declaration
     EXPOSURE: TargetString = 'risk_factor.low_birth_weight_and_short_gestation.exposure'
@@ -347,5 +363,6 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     BEP_SUPPLEMENTATION,
     IV_IRON,
     MATERNAL_BMI_ANEMIA,
+    IRON_DEFICIENCY,
 ]
 

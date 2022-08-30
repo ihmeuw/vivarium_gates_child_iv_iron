@@ -83,9 +83,7 @@ class ResultsStratifier(ResultsStratifier_):
 class DisabilityObserver(DisabilityObserver_):
     def on_post_setup(self, event: Event) -> None:
         for cause in self._cause_components:
-            if cause.has_disability:
-                self.disability_pipelines[cause.state_id] = cause.disability_weight
-            if cause.name == 'disease_model.moderate_protein_energy_malnutrition':
+            if cause.has_disability or cause.name == 'disease_model.moderate_protein_energy_malnutrition':
                 self.disability_pipelines[cause.state_id] = cause.disability_weight
 
 

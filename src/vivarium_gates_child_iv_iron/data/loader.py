@@ -100,6 +100,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
 
         data_keys.IRON_DEFICIENCY.EXPOSURE: load_standard_data,
         data_keys.IRON_DEFICIENCY.RELATIVE_RISK: load_if_rr,
+        data_keys.IRON_DEFICIENCY.DISTRIBUTION: load_if_distribution,
 
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,
@@ -897,3 +898,6 @@ def load_if_rr(key, location):
         data[col].values[:] = 0.4 # any number < 1 for RR logging test
 
     return data
+
+def load_if_distribution(key, location):
+    return data_values.Iron_Deficiency.DISTRIBUTION

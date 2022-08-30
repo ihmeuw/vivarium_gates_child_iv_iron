@@ -89,3 +89,9 @@ class __MaternalCharacteristics(NamedTuple):
 
 
 MATERNAL_CHARACTERISTICS = __MaternalCharacteristics()
+
+
+class __IronDeficiency(NamedTuple):
+    DISTRIBUTION: str = 'normal'
+
+Iron_Deficiency = __IronDeficiency()

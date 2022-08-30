@@ -98,6 +98,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.STUNTING.RELATIVE_RISK: load_standard_data,
         data_keys.STUNTING.PAF: load_categorical_paf,
 
+        data_keys.IRON_DEFICIENCY.EXPOSURE: load_standard_data,
         data_keys.IRON_DEFICIENCY.RELATIVE_RISK: load_if_rr,
 
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,

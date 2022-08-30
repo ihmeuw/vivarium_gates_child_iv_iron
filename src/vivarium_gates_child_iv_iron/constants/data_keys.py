@@ -232,6 +232,7 @@ STUNTING = __Stunting()
 
 class __IronDeficiency(NamedTuple):
     # Keys that will be loaded into artifact
+    EXPOSURE: TargetString = 'risk_factor.iron_deficiency.exposure'
     RELATIVE_RISK: TargetString = 'risk_factor.iron_deficiency.relative_risk'
 
     @property

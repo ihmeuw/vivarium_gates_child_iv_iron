@@ -93,5 +93,7 @@ MATERNAL_CHARACTERISTICS = __MaternalCharacteristics()
 
 class __IronDeficiency(NamedTuple):
     DISTRIBUTION: str = 'normal'
+    EXPOSURE_STANDARD_DEVIATION: float = 0.25
+
 
 Iron_Deficiency = __IronDeficiency()

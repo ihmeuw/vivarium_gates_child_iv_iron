@@ -235,6 +235,7 @@ class __IronDeficiency(NamedTuple):
     EXPOSURE: TargetString = 'risk_factor.iron_deficiency.exposure'
     RELATIVE_RISK: TargetString = 'risk_factor.iron_deficiency.relative_risk'
     DISTRIBUTION: TargetString = 'risk_factor.iron_deficiency.distribution'
+    EXPOSURE_STANDARD_DEVIATION: TargetString = 'risk_factor.iron_deficiency.exposure_standard_deviation'
 
     @property
     def name(self):

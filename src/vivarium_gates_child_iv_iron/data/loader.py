@@ -102,7 +102,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.IRON_DEFICIENCY.RELATIVE_RISK: load_if_rr,
         data_keys.IRON_DEFICIENCY.DISTRIBUTION: load_if_distribution,
         data_keys.IRON_DEFICIENCY.EXPOSURE_STANDARD_DEVIATION: load_standard_data,
-        data_keys.IRON_DEFICIENCY.PAF: load_standard_data,
+        data_keys.IRON_DEFICIENCY.PAF: load_iron_deficiency_paf,
 
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,
@@ -907,9 +907,19 @@ def load_if_distribution(key, location):
     return data_values.Iron_Deficiency.DISTRIBUTION
 
 
-# def load_if_esd(key, location):
-#     data = load_standard_data(data_keys.IRON_DEFICIENCY.EXPOSURE)
-#     for col in data.columns:
-#         data[col].values[:] = 0.25 # any number < 1 for RR logging test
-#
-#     return data
+def load_iron_deficiency_paf(key, location):
+    draw_cols = [f'draw_{i}' for i in list(range(1000))]
+    pop = load_population_structure(data_keys.POPULATION.STRUCTURE, "South Asia")
+    pop = pop.drop(['location', 'value'], 'columns')
+    pop[draw_cols] = 0.05
+
+    affected_entity = ['maternal_hypertensive_disorders'] * len(pop)
+    affected_measure = ['incidence_rate'] * len(pop)
+
+    pop['affected_entity'] = affected_entity
+    pop['affected_measure'] = affected_measure
+
+    paf = pop.set_index([affected_entity, affected_measure], append=True)
+    paf.index.set_names(['affected_entity', 'affected_measure'], level=[5, 6], inplace=True)
+
+    return paf

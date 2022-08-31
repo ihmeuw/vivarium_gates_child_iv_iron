@@ -921,5 +921,5 @@ def load_iron_deficiency_paf(key, location):
 
     paf = paf.set_index([affected_entity, affected_measure], append=True)
     paf.index.set_names(['affected_entity', 'affected_measure'], level=[5, 6], inplace=True)
-
+    paf = paf.drop(['affected_entity', 'affected_measure'], 'columns')
     return paf

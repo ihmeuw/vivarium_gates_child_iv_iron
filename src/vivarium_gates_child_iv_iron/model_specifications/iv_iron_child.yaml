@@ -20,8 +20,8 @@ components:
             - RiskEffect('risk_factor.child_stunting', 'cause.lower_respiratory_infections.incidence_rate')
 
             - Risk('risk_factor.iron_deficiency')
-#            - RiskEffect('risk_factor.iron_deficiency', 'cause.maternal_hemorrhage.incidence_rate')
-#            - RiskEffect('risk_factor.iron_deficiency', 'cause.'other_maternal_disorders'.incidence_rate')
+            - RiskEffect('risk_factor.iron_deficiency', 'cause.maternal_hypertensive_disorders.incidence_rate')
+
 
             - LBWSGRiskEffect('cause.diarrheal_diseases.excess_mortality_rate')
             - LBWSGRiskEffect('cause.lower_respiratory_infections.excess_mortality_rate')

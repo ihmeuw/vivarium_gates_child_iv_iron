@@ -288,7 +288,7 @@ class __AffectedUnmodeledCauses(NamedTuple):
     SIDS_CSMR: TargetString = TargetString('cause.sudden_infant_death_syndrome.cause_specific_mortality_rate')
     NEONATAL_LRI_CSMR: TargetString = TargetString('cause.neonatal_lower_respiratory_infections.cause_specific_mortality_rate')
     NEONATAL_DIARRHEAL_DISEASES_CSMR: TargetString = TargetString('cause.neonatal_diarrheal_diseases.cause_specific_mortality_rate')
-
+    MATERNAL_HYPERTENSIVE_DISORDERS_INCIDENCE_RATE: TargetString = 'cause.maternal_hypertensive_disorders.incidence_rate'
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 
     @property

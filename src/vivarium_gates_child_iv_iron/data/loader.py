@@ -923,3 +923,6 @@ def load_iron_deficiency_paf(key, location):
     paf.index.set_names(['affected_entity', 'affected_measure'], level=[5, 6], inplace=True)
     paf = paf.drop(['affected_entity', 'affected_measure'], 'columns')
     return paf
+
+def load_id_tmred(key, location):
+    return data_values.Iron_Deficiency.TMRED

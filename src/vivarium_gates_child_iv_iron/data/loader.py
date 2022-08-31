@@ -909,17 +909,17 @@ def load_if_distribution(key, location):
 
 def load_iron_deficiency_paf(key, location):
     draw_cols = [f'draw_{i}' for i in list(range(1000))]
-    pop = load_population_structure(data_keys.POPULATION.STRUCTURE, "South Asia")
-    pop = pop.drop(['location', 'value'], 'columns')
-    pop[draw_cols] = 0.05
+    paf = load_population_structure(data_keys.POPULATION.STRUCTURE, "South Asia")
+    paf = paf.drop(['location', 'value'], 'columns')
+    paf[draw_cols] = 0.05
 
-    affected_entity = ['maternal_hypertensive_disorders'] * len(pop)
-    affected_measure = ['incidence_rate'] * len(pop)
+    affected_entity = ['maternal_hypertensive_disorders'] * len(paf)
+    affected_measure = ['incidence_rate'] * len(paf)
 
-    pop['affected_entity'] = affected_entity
-    pop['affected_measure'] = affected_measure
+    paf['affected_entity'] = affected_entity
+    paf['affected_measure'] = affected_measure
 
-    paf = pop.set_index([affected_entity, affected_measure], append=True)
+    paf = paf.set_index([affected_entity, affected_measure], append=True)
     paf.index.set_names(['affected_entity', 'affected_measure'], level=[5, 6], inplace=True)
 
     return paf

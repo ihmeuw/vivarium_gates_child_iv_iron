@@ -38,6 +38,7 @@ components:
             - DiseaseObserver('maternal_hypertensive_disorders')
             - CategoricalRiskObserver('child_stunting')
             - CategoricalRiskObserver('child_wasting')
+            - CategoricalRiskObserver('iron_deficiency')
 
     vivarium_gates_child_iv_iron:
         components:

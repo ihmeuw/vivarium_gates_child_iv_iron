@@ -105,6 +105,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.IRON_DEFICIENCY.PAF: load_iron_deficiency_paf,
         data_keys.IRON_DEFICIENCY.TMRED: load_id_tmred,
         data_keys.IRON_DEFICIENCY.RELATIVE_RISK_SCALAR: load_id_rr_scalar,
+        data_keys.IRON_DEFICIENCY.CATEGORIES: load_id_categories,
 
         data_keys.MHD.PREVALENCE: load_standard_data,
         data_keys.MHD.INCIDENCE_RATE: load_standard_data,
@@ -946,3 +947,8 @@ def load_mhd_rm(key, location):
     remission_rate[draw_cols] = 0.05
 
     return remission_rate
+
+
+def load_id_categories(key, location)
+    data = get_data(data_keys.IV_IRON.CATEGORIES, location)
+    return data

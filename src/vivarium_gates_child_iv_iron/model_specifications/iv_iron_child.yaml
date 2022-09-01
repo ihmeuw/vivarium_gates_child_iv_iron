@@ -6,6 +6,7 @@ components:
         disease:
             - SIS_fixed_duration('measles', '10.0')
             - SIS('lower_respiratory_infections')
+            - SIS('maternal_hypertensive_disorders')
             - RiskAttributableDisease('cause.moderate_protein_energy_malnutrition', 'risk_factor.child_wasting')
             - RiskAttributableDisease('cause.severe_protein_energy_malnutrition', 'risk_factor.child_wasting')
         risks:
@@ -34,6 +35,7 @@ components:
             - DiseaseObserver('lower_respiratory_infections')
             - DiseaseObserver('moderate_protein_energy_malnutrition')
             - DiseaseObserver('severe_protein_energy_malnutrition')
+            - DiseaseObserver('maternal_hypertensive_disorders')
             - CategoricalRiskObserver('child_stunting')
             - CategoricalRiskObserver('child_wasting')
 

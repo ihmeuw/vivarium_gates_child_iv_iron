@@ -261,6 +261,7 @@ class __MaternalHypertensiveDisorders(NamedTuple):
     EMR: TargetString = TargetString('cause.maternal_hypertensive_disorders.excess_mortality_rate')
     CSMR: TargetString = TargetString('cause.maternal_hypertensive_disorders.cause_specific_mortality_rate')
     RESTRICTIONS: TargetString = TargetString('cause.maternal_hypertensive_disorders.restrictions')
+    REMISSION_RATE: TargetString = TargetString('cause.maternal_hypertensive_disorders.remission_rate')
 
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 

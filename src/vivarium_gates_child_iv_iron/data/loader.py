@@ -112,7 +112,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.MHD.CSMR: load_standard_data,
         data_keys.MHD.RESTRICTIONS: load_metadata,
         data_keys.MHD.DISABILITY_WEIGHT: load_standard_data,
-        data_keys.MHD.REMISSION_RATE: load_standard_data,
+        data_keys.MHD.REMISSION_RATE: load_mhd_rm,,
 
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,
@@ -938,3 +938,11 @@ def load_id_tmred(key, location):
 
 def load_id_rr_scalar(key, location):
     return data_values.Iron_Deficiency.RR_SCALAR
+
+def load_mhd_rm(key, location):
+    draw_cols = [f'draw_{i}' for i in list(range(1000))]
+    remission_rate = load_population_structure(data_keys.POPULATION.STRUCTURE, "South Asia")
+    remission_rate = paf.drop(['location', 'value'], 'columns')
+    remission_rate[draw_cols] = 0.05
+
+    return remission_rate

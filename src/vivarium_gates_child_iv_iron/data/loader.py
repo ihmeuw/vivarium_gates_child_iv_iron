@@ -949,6 +949,6 @@ def load_mhd_rm(key, location):
     return remission_rate
 
 
-def load_id_categories(key, location)
+def load_id_categories(key, location):
     data = get_data(data_keys.IV_IRON.CATEGORIES, location)
     return data

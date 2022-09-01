@@ -106,6 +106,13 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.IRON_DEFICIENCY.TMRED: load_id_tmred,
         data_keys.IRON_DEFICIENCY.RELATIVE_RISK_SCALAR: load_id_rr_scalar,
 
+        data_keys.MHD.PREVALENCE: load_standard_data,
+        data_keys.MHD.INCIDENCE_RATE: load_standard_data,
+        data_keys.MHD.EMR: load_standard_data,
+        data_keys.MHD.CSMR: load_standard_data,
+        data_keys.MHD.MATERNAL_HYPERTENSIVE_DISORDERS_INCIDENCE_RATE: load_standard_data,
+        data_keys.MHD.RESTRICTIONS: load_metadata,
+
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,
         data_keys.MODERATE_PEM.CSMR: load_pem_csmr,
@@ -134,7 +141,6 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.AFFECTED_UNMODELED_CAUSES.SIDS_CSMR: load_sids_csmr,
         data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_LRI_CSMR: load_neonatal_lri_csmr,
         data_keys.AFFECTED_UNMODELED_CAUSES.NEONATAL_DIARRHEAL_DISEASES_CSMR: load_neonatal_diarrhea_csmr,
-        data_keys.AFFECTED_UNMODELED_CAUSES.MATERNAL_HYPERTENSIVE_DISORDERS_INCIDENCE_RATE: load_standard_data,
 
         data_keys.IFA_SUPPLEMENTATION.DISTRIBUTION: load_intervention_distribution,
         data_keys.IFA_SUPPLEMENTATION.CATEGORIES: load_intervention_categories,

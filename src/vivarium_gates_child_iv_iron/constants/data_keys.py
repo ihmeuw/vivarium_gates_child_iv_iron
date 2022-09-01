@@ -252,6 +252,32 @@ class __IronDeficiency(NamedTuple):
 IRON_DEFICIENCY = __IronDeficiency()
 
 
+class __MaternalHypertensiveDisorders(NamedTuple):
+
+    # Keys that will be loaded into the artifact. must have a colon type declaration
+    PREVALENCE: TargetString = TargetString('cause.maternal_hypertensive_disorders.prevalence')
+    INCIDENCE_RATE: TargetString = TargetString('cause.maternal_hypertensive_disorders.incidence_rate')
+    DISABILITY_WEIGHT: TargetString = TargetString('cause.maternal_hypertensive_disorders.disability_weight')
+    EMR: TargetString = TargetString('cause.maternal_hypertensive_disorders.excess_mortality_rate')
+    CSMR: TargetString = TargetString('cause.maternal_hypertensive_disorders.cause_specific_mortality_rate')
+    RESTRICTIONS: TargetString = TargetString('cause.maternal_hypertensive_disorders.restrictions')
+
+    # Useful keys not for the artifact - distinguished by not using the colon type declaration
+
+    @property
+    def name(self):
+        return 'maternal_hypertensive_disorders'
+
+    @property
+    def log_name(self):
+        return 'maternal_hypertensive_disorders'
+
+
+MHD = __Maternal_Hyptensive_Disorders()
+
+
+
+
 class __LowBirthWeightShortGestation(NamedTuple):
     # Keys that will be loaded into the artifact. must have a colon type declaration
     EXPOSURE: TargetString = 'risk_factor.low_birth_weight_and_short_gestation.exposure'
@@ -291,7 +317,6 @@ class __AffectedUnmodeledCauses(NamedTuple):
     SIDS_CSMR: TargetString = TargetString('cause.sudden_infant_death_syndrome.cause_specific_mortality_rate')
     NEONATAL_LRI_CSMR: TargetString = TargetString('cause.neonatal_lower_respiratory_infections.cause_specific_mortality_rate')
     NEONATAL_DIARRHEAL_DISEASES_CSMR: TargetString = TargetString('cause.neonatal_diarrheal_diseases.cause_specific_mortality_rate')
-    MATERNAL_HYPERTENSIVE_DISORDERS_INCIDENCE_RATE: TargetString = 'cause.maternal_hypertensive_disorders.incidence_rate'
     # Useful keys not for the artifact - distinguished by not using the colon type declaration
 
     @property
@@ -370,5 +395,6 @@ MAKE_ARTIFACT_KEY_GROUPS = [
     IV_IRON,
     MATERNAL_BMI_ANEMIA,
     IRON_DEFICIENCY,
+    MHD,
 ]
 

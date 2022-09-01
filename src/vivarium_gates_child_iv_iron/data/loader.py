@@ -110,8 +110,8 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.MHD.INCIDENCE_RATE: load_standard_data,
         data_keys.MHD.EMR: load_standard_data,
         data_keys.MHD.CSMR: load_standard_data,
-        data_keys.MHD.MATERNAL_HYPERTENSIVE_DISORDERS_INCIDENCE_RATE: load_standard_data,
         data_keys.MHD.RESTRICTIONS: load_metadata,
+        data_keys.MHD.DISABILITY_WEIGHT: load_standard_data,
 
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,

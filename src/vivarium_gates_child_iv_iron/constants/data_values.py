@@ -92,7 +92,11 @@ MATERNAL_CHARACTERISTICS = __MaternalCharacteristics()
 
 
 class __IronDeficiency(NamedTuple):
-    TMRED: tuple = ('draws', True, 0.04, 0.06)
+    TMRED: dict = {'distribution': 'draws',
+                   'inverted': True,
+                   'min': 0.04,
+                   'max': 0.06
+                  }
     DISTRIBUTION: str = 'normal'
     RR_SCALAR: float = 10
 

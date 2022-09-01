@@ -273,7 +273,7 @@ class __MaternalHypertensiveDisorders(NamedTuple):
         return 'maternal_hypertensive_disorders'
 
 
-MHD = __Maternal_Hyptensive_Disorders()
+MHD = __MaternalHypertensiveDisorders()
 
 
 

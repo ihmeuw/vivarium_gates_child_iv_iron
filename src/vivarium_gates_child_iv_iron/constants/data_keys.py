@@ -237,7 +237,8 @@ class __IronDeficiency(NamedTuple):
     DISTRIBUTION: TargetString = 'risk_factor.iron_deficiency.distribution'
     EXPOSURE_STANDARD_DEVIATION: TargetString = 'risk_factor.iron_deficiency.exposure_standard_deviation'
     PAF: TargetString = 'risk_factor.iron_deficiency.population_attributable_fraction'
-    TMRED: TargetString = 'risk_factor.iron_deficiency.tmred'
+    TMRED: TargetString = 'risk_factor.iron_deficiency.tmred',
+    RELATIVE_RISK_SCALAR: TargetString = 'risk_factor.iron_deficiency.relative_risk_scalar',
 
     @property
     def name(self):

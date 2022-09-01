@@ -99,6 +99,7 @@ class __IronDeficiency(NamedTuple):
         'max': 0.06,
     }
     DISTRIBUTION: str = 'normal'
+    RR_SCALAR: float = 10
 
 
 Iron_Deficiency = __IronDeficiency()

@@ -104,6 +104,7 @@ def get_data(lookup_key: str, location: str) -> pd.DataFrame:
         data_keys.IRON_DEFICIENCY.EXPOSURE_STANDARD_DEVIATION: load_standard_data,
         data_keys.IRON_DEFICIENCY.PAF: load_iron_deficiency_paf,
         data_keys.IRON_DEFICIENCY.TMRED: load_id_tmred,
+        data_keys.IRON_DEFICIENCY.RELATIVE_RISK_SCALAR: load_id_rr_scalar,
 
         data_keys.MODERATE_PEM.DISABILITY_WEIGHT: load_pem_disability_weight,
         data_keys.MODERATE_PEM.EMR: load_pem_emr,
@@ -927,3 +928,6 @@ def load_iron_deficiency_paf(key, location):
 
 def load_id_tmred(key, location):
     return data_values.Iron_Deficiency.TMRED
+
+def load_id_rr_scalar(key, location):
+    return data_values.Iron_Deficiency.RR_SCALAR

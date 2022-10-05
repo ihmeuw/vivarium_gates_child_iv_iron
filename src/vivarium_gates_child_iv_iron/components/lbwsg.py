@@ -13,6 +13,7 @@ import pandas as pd
 
 from vivarium.framework.engine import Builder
 from vivarium.framework.population import SimulantData
+from vivarium.framework.randomness import RandomnessStream
 from vivarium.framework.time import get_time_stamp
 from vivarium.framework.values import Pipeline
 from vivarium_public_health.risks.data_transformations import get_exposure_post_processor

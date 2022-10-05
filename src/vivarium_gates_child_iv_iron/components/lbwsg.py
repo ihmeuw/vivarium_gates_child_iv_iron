@@ -35,6 +35,9 @@ class LBWSGLineList(LBWSGRisk):
         super().setup(builder)
         self.start_time = get_time_stamp(builder.configuration.time.start)
 
+    def _get_randomness_stream(self, builder) -> RandomnessStream:
+        return None
+
     def _get_birth_exposure_pipelines(self, builder: Builder) -> Dict[str, Pipeline]:
         def get_pipeline(axis_: str):
             return builder.value.register_value_producer(

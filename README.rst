@@ -111,7 +111,10 @@ step. For more ways to run simulations, see the tutorials at
 https://vivarium.readthedocs.io/en/latest/tutorials/running_a_simulation/index.html
 and https://vivarium.readthedocs.io/en/latest/tutorials/exploration.html
 
-You must also define the fertility input data path in your model specs yaml.
-This directory is part of the output of the `IV maternal model <https://github.com/ihmeuw/vivarium_gates_iv_iron/>`_.
-Make sure the scenario, draw, and seed specified in your yaml have a corresponding
-file in your fertility input data path.
+You must also define the fertility input data path produced by the
+`IV maternal model <https://github.com/ihmeuw/vivarium_gates_iv_iron/>`_
+in your model specs yaml. When you run the IV maternal model, there will be a
+``child_data`` folder written to your results directory with files that look like
+``scenario_baseline_draw_482_seed_241.hdf``. Make sure the values for ``intervention.scenario``,
+``input_data.input_draw_number``, and ``randomness.random_seed`` specified
+in your yaml have a corresponding file in your fertility input data path.

@@ -102,6 +102,16 @@ You'll find six directories inside the main
 Running Simulations
 -------------------
 
+You must run the `IV maternal model <https://github.com/ihmeuw/vivarium_gates_iv_iron/>`_ before running this model because it
+produces fertility data that is used as input to this model. The maternal model will save this
+data to a ``child_data`` directory as files that look like ``scenario_baseline_draw_482_seed_241.hdf``. This ``child_data``
+folder lives in <MATERNAL_RESULTS_DIRECTORY>/model_spec/<MODEL_RUNTIME>. Your maternal results directory will be ``~/vivarium_results``
+by default, or the folder you specified using the ``-o`` flag when you ran ``simulate``. You'll need to update your model specification file, i.e.
+``/<REPO_INSTALLATION_DIRECTORY>/vivarium_gates_child_iv_iron/src/vivarium_gates_child_iv_iron/model_specifications/iv_iron_child.yaml``,
+so that ``configuration.input_data.fertility_input_data_path`` points to ``child_data``. You will also need to make sure that the values for
+``intervention.scenario``, ``input_data.input_draw_number``, and ``randomness.random_seed`` in your model specification file
+have a corresponding file in your ``child_data`` folder.
+
 With your conda environment active, you can run simulations by, e.g.:
 
    (vivarium_gates_child_iv_iron) :~$ simulate run -v /<REPO_INSTALLATION_DIRECTORY>/vivarium_gates_child_iv_iron/src/vivarium_gates_child_iv_iron/model_specifications/iv_iron_child.yaml
@@ -110,11 +120,3 @@ The ``-v`` flag will log verbosely, so you will get log messages every time
 step. For more ways to run simulations, see the tutorials at
 https://vivarium.readthedocs.io/en/latest/tutorials/running_a_simulation/index.html
 and https://vivarium.readthedocs.io/en/latest/tutorials/exploration.html
-
-You must also define the fertility input data path produced by the
-`IV maternal model <https://github.com/ihmeuw/vivarium_gates_iv_iron/>`_
-in your model specs yaml. When you run the IV maternal model, there will be a
-``child_data`` folder written to your results directory with files that look like
-``scenario_baseline_draw_482_seed_241.hdf``. Make sure the values for ``intervention.scenario``,
-``input_data.input_draw_number``, and ``randomness.random_seed`` specified
-in your yaml have a corresponding file in your fertility input data path.

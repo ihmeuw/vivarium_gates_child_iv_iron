@@ -6,15 +6,12 @@ Fertility Models
 Fertility module to create simulants from existing data
 
 """
-import numpy as np
 import pandas as pd
 from pathlib import Path
 
+from vivarium.framework.engine import Builder
 from vivarium.framework.event import Event
 from vivarium_public_health import utilities
-from vivarium_public_health.population.data_transformations import (
-    get_live_births_per_year,
-)
 
 PREGNANCY_DURATION = pd.Timedelta(days=9 * utilities.DAYS_PER_MONTH)
 
@@ -34,28 +31,28 @@ class FertilityLineList:
     def name(self):
         return "line_list_fertility"
 
-    def setup(self, builder):
+    # noinspection PyAttributeOutsideInit
+    def setup(self, builder: Builder):
         self.clock = builder.time.clock()
-        self.randomness = builder.randomness
         self.simulant_creator = builder.population.get_simulant_creator()
 
         # Requirements for input data
-        self.fertility_data_directory = builder.configuration.input_data.fertility_input_data_path
-        self.draw = builder.configuration.input_data.input_draw_number
-        self.seed = builder.configuration.randomness.random_seed
-        self.scenario = builder.configuration.intervention.scenario
-        self.birth_records = self._get_birth_records()
+        self.birth_records = self._get_birth_records(builder)
 
         builder.event.register_listener("time_step", self.on_time_step)
 
-    def _get_birth_records(self) -> pd.DataFrame:
+    @staticmethod
+    def _get_birth_records(builder: Builder) -> pd.DataFrame:
         """
         Method to load existing fertility data to use as birth records.
         """
-        fertility_data_dir = self.fertility_data_directory
-        file_path = fertility_data_dir + f'scenario_{self.scenario}_draw_{self.draw}_seed_{self.seed}.hdf'
-        birth_records = pd.read_hdf(file_path)
+        data_directory = Path(builder.configuration.input_data.fertility_input_data_path)
+        scenario = builder.configuration.intervention.scenario
+        draw = builder.configuration.input_data.input_draw_number
+        seed = builder.configuration.randomness.random_seed
 
+        file_path = data_directory / f'scenario_{scenario}_draw_{draw}_seed_{seed}.hdf'
+        birth_records = pd.read_hdf(file_path)
         return birth_records
 
     def on_time_step(self, event: Event) -> None:

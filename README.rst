@@ -2,6 +2,12 @@
 vivarium_gates_child_iv_iron
 ===============================
 
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.7470805.svg
+   :target: https://doi.org/10.5281/zenodo.7470805
+
+Cite as
+James Albright, Hussain Jafari, Rajan Mudambi, Alison Bowman, James Collins, & Abraham Flaxman. (2022). ihmeuw/vivarium_gates_child_iv_iron: Archival release (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.7470805
+
 Research repository for the vivarium_gates_child_iv_iron project.
 
 .. contents::

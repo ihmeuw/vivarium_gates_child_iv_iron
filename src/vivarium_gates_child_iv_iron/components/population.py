@@ -39,7 +39,7 @@ class PopulationLineList(BasePopulation):
         Creates simulants based on their birth date from the line list data.  Their demographic characteristics are also
         determined by the input data.
         """
-        columns = ["age", "sex", "alive", "location", "entrance_time", "exit_time"]
+        columns = ["age", "sex", "alive", "location", "entrance_time", "exit_time", "maternal_id"]
         new_simulants = pd.DataFrame(columns=columns, index=pop_data.index)
 
         if pop_data.creation_time >= self.start_time:
@@ -53,6 +53,7 @@ class PopulationLineList(BasePopulation):
             new_simulants["location"] = self.location
             new_simulants["entrance_time"] = pop_data.creation_time
             new_simulants["exit_time"] = pd.NaT
+            new_simulants["maternal_id"] = new_births["maternal_id"]
 
         self.population_view.update(new_simulants)
 

@@ -27,6 +27,7 @@ class PopulationLineList(BasePopulation):
     # noinspection PyAttributeOutsideInit
     def setup(self, builder: Builder) -> None:
         self.config = builder.configuration.population
+        self.key_columns = builder.configuration.randomness.key_columns
         if self.config.include_sex not in ["Male", "Female", "Both"]:
             raise ValueError(
                 "Configuration key 'population.include_sex' must be one "
@@ -109,6 +110,7 @@ class PopulationLineList(BasePopulation):
             new_simulants["exit_time"] = pd.NaT
             new_simulants["maternal_id"] = new_births["maternal_id"]
 
+        self.register_simulants(new_simulants[self.key_columns])
         self.population_view.update(new_simulants)
 
     def _get_location(self, builder: Builder) -> str:

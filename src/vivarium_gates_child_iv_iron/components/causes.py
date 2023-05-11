@@ -11,7 +11,7 @@ from vivarium_public_health.disease import (
 
 def SIS_with_birth_prevalence(cause: str) -> DiseaseModel:
     with_condition_data_functions = {
-        "birth_prevalence": lambda cause, builder: builder.data.load(
+        "birth_prevalence": lambda builder, cause: builder.data.load(
             f"cause.{cause}.birth_prevalence"
         )
     }

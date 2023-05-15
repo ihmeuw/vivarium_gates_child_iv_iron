@@ -30,7 +30,6 @@ RENAME_COLUMNS = {
 
 def make_measure_data(data: pd.DataFrame, disaggregate_seeds: bool):
     measure_data = MeasureData(
-        population=get_population_data(data, disaggregate_seeds),
         ylls=get_by_cause_measure_data(data, 'ylls', disaggregate_seeds),
         ylds=get_by_cause_measure_data(data, 'ylds', disaggregate_seeds),
         deaths=get_by_cause_measure_data(data, 'deaths', disaggregate_seeds),
@@ -79,7 +78,6 @@ def make_measure_data(data: pd.DataFrame, disaggregate_seeds: bool):
 
 
 class MeasureData(NamedTuple):
-    population: pd.DataFrame
     ylls: pd.DataFrame
     ylds: pd.DataFrame
     deaths: pd.DataFrame
